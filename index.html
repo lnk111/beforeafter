@@ -496,10 +496,366 @@ input[type="range"]::-webkit-slider-thumb {
 .count-text { color: var(--muted); font-size: .75rem; }
 .count-warn { color: var(--accent); font-weight: 600; font-size: .75rem; }
 
+
+/* ── TABS ── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+.tab-btn {
+  padding: 13px 22px;
+  font-family: var(--font);
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+
+/* ── TAB PANELS ── */
+.tab-panel { display: none; flex: 1; min-height: 0; overflow: hidden; }
+.tab-panel.active { display: contents; }
+
+/* ── RESIZE TAB ── */
+.resize-workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* LEFT: RESIZE SIMULATION */
+.resize-sim-panel {
+  background: #2a2724;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  gap: 14px;
+  overflow-y: auto;
+  width: 50vw;
+  min-width: 280px;
+  max-width: 70vw;
+  flex-shrink: 0;
+}
+#resizeSimCanvas { display: block; width: 100%; height: auto; }
+
+/* RIGHT: RESIZE CONTROLS */
+.resize-ctrl {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 20px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* COLOR PALETTE */
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+.pal-btn {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  position: relative;
+}
+.pal-btn:hover { transform: scale(1.1); }
+.pal-btn.active {
+  border-color: var(--accent);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 3px rgba(184,92,56,.2);
+}
+.pal-btn.active::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+/* custom color picker */
+.custom-color-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.custom-color-wrap label {
+  font-size: .72rem; color: var(--muted); font-weight: 500;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+input[type="color"] {
+  width: 38px; height: 38px; border-radius: 8px;
+  border: 1.5px solid var(--border); cursor: pointer;
+  padding: 2px; background: white;
+}
+
+/* upload zone for resize tab */
+.resize-upload-zone {
+  background: var(--card);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 36px 20px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative; overflow: hidden;
+  min-height: 180px; justify-content: center;
+  flex-shrink: 0;
+}
+.resize-upload-zone:hover { border-color: var(--accent); background: #fdf7f4; }
+.resize-upload-zone.has-image { border-style: solid; border-color: var(--accent); padding: 0; }
+.resize-upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.resize-preview-img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--radius)-2px); display: block; min-height: 180px; max-height: 240px; }
+
+.fit-mode-row { display: flex; gap: 8px; }
+.fit-btn {
+  flex: 1; padding: 9px 0;
+  border: 1.5px solid var(--border); background: transparent;
+  border-radius: 8px; font-family: var(--font); font-size: .8rem;
+  cursor: pointer; transition: all .15s; color: var(--ink);
+}
+.fit-btn.on { background: var(--accent); border-color: var(--accent); color: white; font-weight: 600; }
+
 </style>
 
 <!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+/* ════════════════════════════════════════
+   TAB SWITCHING
+════════════════════════════════════════ */
+function switchTab(n) {
+  document.getElementById('tab1Btn').classList.toggle('active', n===1);
+  document.getElementById('tab2Btn').classList.toggle('active', n===2);
+  document.getElementById('tab1Panel').classList.toggle('active', n===1);
+  document.getElementById('tab2Panel').classList.toggle('active', n===2);
+  if (n===2) { rUpdateCountBar(); rRefreshSim(); }
+}
+
+/* ════════════════════════════════════════
+   RESIZE TAB
+════════════════════════════════════════ */
+const PALETTE_COLORS = [
+  { hex: '#ffffff', label: '퓨어 화이트' },
+  { hex: '#fafaf8', label: '오프 화이트' },
+  { hex: '#f7f5f0', label: '크림' },
+  { hex: '#f5f2eb', label: '아이보리' },
+  { hex: '#f2ede3', label: '내추럴' },
+  { hex: '#ede8dc', label: '린넨' },
+  { hex: '#e8e2d5', label: '샌드' },
+  { hex: '#e3ddd0', label: '베이지' },
+  { hex: '#ddd6c8', label: '웜베이지' },
+  { hex: '#d6cfc0', label: '카푸치노' },
+  { hex: '#cec6b5', label: '그레이베이지' },
+  { hex: '#c5bcaa', label: '타프' },
+];
+
+let rImg = null;
+let rBgColor = '#ffffff';
+let rFitMode = 'contain';
+
+// 팔레트 렌더링
+function buildPalette() {
+  const wrap = document.getElementById('colorPalette');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  PALETTE_COLORS.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'pal-btn' + (c.hex === rBgColor ? ' active' : '');
+    btn.style.background = c.hex;
+    if (c.hex === '#ffffff' || c.hex === '#f5f2ee' || c.hex === '#f0ece4') {
+      btn.style.boxShadow = 'inset 0 0 0 1px #ddd';
+    }
+    // checkmark color
+    const isDark = ['#1a1816'].includes(c.hex);
+    btn.style.color = isDark ? '#fff' : '#333';
+    btn.title = c.label;
+    btn.onclick = () => {
+      document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      rBgColor = c.hex;
+      document.getElementById('customColor').value = c.hex;
+      document.getElementById('customColorHex').textContent = c.hex;
+      rRefreshSim();
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+function setCustomColor(val) {
+  rBgColor = val;
+  document.getElementById('customColorHex').textContent = val;
+  document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+  rRefreshSim();
+}
+
+function setFitMode(mode, btn) {
+  rFitMode = mode;
+  document.querySelectorAll('.fit-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  rRefreshSim();
+}
+
+function rLoadFile(e) {
+  const f = e.target.files[0]; if (f) rReadImg(f);
+}
+function rReadImg(file) {
+  const r = new FileReader();
+  r.onload = ev => {
+    const i = new Image();
+    i.onload = () => { rImg = i; rShowPreview(ev.target.result); rCheckReady(); rRefreshSim(); };
+    i.src = ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+function rShowPreview(src) {
+  const z = document.getElementById('rZone');
+  z.classList.add('has-image');
+  z.querySelector('input').style.display = 'none';
+  ['up-icon','up-label','up-hint'].forEach(c => { const el = z.querySelector('.'+c); if(el) el.style.display='none'; });
+  const old = z.querySelector('.resize-preview-img'); if(old) old.remove();
+  const img = document.createElement('img'); img.src = src; img.className = 'resize-preview-img'; z.appendChild(img);
+}
+function rOnDrag(e) { e.preventDefault(); document.getElementById('rZone').classList.add('drag-over'); }
+function rOffDrag()  { document.getElementById('rZone').classList.remove('drag-over'); }
+function rOnDrop(e)  {
+  e.preventDefault(); rOffDrag();
+  const f = e.dataTransfer.files[0]; if(f && f.type.startsWith('image/')) rReadImg(f);
+}
+function rCheckReady() {
+  document.getElementById('rGenBtn').classList.toggle('ready', !!rImg);
+}
+
+// 캔버스에 그리기
+function rDraw(canvas, scale) {
+  const ctx = canvas.getContext('2d');
+  const CW = Math.round(1080 * scale);
+  const CH = Math.round(1350 * scale);
+  canvas.width = CW; canvas.height = CH;
+
+  // 배경 색상
+  ctx.fillStyle = rBgColor;
+  ctx.fillRect(0, 0, CW, CH);
+
+  if (!rImg) return;
+
+  const iw = rImg.naturalWidth, ih = rImg.naturalHeight;
+  const ia = iw / ih, ca = CW / CH;
+
+  let dx, dy, dw, dh;
+  if (rFitMode === 'contain') {
+    if (ia > ca) { dw = CW; dh = CW / ia; dx = 0; dy = (CH - dh) / 2; }
+    else         { dh = CH; dw = CH * ia; dy = 0; dx = (CW - dw) / 2; }
+  } else {
+    // cover
+    if (ia > ca) { dh = CH; dw = CH * ia; dy = 0; dx = (CW - dw) / 2; }
+    else         { dw = CW; dh = CW / ia; dx = 0; dy = (CH - dh) / 2; }
+  }
+  ctx.drawImage(rImg, dx, dy, dw, dh);
+
+  // 무료 워터마크
+  if (!isPro) drawWatermark(ctx, CW, CH);
+}
+
+function rRefreshSim() {
+  if (!rImg) return;
+  document.getElementById('rSimPh').style.display = 'none';
+  const c = document.getElementById('resizeSimCanvas'); c.style.display = 'block';
+  const fw = document.getElementById('rSimFrame').clientWidth || 320;
+  rDraw(c, fw / 1080);
+}
+
+const rResultCanvas = document.createElement('canvas');
+
+function rGenerate() {
+  if (!rImg) return;
+  if (!canSave()) { openModal(); return; }
+  rDraw(rResultCanvas, 1.0);
+  document.getElementById('rDlBtn').classList.add('show');
+  if (!isPro) { incrementSaveCount(); rUpdateCountBar(); updateCountBar(); }
+  rRefreshSim();
+}
+
+function rDownload() {
+  const a = document.createElement('a');
+  a.download = 'insta-resize.jpg';
+  a.href = rResultCanvas.toDataURL('image/jpeg', 1.0);
+  a.click();
+}
+
+// 횟수 표시
+function rUpdateCountBar() {
+  const bar  = document.getElementById('rCountBar');
+  const dots = document.getElementById('rCountDots');
+  const text = document.getElementById('rCountText');
+  const warn = document.getElementById('rCountWarn');
+  if (!bar) return;
+  if (isPro) { bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+  const used = getSaveCount();
+  const left = Math.max(0, FREE_LIMIT - used);
+  dots.innerHTML = '';
+  for (let i = 0; i < FREE_LIMIT; i++) {
+    const d = document.createElement('div');
+    d.className = 'count-dot' + (i < used ? ' used' : '');
+    dots.appendChild(d);
+  }
+  text.textContent = `오늘 저장 ${used}/${FREE_LIMIT}회`;
+  warn.textContent = left === 0 ? '오늘 횟수 초과 · PRO 업그레이드' : left === 1 ? '오늘 1회 남음' : '';
+}
+
+// 리사이저2 (탭2 패널용)
+const resizer2El = document.getElementById('resizer2');
+const rSimPanelEl = document.getElementById('rSimPanel');
+let r2ing = false, r2x = 0, r2w = 0;
+if (resizer2El) {
+  resizer2El.addEventListener('mousedown', e => {
+    r2ing = true; r2x = e.clientX; r2w = rSimPanelEl.offsetWidth;
+    resizer2El.classList.add('active');
+    document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!r2ing) return;
+    const nw = Math.min(Math.max(r2w + (e.clientX - r2x), 240), window.innerWidth * 0.72);
+    rSimPanelEl.style.width = nw + 'px';
+    rRefreshSim();
+  });
+  document.addEventListener('mouseup', () => {
+    if (!r2ing) return;
+    r2ing = false; resizer2El.classList.remove('active');
+    document.body.style.cursor = ''; document.body.style.userSelect = '';
+  });
+}
+
+// 초기화
+window.addEventListener('DOMContentLoaded', () => {
+  buildPalette();
+  updateCountBar();
+  rUpdateCountBar();
+});
+
+</script>
 <script>
   const SUPABASE_URL = 'https://garzmqgpyghbiorehlta.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_13OUnm9P_LQ42g1bn9NxnA_6yxsw1OL';
@@ -618,6 +974,14 @@ input[type="range"]::-webkit-slider-thumb {
   </div>
 </header>
 
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab1Btn" onclick="switchTab(1)">✂️ 비포 &amp; 애프터</button>
+  <button class="tab-btn" id="tab2Btn" onclick="switchTab(2)">🖼️ 사진 리사이즈</button>
+</div>
+
+<!-- TAB 1: Before & After -->
+<div class="tab-panel active" id="tab1Panel">
 <div class="workspace-wrap">
 <div class="workspace">
 
@@ -760,6 +1124,79 @@ input[type="range"]::-webkit-slider-thumb {
   </div>
 </div>
 </div><!-- /workspace-wrap -->
+</div><!-- /tab1Panel -->
+
+<!-- TAB 2: 사진 리사이즈 -->
+<div class="tab-panel" id="tab2Panel">
+<div class="resize-workspace">
+
+  <!-- LEFT: SIMULATION -->
+  <div class="resize-sim-panel" id="rSimPanel">
+    <div class="sim-header">
+      <h2>미리보기</h2>
+      <span class="sim-live">실시간</span>
+    </div>
+    <div class="sim-frame" id="rSimFrame">
+      <div class="sim-placeholder" id="rSimPh">
+        <span>🖼️</span>
+        <p>사진을 업로드하면<br>여기에 미리보기가<br>실시간으로 표시됩니다</p>
+      </div>
+      <canvas id="resizeSimCanvas" style="display:none;"></canvas>
+    </div>
+    <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
+  </div>
+
+  <!-- RESIZER -->
+  <div class="resizer" id="resizer2"></div>
+
+  <!-- RIGHT: CONTROLS -->
+  <div class="resize-ctrl">
+
+    <!-- 업로드 -->
+    <div class="resize-upload-zone" id="rZone"
+         ondragover="rOnDrag(event)" ondragleave="rOffDrag()" ondrop="rOnDrop(event)">
+      <input type="file" accept="image/*" onchange="rLoadFile(event)">
+      <div class="up-icon">🖼️</div>
+      <span class="up-label" style="color:var(--ink)">사진 업로드</span>
+      <span class="up-hint">가로/세로 어떤 사진도 OK</span>
+    </div>
+
+    <!-- 여백 채울 색상 -->
+    <div class="opts-panel">
+      <h2>여백 색상 선택</h2>
+      <div class="color-palette" id="colorPalette"></div>
+      <div class="custom-color-wrap">
+        <label>직접 선택</label>
+        <input type="color" id="customColor" value="#ffffff" oninput="setCustomColor(this.value)">
+        <span style="font-size:.75rem;color:var(--muted);" id="customColorHex">#ffffff</span>
+      </div>
+    </div>
+
+    <!-- 핏 모드 -->
+    <div class="opts-panel">
+      <h2>이미지 배치</h2>
+      <div class="fit-mode-row">
+        <button class="fit-btn on" id="fitContain" onclick="setFitMode('contain',this)">여백 유지 (원본 비율)</button>
+        <button class="fit-btn"   id="fitCover"   onclick="setFitMode('cover',this)">꽉 채우기 (일부 잘림)</button>
+      </div>
+    </div>
+
+    <!-- 저장 -->
+    <div class="action-area">
+      <div class="count-bar" id="rCountBar">
+        <div>
+          <div class="count-dots" id="rCountDots"></div>
+          <span class="count-text" id="rCountText">오늘 저장 횟수</span>
+        </div>
+        <span class="count-warn" id="rCountWarn"></span>
+      </div>
+      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 인스타 고화질 저장 (1080 × 1350)</button>
+      <button class="dl-btn"  id="rDlBtn"  onclick="rDownload()">⬇ JPG 다운로드</button>
+    </div>
+
+  </div>
+</div>
+</div><!-- /tab2Panel -->
 
 <!-- PRO UPGRADE MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
