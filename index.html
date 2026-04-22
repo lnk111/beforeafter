@@ -2199,6 +2199,7 @@ const rMainFrame=document.getElementById('rMainFrame');
 if(rMainFrame) rMainFrame.addEventListener('click', rPickColor);
 
 /* ── 초기화 ── */
+window.baTextPos = 8;
 window.addEventListener('DOMContentLoaded',()=>{
   updateCountBar();
   rUpdateCountBar();
@@ -2210,8 +2211,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   baBuildTxtColors();
 });
 
-/* ── 비포&애프터 텍스트 오버레이 초기화 ── */
-window.baTextPos = 8; // 기본: 우측 하단
 
 function baBuildPosGrid() {
   const grid = document.getElementById('baPosGrid');
