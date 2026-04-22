@@ -431,13 +431,51 @@ input[type="range"]::-webkit-slider-thumb {
   font-family: var(--font); text-decoration: underline;
 }
 
+
+/* ── AUTH MODAL ── */
+.auth-modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.55); z-index: 2000;
+  align-items: center; justify-content: center;
+}
+.auth-modal-overlay.open { display: flex; animation: fadeIn .2s ease; }
+.auth-modal {
+  background: white; border-radius: 20px;
+  padding: 36px 32px; max-width: 380px; width: 90%;
+  box-shadow: 0 24px 64px rgba(0,0,0,.25);
+  animation: slideUp .25s ease;
+}
+.auth-modal h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+.auth-modal p  { font-size: .8rem; color: var(--muted); margin-bottom: 20px; }
+.auth-input {
+  width: 100%; padding: 11px 14px; margin-bottom: 10px;
+  border: 1.5px solid var(--border); border-radius: 9px;
+  font-family: var(--font); font-size: .9rem; outline: none;
+  transition: border-color .15s;
+}
+.auth-input:focus { border-color: var(--accent); }
+.auth-btn-row { display: flex; gap: 8px; margin-top: 4px; }
+.auth-btn {
+  flex: 1; padding: 12px; border: none; border-radius: 9px;
+  font-family: var(--font); font-size: .88rem; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.auth-btn.primary { background: var(--accent); color: white; }
+.auth-btn.primary:hover { background: #a34e2f; }
+.auth-btn.secondary { background: var(--bg); color: var(--ink); border: 1.5px solid var(--border); }
+.auth-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+#authMsg { font-size: .75rem; margin-top: 10px; min-height: 18px; text-align: center; }
+.auth-reset { display: block; text-align: center; margin-top: 12px; font-size: .75rem; color: var(--muted); cursor: pointer; background: none; border: none; font-family: var(--font); }
+.auth-reset:hover { color: var(--accent); }
+.auth-close { display: block; text-align: center; margin-top: 8px; font-size: .75rem; color: var(--muted); cursor: pointer; background: none; border: none; font-family: var(--font); }
+
 </style>
 
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL  = 'https://garzmqgpyghbiorehlta.supabase.co';
-  const SUPABASE_KEY  = 'sb_publishable_13OUnm9P_LQ42g1bn9NxnA_6yxsw1OL';
+  const SUPABASE_URL = 'https://garzmqgpyghbiorehlta.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_13OUnm9P_LQ42g1bn9NxnA_6yxsw1OL';
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   let currentUser = null;
@@ -445,67 +483,76 @@ input[type="range"]::-webkit-slider-thumb {
   // 로그인 상태 감지
   sb.auth.onAuthStateChange(async (event, session) => {
     currentUser = session?.user ?? null;
-    if (currentUser) {
-      await loadProStatus();
-    } else {
-      isPro = false;
-      updatePlanUI();
-      updateAuthUI(false);
-    }
+    if (currentUser) { await loadProStatus(); }
+    else { isPro = false; updatePlanUI(); updateAuthUI(false); }
   });
 
   // 초기 세션 확인
   (async () => {
     const { data: { session } } = await sb.auth.getSession();
     currentUser = session?.user ?? null;
-    if (currentUser) {
-      await loadProStatus();
-      updateAuthUI(true);
-    }
+    if (currentUser) { await loadProStatus(); updateAuthUI(true); }
   })();
 
   // DB에서 PRO 상태 불러오기
   async function loadProStatus() {
-    const { data, error } = await sb
-      .from('users')
-      .select('is_pro')
-      .eq('id', currentUser.id)
-      .single();
-
+    const { data } = await sb.from('users').select('is_pro').eq('id', currentUser.id).single();
     if (data) {
       isPro = data.is_pro;
     } else {
-      // 첫 로그인 시 users 테이블에 추가
-      await sb.from('users').upsert({
-        id: currentUser.id,
-        email: currentUser.email,
-        is_pro: false
-      });
+      await sb.from('users').upsert({ id: currentUser.id, email: currentUser.email, is_pro: false });
       isPro = false;
     }
     updatePlanUI();
     updateAuthUI(true);
-    if (typeof refreshSim === 'function' && window.imgs?.before && window.imgs?.after) refreshSim();
+    if (typeof refreshSim === 'function' && imgs?.before && imgs?.after) refreshSim();
   }
 
-  // Google 로그인
-  async function loginWithGoogle() {
-    await sb.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.href }
-    });
+  // ── 이메일 회원가입 ──
+  async function signUp() {
+    const email = document.getElementById('authEmail').value.trim();
+    const pw    = document.getElementById('authPw').value.trim();
+    if (!email || !pw) return showAuthMsg('이메일과 비밀번호를 입력해주세요.');
+    if (pw.length < 6)  return showAuthMsg('비밀번호는 6자 이상이어야 해요.');
+    const { error } = await sb.auth.signUp({ email, password: pw });
+    if (error) return showAuthMsg('오류: ' + error.message);
+    showAuthMsg('✅ 가입 완료! 이메일 인증 후 로그인해주세요.', true);
   }
 
-  // 로그아웃
+  // ── 이메일 로그인 ──
+  async function signIn() {
+    const email = document.getElementById('authEmail').value.trim();
+    const pw    = document.getElementById('authPw').value.trim();
+    if (!email || !pw) return showAuthMsg('이메일과 비밀번호를 입력해주세요.');
+    const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+    if (error) return showAuthMsg('로그인 실패: 이메일/비밀번호를 확인해주세요.');
+    closeAuthModal();
+  }
+
+  // ── 로그아웃 ──
   async function logout() {
     await sb.auth.signOut();
-    currentUser = null;
-    isPro = false;
-    updatePlanUI();
-    updateAuthUI(false);
+    currentUser = null; isPro = false;
+    updatePlanUI(); updateAuthUI(false);
   }
 
-  // 로그인 UI 업데이트
+  // ── 비밀번호 재설정 ──
+  async function resetPassword() {
+    const email = document.getElementById('authEmail').value.trim();
+    if (!email) return showAuthMsg('이메일을 먼저 입력해주세요.');
+    await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+    showAuthMsg('📧 비밀번호 재설정 이메일을 보냈어요!', true);
+  }
+
+  function showAuthMsg(msg, ok=false) {
+    const el = document.getElementById('authMsg');
+    el.textContent = msg;
+    el.style.color = ok ? '#2d9e6b' : '#e85c38';
+  }
+
+  function openAuthModal()  { document.getElementById('authModalOverlay').classList.add('open'); }
+  function closeAuthModal() { document.getElementById('authModalOverlay').classList.remove('open'); }
+
   function updateAuthUI(loggedIn) {
     const loginBtn  = document.getElementById('loginBtn');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -534,7 +581,7 @@ input[type="range"]::-webkit-slider-thumb {
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <span id="userEmail" style="display:none;font-size:.75rem;color:var(--muted);"></span>
-    <button id="loginBtn" onclick="loginWithGoogle()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;">
+    <button id="loginBtn" onclick="openAuthModal()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;">
       🔑 로그인
     </button>
     <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:100px;font-family:var(--font);font-size:.78rem;cursor:pointer;">
@@ -713,8 +760,8 @@ function closeModalOutside(e) { if(e.target===document.getElementById('modalOver
 
 async function activatePro() {
   if (!currentUser) {
-    alert('먼저 로그인해주세요!');
     closeModal();
+    openAuthModal();
     return;
   }
   // 실제 서비스: 토스페이먼츠 결제 완료 후 호출
@@ -931,5 +978,23 @@ document.addEventListener('mouseup', ()=>{
   document.body.style.cursor=''; document.body.style.userSelect='';
 });
 </script>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal-overlay" id="authModalOverlay" onclick="if(event.target===this)closeAuthModal()">
+  <div class="auth-modal">
+    <h2>🔑 로그인 / 회원가입</h2>
+    <p>이메일과 비밀번호를 입력해주세요</p>
+    <input class="auth-input" type="email"    id="authEmail" placeholder="이메일">
+    <input class="auth-input" type="password" id="authPw"    placeholder="비밀번호 (6자 이상)"
+           onkeydown="if(event.key==='Enter')signIn()">
+    <div class="auth-btn-row">
+      <button class="auth-btn primary"   onclick="signIn()">로그인</button>
+      <button class="auth-btn secondary" onclick="signUp()">회원가입</button>
+    </div>
+    <div id="authMsg"></div>
+    <button class="auth-reset" onclick="resetPassword()">비밀번호를 잊으셨나요?</button>
+    <button class="auth-close" onclick="closeAuthModal()">닫기</button>
+  </div>
+</div>
 </body>
 </html>
