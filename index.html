@@ -86,7 +86,7 @@ body {
 
 /* ── LEFT SIM PANEL ── */
 .sim-panel {
-  background: #2a2724;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -109,11 +109,11 @@ body {
   font-family: var(--font);
   font-size: .9rem;
   font-weight: 600;
-  color: #c8bfb5;
+  color: var(--ink);
 }
 .sim-live {
   display: flex; align-items: center; gap: 5px;
-  font-size: .65rem; color: #6a6460; letter-spacing: .06em;
+  font-size: .65rem; color: var(--muted); letter-spacing: .06em;
 }
 .sim-live::before {
   content: '';
@@ -124,7 +124,7 @@ body {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
 
 .sim-frame {
-  background: #1a1816;
+  background: #f4f1ed;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,.45);
@@ -144,12 +144,12 @@ body {
 .sim-placeholder span { font-size: 2rem; opacity: .45; }
 .sim-placeholder p { font-size: .72rem; text-align: center; line-height: 1.6; }
 #simCanvas { display: block; width: 100%; height: auto; }
-.sim-label { font-size: .65rem; color: #4e4a46; letter-spacing: .04em; }
+.sim-label { font-size: .65rem; color: var(--muted); letter-spacing: .04em; }
 
 /* ── RESIZER ── */
 .resizer {
   width: 5px;
-  background: #3a3632;
+  background: var(--border);
   cursor: col-resize;
   flex-shrink: 0;
   position: relative;
@@ -162,7 +162,7 @@ body {
   top: 50%; left: 50%;
   transform: translate(-50%,-50%);
   font-size: 13px;
-  color: #6a6460;
+  color: var(--muted);
   pointer-events: none;
 }
 
@@ -535,7 +535,7 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* LEFT: RESIZE SIMULATION */
 .resize-sim-panel {
-  background: #2a2724;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -733,7 +733,7 @@ input[type="color"] {
 
 /* 좌측 시뮬 패널: 메인 캔버스 + 하단 썸네일 */
 .resize-sim-panel {
-  background: #2a2724;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   padding: 16px;
@@ -747,11 +747,11 @@ input[type="color"] {
 .rsim-header {
   display: flex; align-items: center; justify-content: space-between;
 }
-.rsim-header h2 { font-family: var(--font); font-size: .9rem; font-weight: 600; color: #c8bfb5; }
+.rsim-header h2 { font-family: var(--font); font-size: .9rem; font-weight: 600; color: var(--ink); }
 
 /* 메인 캔버스 프레임 - 스포이드 커서 가능 */
 .rsim-main-frame {
-  background: #1a1816;
+  background: #f4f1ed;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,.45);
@@ -779,7 +779,7 @@ input[type="color"] {
   align-items: center;
 }
 .rsim-thumbs::-webkit-scrollbar { height: 4px; }
-.rsim-thumbs::-webkit-scrollbar-thumb { background: #3a3632; border-radius: 2px; }
+.rsim-thumbs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 .rsim-thumb {
   width: 52px; height: 52px; border-radius: 6px;
   overflow: hidden; flex-shrink: 0; cursor: pointer;
