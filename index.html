@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=1280">
 <title>Before / After 사진 합치기</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&family=Gaegu&family=Playfair+Display:wght@400;700&family=Montserrat:wght@400;600;700&family=Dancing+Script:wght@600&family=Oswald:wght@400;600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -929,6 +929,23 @@ input[type="color"] {
   background: var(--bg); color: var(--ink); outline: none; cursor: pointer;
 }
 
+
+/* ── FONT SELECT ── */
+.font-sel {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: .85rem;
+  background: var(--bg);
+  color: var(--ink);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.font-sel:focus { border-color: var(--accent); }
+
 </style>
 
 <!-- Supabase SDK -->
@@ -1189,6 +1206,21 @@ input[type="color"] {
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
           <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">글씨체</div>
+            <select class="font-sel" id="baOverlayFont" onchange="refreshSim()">
+              <option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option>
+              <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+              <option value="Nanum Myeongjo, serif">나눔명조</option>
+              <option value="Nanum Pen Script, cursive">나눔손글씨 펜</option>
+              <option value="Gaegu, cursive">가에구 (손글씨)</option>
+              <option value="Playfair Display, serif">Playfair Display</option>
+              <option value="Montserrat, sans-serif">Montserrat</option>
+              <option value="Dancing Script, cursive">Dancing Script</option>
+              <option value="Oswald, sans-serif">Oswald</option>
+              <option value="Arial, sans-serif">Arial</option>
+            </select>
+          </div>
+          <div>
             <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">크기</div>
             <select class="font-size-sel" id="baOverlaySize" onchange="refreshSim()">
               <option value="24">작게</option>
@@ -1329,6 +1361,22 @@ input[type="color"] {
           <div class="pos-grid" id="posGrid"></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
+          <!-- 글씨체 -->
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">글씨체</div>
+            <select class="font-sel" id="rOverlayFont" onchange="rRefreshSim()">
+              <option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option>
+              <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+              <option value="Nanum Myeongjo, serif">나눔명조</option>
+              <option value="Nanum Pen Script, cursive">나눔손글씨 펜</option>
+              <option value="Gaegu, cursive">가에구 (손글씨)</option>
+              <option value="Playfair Display, serif">Playfair Display</option>
+              <option value="Montserrat, sans-serif">Montserrat</option>
+              <option value="Dancing Script, cursive">Dancing Script</option>
+              <option value="Oswald, sans-serif">Oswald</option>
+              <option value="Arial, sans-serif">Arial</option>
+            </select>
+          </div>
           <!-- 글자 크기 -->
           <div>
             <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">크기</div>
@@ -1596,7 +1644,8 @@ function coverFit(ctx, img, dx, dy, dw, dh) {
 function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
   const fs=fontSize(cw);
   ctx.save();
-  ctx.font=`600 ${fs}px "Noto Sans KR",sans-serif`;
+  const rFont = document.getElementById('rOverlayFont')?.value || '"Noto Sans KR",sans-serif';
+  ctx.font=`600 ${fs}px ${rFont}`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
   ctx.shadowColor='rgba(0,0,0,0.5)';
   ctx.shadowBlur=Math.round(fs*0.6); ctx.shadowOffsetY=1;
@@ -1637,7 +1686,8 @@ function drawAll(canvas, scale) {
     const pad = Math.round(40 * scale);
     ctx.save();
     ctx.globalAlpha = op;
-    ctx.font = `600 ${fs}px "Noto Sans KR",sans-serif`;
+    const baFont = document.getElementById('baOverlayFont')?.value || '"Noto Sans KR",sans-serif';
+    ctx.font = `600 ${fs}px ${baFont}`;
     ctx.textBaseline = 'middle';
     const tw = ctx.measureText(baTxt).width;
     const col_ = pos % 3, row_ = Math.floor(pos / 3);
@@ -2026,7 +2076,8 @@ function rDraw(canvas, scale) {
 
     ctx.save();
     ctx.globalAlpha = op;
-    ctx.font = `600 ${fs}px "Noto Sans KR",sans-serif`;
+    const rFont = document.getElementById('rOverlayFont')?.value || '"Noto Sans KR",sans-serif';
+    ctx.font = `600 ${fs}px ${rFont}`;
     ctx.textBaseline = 'middle';
 
     const tw = ctx.measureText(txt).width;
