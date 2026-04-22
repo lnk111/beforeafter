@@ -469,6 +469,33 @@ input[type="range"]::-webkit-slider-thumb {
 .auth-reset:hover { color: var(--accent); }
 .auth-close { display: block; text-align: center; margin-top: 8px; font-size: .75rem; color: var(--muted); cursor: pointer; background: none; border: none; font-family: var(--font); }
 
+
+/* ── DAILY COUNT ── */
+.count-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: .78rem;
+}
+.count-bar.hidden { display: none; }
+.count-dots {
+  display: flex;
+  gap: 5px;
+}
+.count-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent);
+  transition: background .2s;
+}
+.count-dot.used { background: var(--border); }
+.count-text { color: var(--muted); font-size: .75rem; }
+.count-warn { color: var(--accent); font-weight: 600; font-size: .75rem; }
+
 </style>
 
 <!-- Supabase SDK -->
@@ -706,6 +733,15 @@ input[type="range"]::-webkit-slider-thumb {
       </div>
     </div>
 
+    <!-- 무료 사용자 일일 횟수 표시 -->
+    <div class="count-bar" id="countBar">
+      <div>
+        <div class="count-dots" id="countDots"></div>
+        <span class="count-text" id="countText">오늘 저장 횟수</span>
+      </div>
+      <span class="count-warn" id="countWarn"></span>
+    </div>
+
     <div class="action-area">
       <!-- PLAN BANNER -->
       <div class="plan-banner" id="planBanner">
@@ -731,14 +767,14 @@ input[type="range"]::-webkit-slider-thumb {
     <div class="modal-icon">✦</div>
     <h2>PRO 플랜으로 업그레이드</h2>
     <p style="font-size:.85rem;color:var(--muted);">워터마크 없이 깔끔하게, 고화질로</p>
-    <div class="modal-price">₩9,900 <span>/ 월</span></div>
+    <div class="modal-price">₩3,900 <span>/ 월</span></div>
     <ul class="modal-features">
       <li>워터마크 완전 제거</li>
       <li>1080 × 1350 px 최고화질 저장</li>
       <li>무제한 이미지 생성</li>
       <li>모든 옵션 제한 없이 사용</li>
     </ul>
-    <button class="modal-cta" onclick="activatePro()">월 9,900원으로 시작하기</button>
+    <button class="modal-cta" onclick="activatePro()">월 3,900원으로 시작하기</button>
     <button class="modal-close" onclick="closeModal()">나중에 할게요</button>
     <button class="modal-demo" onclick="activateProDemo()">🔓 데모: PRO 무료 체험 (테스트용)</button>
   </div>
@@ -753,6 +789,55 @@ const IW = 1080, IH = 1350;
 
 /* ── PRO STATE ── */
 let isPro = false;
+
+/* ── 일일 저장 횟수 제한 (무료: 하루 3회) ── */
+const FREE_LIMIT = 3;
+
+function getTodayKey() {
+  return 'saveCount_' + new Date().toISOString().slice(0, 10);
+}
+function getSaveCount() {
+  return parseInt(localStorage.getItem(getTodayKey()) || '0');
+}
+function incrementSaveCount() {
+  const key = getTodayKey();
+  const cur = getSaveCount();
+  localStorage.setItem(key, cur + 1);
+}
+function canSave() {
+  if (isPro) return true;
+  return getSaveCount() < FREE_LIMIT;
+}
+function updateCountBar() {
+  const bar   = document.getElementById('countBar');
+  const dots  = document.getElementById('countDots');
+  const text  = document.getElementById('countText');
+  const warn  = document.getElementById('countWarn');
+  if (!bar) return;
+
+  if (isPro) { bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+
+  const used = getSaveCount();
+  const left = Math.max(0, FREE_LIMIT - used);
+
+  // 점 렌더링
+  dots.innerHTML = '';
+  for (let i = 0; i < FREE_LIMIT; i++) {
+    const d = document.createElement('div');
+    d.className = 'count-dot' + (i < used ? ' used' : '');
+    dots.appendChild(d);
+  }
+  text.textContent = `오늘 저장 ${used}/${FREE_LIMIT}회`;
+
+  if (left === 0) {
+    warn.textContent = '오늘 횟수 초과 · PRO 업그레이드';
+  } else if (left === 1) {
+    warn.textContent = '오늘 1회 남음';
+  } else {
+    warn.textContent = '';
+  }
+}
 
 function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
@@ -795,6 +880,7 @@ function updatePlanUI() {
   } else {
     wm.classList.remove('hidden');
   }
+  updateCountBar();
 }
 
 /* ── WATERMARK ── */
@@ -941,8 +1027,21 @@ function refreshSim() {
 }
 function generate() {
   if(!imgs.before||!imgs.after) return;
+
+  if (!canSave()) {
+    // 횟수 초과 시 PRO 모달
+    openModal();
+    return;
+  }
+
   drawAll(document.getElementById('resultCanvas'), 1.0);
   document.getElementById('dlBtn').classList.add('show');
+
+  if (!isPro) {
+    incrementSaveCount();
+    updateCountBar();
+  }
+
   refreshSim();
 }
 function download() {
@@ -953,6 +1052,7 @@ function download() {
 }
 
 window.addEventListener('resize', ()=>{ if(imgs.before&&imgs.after) refreshSim(); });
+window.addEventListener('DOMContentLoaded', () => { updateCountBar(); });
 
 /* ── PANEL RESIZER ── */
 const resizerEl = document.getElementById('resizer');
