@@ -747,10 +747,11 @@ input[type="color"] {
   background: #f4f1ed;
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,.45);
+  box-shadow: 0 4px 16px rgba(0,0,0,.12);
   width: 100%;
+  max-height: calc(100vh - 260px);
   position: relative;
-  cursor: crosshair;
+  cursor: default;
 }
 .rsim-main-frame.eyedrop-mode { cursor: crosshair; }
 .rsim-main-frame.eyedrop-mode::after {
@@ -760,7 +761,7 @@ input[type="color"] {
   font-size: .7rem; padding: 4px 10px; border-radius: 100px;
   pointer-events: none; white-space: nowrap;
 }
-#rMainCanvas { display: block; width: 100%; height: auto; }
+#rMainCanvas { display: block; width: 100%; height: auto; max-height: calc(100vh - 260px); object-fit: contain; }
 
 /* 하단 썸네일 스트립 */
 .rsim-thumbs {
@@ -1274,6 +1275,7 @@ input[type="color"] {
 
 <!-- TAB 2: 사진 리사이즈 -->
 <div class="tab-panel" id="tab2Panel">
+<div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:0 100px 24px 100px;background:#ffffff;overflow:hidden;">
 <div class="resize-workspace" style="flex:1;min-height:0;">
 
   <!-- LEFT: 메인 미리보기 + 하단 썸네일 -->
@@ -1417,6 +1419,7 @@ input[type="color"] {
 
   </div>
 </div>
+</div><!-- /resize-wrap -->
 </div><!-- /tab2Panel -->
 </div><!-- /tab-container -->
 
