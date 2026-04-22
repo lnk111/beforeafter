@@ -26,9 +26,17 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--ink);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+.tab-container {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* ── TOPBAR ── */
@@ -64,16 +72,7 @@ body {
   display: flex;
   min-height: 0;
   overflow: hidden;
-}
-
-/* ── WORKSPACE WRAPPER ── */
-.workspace-wrap {
-  flex: 1;
-  background: #ffffff;
-  padding: 0 16px 16px 16px;
-  display: flex;
-  min-height: 0;
-  overflow: hidden;
+  flex-direction: column;
 }
 
 /* ── WORKSPACE ── */
@@ -523,8 +522,8 @@ input[type="range"]::-webkit-slider-thumb {
 .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
 
 /* ── TAB PANELS ── */
-.tab-panel { display: none; flex: 1; min-height: 0; overflow: hidden; }
-.tab-panel.active { display: contents; }
+.tab-panel { display: none; }
+.tab-panel.active { display: flex; flex: 1; flex-direction: column; min-height: 0; overflow: hidden; }
 
 /* ── RESIZE TAB ── */
 .resize-workspace {
@@ -974,6 +973,7 @@ window.addEventListener('DOMContentLoaded', () => {
   </div>
 </header>
 
+<div class="tab-container">
 <!-- TAB BAR -->
 <div class="tab-bar">
   <button class="tab-btn active" id="tab1Btn" onclick="switchTab(1)">✂️ 비포 &amp; 애프터</button>
@@ -1128,7 +1128,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <!-- TAB 2: 사진 리사이즈 -->
 <div class="tab-panel" id="tab2Panel">
-<div class="resize-workspace">
+<div class="resize-workspace" style="flex:1;min-height:0;">
 
   <!-- LEFT: SIMULATION -->
   <div class="resize-sim-panel" id="rSimPanel">
@@ -1197,6 +1197,7 @@ window.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 </div><!-- /tab2Panel -->
+</div><!-- /tab-container -->
 
 <!-- PRO UPGRADE MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
