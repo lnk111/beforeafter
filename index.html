@@ -91,12 +91,11 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 24px 28px 20px;
-  gap: 14px;
-  overflow-y: auto;
+  padding: 20px;
+  gap: 10px;
+  overflow: hidden;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
 }
 .sim-header {
   width: 100%;
@@ -126,13 +125,17 @@ body {
   background: #f4f1ed;
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,.45);
-  width: 100%;
-  max-width: 360px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  /* 4:5 비율 유지하며 패널 높이에 맞게 축소 */
+  aspect-ratio: 4/5;
+  height: calc(100% - 80px);
+  max-height: calc(100vh - 200px);
+  width: auto;
+  max-width: 100%;
 }
 .sim-placeholder {
   width: 100%;
-  aspect-ratio: 4/5;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -142,7 +145,7 @@ body {
 }
 .sim-placeholder span { font-size: 2rem; opacity: .45; }
 .sim-placeholder p { font-size: .72rem; text-align: center; line-height: 1.6; }
-#simCanvas { display: block; width: 100%; height: auto; }
+#simCanvas { display: block; width: 100%; height: 100%; object-fit: contain; }
 .sim-label { font-size: .65rem; color: var(--muted); letter-spacing: .04em; }
 
 /* ── RESIZER ── */
@@ -731,12 +734,11 @@ input[type="color"] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 24px 28px 20px;
-  gap: 14px;
-  overflow-y: auto;
+  padding: 20px;
+  gap: 10px;
+  overflow: hidden;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
 }
 .rsim-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -748,9 +750,12 @@ input[type="color"] {
   background: #f4f1ed;
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 4px 24px rgba(0,0,0,.1);
-  width: 100%;
-  max-width: 360px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  aspect-ratio: 4/5;
+  height: calc(100% - 100px);
+  max-height: calc(100vh - 200px);
+  width: auto;
+  max-width: 100%;
   position: relative;
   cursor: default;
 }
@@ -762,7 +767,7 @@ input[type="color"] {
   font-size: .7rem; padding: 4px 10px; border-radius: 100px;
   pointer-events: none; white-space: nowrap;
 }
-#rMainCanvas { display: block; width: 100%; height: auto; max-height: calc(100vh - 260px); object-fit: contain; }
+#rMainCanvas { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* 하단 썸네일 스트립 */
 .rsim-thumbs {
