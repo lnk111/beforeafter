@@ -68,7 +68,7 @@ body {
 .workspace-wrap {
   flex: 1;
   background: #ffffff;
-  padding: 0 16px 16px 16px;
+  padding: 0 32px 24px 32px;
   display: flex;
   min-height: 0;
   overflow: hidden;
@@ -91,7 +91,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 24px 28px 24px;
+  padding: 20px 24px 28px 20px;
   gap: 14px;
   overflow-y: auto;
   width: 50vw;
@@ -172,7 +172,7 @@ body {
   min-width: 0;
   background: var(--bg);
   overflow-y: auto;
-  padding: 20px 28px 36px 22px;
+  padding: 20px 28px 36px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -1182,6 +1182,42 @@ input[type="color"] {
       </div>
     </div>
 
+    <!-- 텍스트/로고 삽입 (비포&애프터 탭) -->
+    <div class="opts-panel text-overlay-panel" id="baTextPanel">
+      <h2>텍스트 / 로고 삽입</h2>
+      <div class="text-input-row">
+        <input type="text" id="baOverlayText" placeholder="예: @my_studio  /  브랜드명" maxlength="40"
+               oninput="refreshSim()">
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:.65rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">위치</div>
+          <div class="pos-grid" id="baPosGrid"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">크기</div>
+            <select class="font-size-sel" id="baOverlaySize" onchange="refreshSim()">
+              <option value="24">작게</option>
+              <option value="36" selected>보통</option>
+              <option value="52">크게</option>
+              <option value="72">매우 크게</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">색상</div>
+            <div class="text-color-row" id="baTxtColorRow"></div>
+          </div>
+          <div class="opacity-row">
+            <label>불투명도</label>
+            <input type="range" min="10" max="100" value="100" id="baOverlayOpacity"
+                   oninput="document.getElementById('baOpacityVal').textContent=this.value+'%';refreshSim();">
+            <span class="opacity-val" id="baOpacityVal">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- 무료 사용자 일일 횟수 표시 -->
     <div class="count-bar" id="countBar">
       <div>
@@ -1597,6 +1633,30 @@ function drawAll(canvas, scale) {
     coverFit(ctx,imgs.after,w1+dp,0,w2,CH);
     if(opts.showLabel){ drawLabel(ctx,lblB,0,0,w1,CH,CW); drawLabel(ctx,lblA,w1+dp,0,w2,CH,CW); }
   }
+  // 비포&애프터 텍스트 오버레이
+  const baTxt = (document.getElementById('baOverlayText')?.value || '').trim();
+  if (baTxt) {
+    const fs  = Math.round(parseInt(document.getElementById('baOverlaySize')?.value||36) * scale);
+    const op  = (document.getElementById('baOverlayOpacity')?.value||100) / 100;
+    const colBtn = document.querySelector('#baTxtColorRow .txt-col-btn.on');
+    const col = colBtn ? colBtn.style.background : '#ffffff';
+    const pos = window.baTextPos ?? 8;
+    const pad = Math.round(40 * scale);
+    ctx.save();
+    ctx.globalAlpha = op;
+    ctx.font = `600 ${fs}px "Noto Sans KR",sans-serif`;
+    ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(baTxt).width;
+    const col_ = pos % 3, row_ = Math.floor(pos / 3);
+    const x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
+    const y = row_===0 ? pad+fs/2 : row_===1 ? CH/2 : CH-pad-fs/2;
+    ctx.textAlign = 'left';
+    ctx.shadowColor='rgba(0,0,0,0.45)'; ctx.shadowBlur=Math.round(fs*0.4); ctx.shadowOffsetY=1;
+    ctx.fillStyle = col;
+    ctx.fillText(baTxt, x, y);
+    ctx.restore();
+  }
+
   if(!isPro) drawWatermark(ctx, CW, CH);
 }
 
@@ -2093,7 +2153,48 @@ window.addEventListener('DOMContentLoaded',()=>{
   rBuildTxtColors();
   rBuildPosGrid();
   buildPalette();
+  baBuildPosGrid();
+  baBuildTxtColors();
 });
+
+/* ── 비포&애프터 텍스트 오버레이 초기화 ── */
+window.baTextPos = 8; // 기본: 우측 하단
+
+function baBuildPosGrid() {
+  const grid = document.getElementById('baPosGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ['↖','↑','↗','←','·','→','↙','↓','↘'].forEach((lbl,i) => {
+    const cell = document.createElement('button');
+    cell.className = 'pos-cell' + (i === window.baTextPos ? ' on' : '');
+    cell.title = lbl;
+    cell.onclick = () => {
+      window.baTextPos = i;
+      document.querySelectorAll('#baPosGrid .pos-cell').forEach(c => c.classList.remove('on'));
+      cell.classList.add('on');
+      refreshSim();
+    };
+    grid.appendChild(cell);
+  });
+}
+
+function baBuildTxtColors() {
+  const row = document.getElementById('baTxtColorRow');
+  if (!row) return;
+  row.innerHTML = '';
+  ['#ffffff','#111111','#888888','#b85c38','#3a6ea5'].forEach((c,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'txt-col-btn' + (i===0?' on':'');
+    btn.style.background = c;
+    if (c==='#ffffff') btn.style.boxShadow='inset 0 0 0 1px #ccc';
+    btn.onclick = () => {
+      document.querySelectorAll('#baTxtColorRow .txt-col-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      refreshSim();
+    };
+    row.appendChild(btn);
+  });
+}
 
 </script>
 
