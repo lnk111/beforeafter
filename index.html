@@ -637,6 +637,305 @@ input[type="color"] {
 }
 .fit-btn.on { background: var(--accent); border-color: var(--accent); color: white; font-weight: 600; }
 
+
+/* ── MULTI UPLOAD ── */
+.multi-upload-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.multi-drop-zone {
+  background: var(--card);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+  text-align: center;
+}
+.multi-drop-zone:hover, .multi-drop-zone.drag-over {
+  border-color: var(--accent); background: #fdf7f4;
+}
+.multi-drop-zone input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.multi-drop-zone .up-icon { font-size: 1.6rem; }
+.multi-drop-zone .up-label { font-size: 1rem; font-weight: 600; color: var(--ink); }
+.multi-drop-zone .up-hint  { font-size: .72rem; color: var(--muted); }
+
+/* 썸네일 그리드 */
+.thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.thumb-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: border-color .15s, transform .15s;
+  background: #eee;
+}
+.thumb-item:hover { transform: scale(1.03); }
+.thumb-item.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(184,92,56,.15);
+}
+.thumb-item img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.thumb-item .thumb-del {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(0,0,0,.55); color: white;
+  font-size: 11px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .15s;
+  z-index: 5;
+}
+.thumb-item:hover .thumb-del { opacity: 1; }
+.thumb-item .thumb-num {
+  position: absolute; bottom: 3px; left: 4px;
+  font-size: .6rem; font-weight: 700; color: white;
+  background: rgba(0,0,0,.45); padding: 1px 5px; border-radius: 4px;
+}
+.thumb-selected-badge {
+  position: absolute; inset: 0;
+  background: rgba(184,92,56,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  opacity: 0; transition: opacity .15s;
+}
+.thumb-item.selected .thumb-selected-badge { opacity: 1; }
+
+/* 선택된 이미지 번호 표시 */
+.selected-label {
+  font-size: .75rem; color: var(--muted);
+  text-align: center; padding: 4px 0;
+}
+
+/* 일괄 저장 버튼 */
+.batch-info {
+  font-size: .78rem; color: var(--muted);
+  background: var(--bg); border-radius: 8px;
+  padding: 8px 12px; text-align: center;
+  border: 1px solid var(--border);
+}
+
+
+/* ════ RESIZE TAB v2 ════ */
+
+/* 좌측 시뮬 패널: 메인 캔버스 + 하단 썸네일 */
+.resize-sim-panel {
+  background: #2a2724;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  overflow-y: auto;
+  width: 50vw;
+  min-width: 280px;
+  max-width: 70vw;
+  flex-shrink: 0;
+}
+.rsim-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.rsim-header h2 { font-family: var(--font); font-size: .9rem; font-weight: 600; color: #c8bfb5; }
+
+/* 메인 캔버스 프레임 - 스포이드 커서 가능 */
+.rsim-main-frame {
+  background: #1a1816;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.45);
+  width: 100%;
+  position: relative;
+  cursor: crosshair;
+}
+.rsim-main-frame.eyedrop-mode { cursor: crosshair; }
+.rsim-main-frame.eyedrop-mode::after {
+  content: '💧 클릭하여 색상 추출';
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.65); color: white;
+  font-size: .7rem; padding: 4px 10px; border-radius: 100px;
+  pointer-events: none; white-space: nowrap;
+}
+#rMainCanvas { display: block; width: 100%; height: auto; }
+
+/* 하단 썸네일 스트립 */
+.rsim-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  min-height: 60px;
+  align-items: center;
+}
+.rsim-thumbs::-webkit-scrollbar { height: 4px; }
+.rsim-thumbs::-webkit-scrollbar-thumb { background: #3a3632; border-radius: 2px; }
+.rsim-thumb {
+  width: 52px; height: 52px; border-radius: 6px;
+  overflow: hidden; flex-shrink: 0; cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: border-color .15s, transform .1s;
+  position: relative;
+}
+.rsim-thumb:hover { transform: scale(1.05); }
+.rsim-thumb.active { border-color: var(--accent); }
+.rsim-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rsim-thumb-num {
+  position: absolute; bottom: 2px; right: 3px;
+  font-size: .55rem; font-weight: 700; color: white;
+  background: rgba(0,0,0,.5); padding: 1px 3px; border-radius: 3px;
+}
+
+/* 우측 컨트롤 */
+.resize-ctrl {
+  flex: 1; min-width: 0; background: var(--bg);
+  overflow-y: auto; padding: 16px 20px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* 업로드 썸네일 그리드 (우측) */
+.r-upload-section { display: flex; flex-direction: column; gap: 10px; }
+.r-upload-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.r-upload-header h2 { font-family: var(--font); font-size: .85rem; font-weight: 700; color: var(--ink); }
+.r-upload-count { font-size: .72rem; color: var(--muted); }
+
+.r-thumb-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+}
+.r-thumb-card {
+  aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  position: relative; cursor: pointer;
+  border: 2px solid var(--border);
+  transition: border-color .15s, transform .1s;
+  background: #eee;
+}
+.r-thumb-card:hover { transform: scale(1.03); border-color: var(--accent); }
+.r-thumb-card.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(184,92,56,.2); }
+.r-thumb-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.r-thumb-del {
+  position: absolute; top: 3px; right: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(0,0,0,.6); color: white; font-size: 11px;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .15s; z-index: 5;
+}
+.r-thumb-card:hover .r-thumb-del { opacity: 1; }
+.r-thumb-add {
+  aspect-ratio: 1; border-radius: 8px;
+  border: 2px dashed var(--border); background: var(--card);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer; position: relative;
+  transition: border-color .15s, background .15s;
+  font-size: .65rem; color: var(--muted);
+}
+.r-thumb-add:hover { border-color: var(--accent); background: #fdf7f4; }
+.r-thumb-add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.r-thumb-add-icon { font-size: 1.2rem; }
+
+/* 드롭존 (초기 상태) */
+.r-dropzone {
+  background: var(--card); border: 2px dashed var(--border);
+  border-radius: var(--radius); padding: 28px 16px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; cursor: pointer; transition: border-color .2s, background .2s;
+  position: relative; text-align: center;
+}
+.r-dropzone:hover, .r-dropzone.drag-over { border-color: var(--accent); background: #fdf7f4; }
+.r-dropzone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* 컬러 팔레트 2행 5열 */
+.r-palette-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+}
+.r-pal-row-label {
+  font-size: .65rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .05em; margin-bottom: -2px;
+}
+.r-pal-btn {
+  aspect-ratio: 1; border-radius: 8px;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.r-pal-btn:hover { transform: scale(1.1); }
+.r-pal-btn.on { border-color: var(--accent); transform: scale(1.08); box-shadow: 0 0 0 2px rgba(184,92,56,.2); }
+
+.r-color-tools {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.eyedrop-btn {
+  padding: 6px 12px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--card);
+  font-family: var(--font); font-size: .75rem; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: all .15s; color: var(--ink);
+}
+.eyedrop-btn:hover { border-color: var(--accent); color: var(--accent); }
+.eyedrop-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+.r-cur-color {
+  width: 28px; height: 28px; border-radius: 6px;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+}
+.r-cur-hex { font-size: .75rem; color: var(--muted); }
+
+/* 텍스트/로고 삽입 */
+.text-overlay-panel { display: flex; flex-direction: column; gap: 10px; }
+.text-input-row { display: flex; gap: 8px; }
+.text-input-row input[type="text"] {
+  flex: 1; padding: 8px 11px; border: 1.5px solid var(--border);
+  border-radius: 8px; font-family: var(--font); font-size: .9rem;
+  color: var(--ink); background: var(--bg); outline: none;
+  transition: border-color .15s;
+}
+.text-input-row input[type="text"]:focus { border-color: var(--accent); }
+
+/* 3×3 위치 가이드 */
+.pos-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 5px; width: 120px;
+}
+.pos-cell {
+  aspect-ratio: 1; border-radius: 6px;
+  border: 1.5px solid var(--border); background: var(--card);
+  cursor: pointer; transition: all .15s;
+}
+.pos-cell:hover { border-color: var(--accent); background: #fdf7f4; }
+.pos-cell.on { background: var(--accent); border-color: var(--accent); }
+
+.text-controls-row {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.text-color-row { display: flex; gap: 5px; }
+.txt-col-btn {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.txt-col-btn:hover { transform: scale(1.1); }
+.txt-col-btn.on { border-color: var(--accent); }
+
+.opacity-row { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 120px; }
+.opacity-row label { font-size: .7rem; color: var(--muted); white-space: nowrap; }
+.opacity-val { font-size: .72rem; color: var(--muted); min-width: 30px; }
+
+.font-size-sel {
+  padding: 6px 10px; border: 1.5px solid var(--border);
+  border-radius: 7px; font-family: var(--font); font-size: .8rem;
+  background: var(--bg); color: var(--ink); outline: none; cursor: pointer;
+}
+
 </style>
 
 <!-- Supabase SDK -->
@@ -916,19 +1215,25 @@ input[type="color"] {
 <div class="tab-panel" id="tab2Panel">
 <div class="resize-workspace" style="flex:1;min-height:0;">
 
-  <!-- LEFT: SIMULATION -->
+  <!-- LEFT: 메인 미리보기 + 하단 썸네일 -->
   <div class="resize-sim-panel" id="rSimPanel">
-    <div class="sim-header">
+    <div class="rsim-header">
       <h2>미리보기</h2>
       <span class="sim-live">실시간</span>
     </div>
-    <div class="sim-frame" id="rSimFrame">
+
+    <!-- 메인 캔버스 (스포이드용) -->
+    <div class="rsim-main-frame" id="rMainFrame">
       <div class="sim-placeholder" id="rSimPh">
         <span>🖼️</span>
-        <p>사진을 업로드하면<br>여기에 미리보기가<br>실시간으로 표시됩니다</p>
+        <p>사진을 업로드하면<br>실시간으로 표시됩니다</p>
       </div>
-      <canvas id="resizeSimCanvas" style="display:none;"></canvas>
+      <canvas id="rMainCanvas" style="display:none;"></canvas>
     </div>
+
+    <!-- 하단 썸네일 스트립 -->
+    <div class="rsim-thumbs" id="rSimThumbs"></div>
+
     <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
   </div>
 
@@ -938,32 +1243,86 @@ input[type="color"] {
   <!-- RIGHT: CONTROLS -->
   <div class="resize-ctrl">
 
-    <!-- 업로드 -->
-    <div class="resize-upload-zone" id="rZone"
-         ondragover="rOnDrag(event)" ondragleave="rOffDrag()" ondrop="rOnDrop(event)">
-      <input type="file" accept="image/*" onchange="rLoadFile(event)">
-      <div class="up-icon">🖼️</div>
-      <span class="up-label" style="color:var(--ink)">사진 업로드</span>
-      <span class="up-hint">가로/세로 어떤 사진도 OK</span>
+    <!-- 업로드 섹션 -->
+    <div class="r-upload-section">
+      <div class="r-upload-header">
+        <h2>📁 업로드된 사진</h2>
+        <span class="r-upload-count" id="rUploadCount">0 / 10장</span>
+      </div>
+      <!-- 초기 드롭존 -->
+      <div class="r-dropzone" id="rZone"
+           ondragover="rOnDrag(event)" ondragleave="rOffDrag()" ondrop="rOnDrop(event)">
+        <input type="file" accept="image/*" multiple onchange="rLoadFiles(event)">
+        <div class="up-icon">🖼️</div>
+        <span class="up-label" style="color:var(--ink);font-size:1rem;font-weight:600;">사진 업로드 (최대 10장)</span>
+        <span class="up-hint">여러 장 한꺼번에 선택 · 드래그 앤 드롭 OK</span>
+      </div>
+      <!-- 썸네일 그리드 (업로드 후) -->
+      <div class="r-thumb-grid" id="rThumbGrid" style="display:none;"></div>
     </div>
 
-    <!-- 여백 채울 색상 -->
+    <!-- 여백 색상 -->
     <div class="opts-panel">
-      <h2>여백 색상 선택</h2>
-      <div class="color-palette" id="colorPalette"></div>
-      <div class="custom-color-wrap">
-        <label>직접 선택</label>
-        <input type="color" id="customColor" value="#ffffff" oninput="setCustomColor(this.value)">
-        <span style="font-size:.75rem;color:var(--muted);" id="customColorHex">#ffffff</span>
+      <h2>여백 색상</h2>
+      <div class="r-pal-row-label" style="margin-bottom:6px;">밝은 계열</div>
+      <div class="r-palette-grid" id="rPalLight"></div>
+      <div class="r-pal-row-label" style="margin:8px 0 6px;">어두운 계열</div>
+      <div class="r-palette-grid" id="rPalDark"></div>
+      <div class="r-color-tools" style="margin-top:10px;">
+        <button class="eyedrop-btn" id="eyedropBtn" onclick="toggleEyedrop()">💧 스포이드</button>
+        <div class="r-cur-color" id="rCurColor" style="background:#ffffff;"></div>
+        <span class="r-cur-hex" id="rCurHex">#ffffff</span>
+        <input type="color" id="rCustomColor" value="#ffffff"
+               oninput="rSetBgColor(this.value)" style="width:32px;height:32px;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;padding:2px;">
       </div>
     </div>
 
-    <!-- 핏 모드 -->
+    <!-- 이미지 배치 -->
     <div class="opts-panel">
       <h2>이미지 배치</h2>
       <div class="fit-mode-row">
-        <button class="fit-btn on" id="fitContain" onclick="setFitMode('contain',this)">여백 유지 (원본 비율)</button>
-        <button class="fit-btn"   id="fitCover"   onclick="setFitMode('cover',this)">꽉 채우기 (일부 잘림)</button>
+        <button class="fit-btn on" onclick="setFitMode('contain',this)">여백 유지</button>
+        <button class="fit-btn"   onclick="setFitMode('cover',this)">꽉 채우기</button>
+      </div>
+    </div>
+
+    <!-- 텍스트/로고 삽입 -->
+    <div class="opts-panel text-overlay-panel">
+      <h2>텍스트 / 로고 삽입</h2>
+      <div class="text-input-row">
+        <input type="text" id="overlayText" placeholder="예: @my_studio  /  브랜드명" maxlength="40"
+               oninput="rRefreshSim()">
+      </div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <!-- 위치 가이드 -->
+        <div>
+          <div style="font-size:.65rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">위치</div>
+          <div class="pos-grid" id="posGrid"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
+          <!-- 글자 크기 -->
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">크기</div>
+            <select class="font-size-sel" id="overlaySize" onchange="rRefreshSim()">
+              <option value="24">작게</option>
+              <option value="36" selected>보통</option>
+              <option value="52">크게</option>
+              <option value="72">매우 크게</option>
+            </select>
+          </div>
+          <!-- 글자 색상 -->
+          <div>
+            <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">색상</div>
+            <div class="text-color-row" id="txtColorRow"></div>
+          </div>
+          <!-- 불투명도 -->
+          <div class="opacity-row">
+            <label>불투명도</label>
+            <input type="range" min="10" max="100" value="100" id="overlayOpacity"
+                   oninput="document.getElementById('opacityVal').textContent=this.value+'%';rRefreshSim();">
+            <span class="opacity-val" id="opacityVal">100%</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -976,8 +1335,7 @@ input[type="color"] {
         </div>
         <span class="count-warn" id="rCountWarn"></span>
       </div>
-      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 인스타 고화질 저장 (1080 × 1350)</button>
-      <button class="dl-btn"  id="rDlBtn"  onclick="rDownload()">⬇ JPG 다운로드</button>
+      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 사진 저장</button>
     </div>
 
   </div>
@@ -1332,188 +1690,409 @@ const PALETTE_COLORS = [
   { hex: '#c5bcaa', label: '타프' },
 ];
 
-let rImg = null;
+// ══════════════════════════════════════════
+//  RESIZE TAB v2
+// ══════════════════════════════════════════
+
+const R_MAX = 10;
+let rImgs = [];        // [{img, src}]
+let rSelIdx = 0;       // 현재 선택 인덱스
 let rBgColor = '#ffffff';
 let rFitMode = 'contain';
+let eyedropActive = false;
 
-// 팔레트 렌더링
-function buildPalette() {
-  const wrap = document.getElementById('colorPalette');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  PALETTE_COLORS.forEach((c, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'pal-btn' + (c.hex === rBgColor ? ' active' : '');
-    btn.style.background = c.hex;
-    if (c.hex === '#ffffff' || c.hex === '#f5f2ee' || c.hex === '#f0ece4') {
-      btn.style.boxShadow = 'inset 0 0 0 1px #ddd';
-    }
-    // checkmark color
-    const isDark = ['#1a1816'].includes(c.hex);
-    btn.style.color = isDark ? '#fff' : '#333';
-    btn.title = c.label;
-    btn.onclick = () => {
-      document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      rBgColor = c.hex;
-      document.getElementById('customColor').value = c.hex;
-      document.getElementById('customColorHex').textContent = c.hex;
-      rRefreshSim();
-    };
-    wrap.appendChild(btn);
+// 하위 호환
+Object.defineProperty(window, 'rImg', { get: () => rImgs[rSelIdx]?.img || null });
+
+/* ── 팔레트 ── */
+const R_LIGHT = [
+  {hex:'#ffffff',label:'화이트'},
+  {hex:'#faf8f4',label:'크림'},
+  {hex:'#f5f0e8',label:'아이보리'},
+  {hex:'#ede6d8',label:'베이지'},
+  {hex:'#e0d8c8',label:'샌드'},
+];
+const R_DARK = [
+  {hex:'#c8bfb0',label:'웜그레이'},
+  {hex:'#a09080',label:'카푸치노'},
+  {hex:'#6b5f50',label:'모카'},
+  {hex:'#3a332a',label:'다크브라운'},
+  {hex:'#1a1816',label:'블랙'},
+];
+
+function rBuildPalette() {
+  ['rPalLight','rPalDark'].forEach((id, ri) => {
+    const wrap = document.getElementById(id);
+    if (!wrap) return;
+    const colors = ri === 0 ? R_LIGHT : R_DARK;
+    wrap.innerHTML = '';
+    colors.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'r-pal-btn' + (c.hex === rBgColor ? ' on' : '');
+      btn.style.background = c.hex;
+      if (['#ffffff','#faf8f4','#f5f0e8'].includes(c.hex))
+        btn.style.boxShadow = 'inset 0 0 0 1px #ddd';
+      btn.title = c.label;
+      btn.onclick = () => rSetBgColor(c.hex);
+      wrap.appendChild(btn);
+    });
   });
 }
 
-function setCustomColor(val) {
-  rBgColor = val;
-  document.getElementById('customColorHex').textContent = val;
-  document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+function rSetBgColor(hex) {
+  rBgColor = hex;
+  document.querySelectorAll('.r-pal-btn').forEach(b => b.classList.remove('on'));
+  // 팔레트에 있으면 활성화
+  document.querySelectorAll('.r-pal-btn').forEach(b => {
+    if (b.style.background === hex || rgbToHex(b.style.background) === hex.toLowerCase()) b.classList.add('on');
+  });
+  const cc = document.getElementById('rCurColor');
+  const ch = document.getElementById('rCurHex');
+  const rc = document.getElementById('rCustomColor');
+  if (cc) cc.style.background = hex;
+  if (ch) ch.textContent = hex;
+  if (rc) rc.value = hex;
   rRefreshSim();
 }
 
-function setFitMode(mode, btn) {
-  rFitMode = mode;
-  document.querySelectorAll('.fit-btn').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  rRefreshSim();
+function rgbToHex(rgb) {
+  const m = rgb.match(/\d+/g);
+  if (!m || m.length < 3) return rgb;
+  return '#' + m.slice(0,3).map(n => parseInt(n).toString(16).padStart(2,'0')).join('');
 }
 
-function rLoadFile(e) {
-  const f = e.target.files[0]; if (f) rReadImg(f);
+/* ── 텍스트 색상 팔레트 ── */
+const TXT_COLORS = ['#ffffff','#111111','#888888','#b85c38','#3a6ea5'];
+function rBuildTxtColors() {
+  const row = document.getElementById('txtColorRow');
+  if (!row) return;
+  row.innerHTML = '';
+  TXT_COLORS.forEach((c,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'txt-col-btn' + (i===0?' on':'');
+    btn.style.background = c;
+    if (c==='#ffffff') btn.style.boxShadow='inset 0 0 0 1px #ccc';
+    btn.onclick = () => {
+      document.querySelectorAll('.txt-col-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      rRefreshSim();
+    };
+    row.appendChild(btn);
+  });
 }
-function rReadImg(file) {
+
+/* ── 위치 가이드 3×3 ── */
+const POS_LABELS = ['↖','↑','↗','←','·','→','↙','↓','↘'];
+let rTextPos = 8; // 기본: 우측 하단 → 인덱스 8
+function rBuildPosGrid() {
+  const grid = document.getElementById('posGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  POS_LABELS.forEach((lbl,i) => {
+    const cell = document.createElement('button');
+    cell.className = 'pos-cell' + (i===rTextPos?' on':'');
+    cell.title = lbl;
+    cell.onclick = () => {
+      rTextPos = i;
+      document.querySelectorAll('.pos-cell').forEach(c=>c.classList.remove('on'));
+      cell.classList.add('on');
+      rRefreshSim();
+    };
+    grid.appendChild(cell);
+  });
+}
+
+/* ── 스포이드 ── */
+function toggleEyedrop() {
+  eyedropActive = !eyedropActive;
+  const btn = document.getElementById('eyedropBtn');
+  const frame = document.getElementById('rMainFrame');
+  if (btn)   btn.classList.toggle('active', eyedropActive);
+  if (frame) frame.classList.toggle('eyedrop-mode', eyedropActive);
+}
+
+function rPickColor(e) {
+  if (!eyedropActive) return;
+  const canvas = document.getElementById('rMainCanvas');
+  if (!canvas || canvas.style.display==='none') return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width  / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = Math.round((e.clientX - rect.left) * scaleX);
+  const y = Math.round((e.clientY - rect.top)  * scaleY);
+  const ctx = canvas.getContext('2d');
+  const px = ctx.getImageData(x, y, 1, 1).data;
+  const hex = '#' + [px[0],px[1],px[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+  rSetBgColor(hex);
+  eyedropActive = false;
+  const btn = document.getElementById('eyedropBtn');
+  const frame = document.getElementById('rMainFrame');
+  if (btn) btn.classList.remove('active');
+  if (frame) frame.classList.remove('eyedrop-mode');
+}
+
+/* ── 파일 로드 ── */
+function rLoadFiles(e) {
+  const files = Array.from(e.target.files).filter(f=>f.type.startsWith('image/')).slice(0, R_MAX - rImgs.length);
+  files.forEach(rReadImgFile);
+}
+function rReadImgFile(file) {
   const r = new FileReader();
   r.onload = ev => {
     const i = new Image();
-    i.onload = () => { rImg = i; rShowPreview(ev.target.result); rCheckReady(); rRefreshSim(); };
+    i.onload = () => {
+      rImgs.push({ img: i, src: ev.target.result });
+      if (rImgs.length === 1) rSelIdx = 0;
+      rRenderAll();
+    };
     i.src = ev.target.result;
   };
   r.readAsDataURL(file);
 }
-function rShowPreview(src) {
-  const z = document.getElementById('rZone');
-  z.classList.add('has-image');
-  z.querySelector('input').style.display = 'none';
-  ['up-icon','up-label','up-hint'].forEach(c => { const el = z.querySelector('.'+c); if(el) el.style.display='none'; });
-  const old = z.querySelector('.resize-preview-img'); if(old) old.remove();
-  const img = document.createElement('img'); img.src = src; img.className = 'resize-preview-img'; z.appendChild(img);
+
+function rDeleteImg(idx) {
+  rImgs.splice(idx, 1);
+  if (rSelIdx >= rImgs.length) rSelIdx = Math.max(0, rImgs.length-1);
+  rRenderAll();
 }
+
+/* ── 렌더 (우측 썸네일 + 좌측 썸네일 + 카운트) ── */
+function rRenderAll() {
+  rRenderRightThumbs();
+  rRenderLeftThumbs();
+  rUpdateUploadCount();
+  rCheckReady();
+  rRefreshSim();
+}
+
+function rRenderRightThumbs() {
+  const grid = document.getElementById('rThumbGrid');
+  const zone = document.getElementById('rZone');
+  if (!grid) return;
+  if (rImgs.length === 0) {
+    grid.style.display = 'none';
+    if (zone) zone.style.display = 'flex';
+    return;
+  }
+  if (zone) zone.style.display = 'none';
+  grid.style.display = 'grid';
+  grid.innerHTML = '';
+  rImgs.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'r-thumb-card' + (idx===rSelIdx?' active':'');
+    card.onclick = (e) => { if (e.target.classList.contains('r-thumb-del')) return; rSelIdx=idx; rRenderAll(); };
+    const img = document.createElement('img'); img.src = item.src; card.appendChild(img);
+    const del = document.createElement('button'); del.className='r-thumb-del'; del.innerHTML='×';
+    del.onclick = () => rDeleteImg(idx);
+    card.appendChild(del);
+    grid.appendChild(card);
+  });
+  // 추가 버튼 (10장 미만일 때)
+  if (rImgs.length < R_MAX) {
+    const add = document.createElement('div'); add.className='r-thumb-add';
+    const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple=true;
+    inp.onchange = rLoadFiles;
+    const ic = document.createElement('span'); ic.className='r-thumb-add-icon'; ic.textContent='＋';
+    const tx = document.createElement('span'); tx.textContent='추가'; tx.style.fontSize='.6rem';
+    add.appendChild(inp); add.appendChild(ic); add.appendChild(tx);
+    grid.appendChild(add);
+  }
+}
+
+function rRenderLeftThumbs() {
+  const strip = document.getElementById('rSimThumbs');
+  if (!strip) return;
+  strip.innerHTML = '';
+  if (rImgs.length <= 1) return;
+  rImgs.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'rsim-thumb' + (idx===rSelIdx?' active':'');
+    div.onclick = () => { rSelIdx=idx; rRenderAll(); };
+    const img = document.createElement('img'); img.src=item.src; div.appendChild(img);
+    const num = document.createElement('span'); num.className='rsim-thumb-num'; num.textContent=idx+1; div.appendChild(num);
+    strip.appendChild(div);
+  });
+}
+
+function rUpdateUploadCount() {
+  const el = document.getElementById('rUploadCount');
+  if (el) el.textContent = rImgs.length + ' / 10장';
+}
+
+/* ── 드래그 앤 드롭 ── */
 function rOnDrag(e) { e.preventDefault(); document.getElementById('rZone').classList.add('drag-over'); }
 function rOffDrag()  { document.getElementById('rZone').classList.remove('drag-over'); }
 function rOnDrop(e)  {
   e.preventDefault(); rOffDrag();
-  const f = e.dataTransfer.files[0]; if(f && f.type.startsWith('image/')) rReadImg(f);
-}
-function rCheckReady() {
-  document.getElementById('rGenBtn').classList.toggle('ready', !!rImg);
+  const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).slice(0,R_MAX-rImgs.length);
+  files.forEach(rReadImgFile);
 }
 
-// 캔버스에 그리기
+function rCheckReady() {
+  document.getElementById('rGenBtn').classList.toggle('ready', rImgs.length > 0);
+}
+
+/* ── 텍스트 설정 getter ── */
+function getOverlayText()    { return (document.getElementById('overlayText')?.value || '').trim(); }
+function getOverlayColor()   { const b=document.querySelector('.txt-col-btn.on'); return b?b.style.background:'#ffffff'; }
+function getOverlayOpacity() { return (document.getElementById('overlayOpacity')?.value || 100) / 100; }
+function getOverlaySize()    { return parseInt(document.getElementById('overlaySize')?.value || 36); }
+
+/* ── 그리기 ── */
 function rDraw(canvas, scale) {
   const ctx = canvas.getContext('2d');
-  const CW = Math.round(1080 * scale);
-  const CH = Math.round(1350 * scale);
-  canvas.width = CW; canvas.height = CH;
+  const CW = Math.round(1080*scale), CH = Math.round(1350*scale);
+  canvas.width=CW; canvas.height=CH;
 
-  // 배경 색상
   ctx.fillStyle = rBgColor;
-  ctx.fillRect(0, 0, CW, CH);
+  ctx.fillRect(0,0,CW,CH);
 
-  if (!rImg) return;
-
-  const iw = rImg.naturalWidth, ih = rImg.naturalHeight;
-  const ia = iw / ih, ca = CW / CH;
-
-  let dx, dy, dw, dh;
-  if (rFitMode === 'contain') {
-    if (ia > ca) { dw = CW; dh = CW / ia; dx = 0; dy = (CH - dh) / 2; }
-    else         { dh = CH; dw = CH * ia; dy = 0; dx = (CW - dw) / 2; }
-  } else {
-    // cover
-    if (ia > ca) { dh = CH; dw = CH * ia; dy = 0; dx = (CW - dw) / 2; }
-    else         { dw = CW; dh = CW / ia; dx = 0; dy = (CH - dh) / 2; }
+  const curImg = rImgs[rSelIdx]?.img;
+  if (curImg) {
+    const iw=curImg.naturalWidth, ih=curImg.naturalHeight;
+    const ia=iw/ih, ca=CW/CH;
+    let dx,dy,dw,dh;
+    if (rFitMode==='contain') {
+      if (ia>ca){ dw=CW; dh=CW/ia; dx=0; dy=(CH-dh)/2; }
+      else       { dh=CH; dw=CH*ia; dy=0; dx=(CW-dw)/2; }
+    } else {
+      if (ia>ca){ dh=CH; dw=CH*ia; dy=0; dx=(CW-dw)/2; }
+      else       { dw=CW; dh=CW/ia; dx=0; dy=(CH-dh)/2; }
+    }
+    ctx.drawImage(curImg,dx,dy,dw,dh);
   }
-  ctx.drawImage(rImg, dx, dy, dw, dh);
 
-  // 무료 워터마크
+  // 텍스트/로고 오버레이
+  const txt = getOverlayText();
+  if (txt) {
+    const fs   = Math.round(getOverlaySize() * scale);
+    const op   = getOverlayOpacity();
+    const col  = getOverlayColor();
+    const pos  = rTextPos;
+    const pad  = Math.round(40 * scale);
+
+    ctx.save();
+    ctx.globalAlpha = op;
+    ctx.font = `600 ${fs}px "Noto Sans KR",sans-serif`;
+    ctx.textBaseline = 'middle';
+
+    const tw = ctx.measureText(txt).width;
+    const th = fs;
+    const col_  = pos % 3;
+    const row_  = Math.floor(pos / 3);
+    let x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
+    let y = row_===0 ? pad+th/2 : row_===1 ? CH/2 : CH-pad-th/2;
+    ctx.textAlign = 'left';
+
+    // 그림자
+    ctx.shadowColor='rgba(0,0,0,0.45)'; ctx.shadowBlur=Math.round(fs*0.4); ctx.shadowOffsetY=1;
+    ctx.fillStyle = col;
+    ctx.fillText(txt, x, y);
+    ctx.restore();
+  }
+
   if (!isPro) drawWatermark(ctx, CW, CH);
 }
 
 function rRefreshSim() {
-  if (!rImg) return;
-  document.getElementById('rSimPh').style.display = 'none';
-  const c = document.getElementById('resizeSimCanvas'); c.style.display = 'block';
-  const fw = document.getElementById('rSimFrame').clientWidth || 320;
-  rDraw(c, fw / 1080);
+  const canvas = document.getElementById('rMainCanvas');
+  const ph = document.getElementById('rSimPh');
+  if (!canvas) return;
+  if (!rImgs[rSelIdx]) {
+    canvas.style.display='none';
+    if (ph) ph.style.display='flex';
+    return;
+  }
+  if (ph) ph.style.display='none';
+  canvas.style.display='block';
+  const fw = document.getElementById('rMainFrame').clientWidth || 320;
+  rDraw(canvas, fw/1080);
 }
 
 const rResultCanvas = document.createElement('canvas');
 
-function rGenerate() {
-  if (!rImg) return;
+async function rGenerate() {
+  if (rImgs.length===0) return;
   if (!canSave()) { openModal(); return; }
-  rDraw(rResultCanvas, 1.0);
-  document.getElementById('rDlBtn').classList.add('show');
-  if (!isPro) { incrementSaveCount(); rUpdateCountBar(); updateCountBar(); }
+
+  const total = isPro ? rImgs.length : Math.min(rImgs.length, FREE_LIMIT-getSaveCount());
+  if (!isPro && rImgs.length > total) {
+    alert(`오늘 ${total}장만 더 저장 가능해요.\nPRO 업그레이드 시 무제한!`);
+  }
+
+  const btn = document.getElementById('rGenBtn');
+  btn.textContent='저장 중...'; btn.style.opacity='.6';
+
+  const origIdx = rSelIdx;
+  for (let i=0; i<total; i++) {
+    rSelIdx=i;
+    const tmp = document.createElement('canvas');
+    rDraw(tmp,1.0);
+    await new Promise(res=>setTimeout(res, i===0?0:250));
+    const a=document.createElement('a');
+    a.download=`insta-${i+1}.jpg`; a.href=tmp.toDataURL('image/jpeg',1.0); a.click();
+    if (!isPro) incrementSaveCount();
+  }
+  rSelIdx=origIdx;
+  if (!isPro) { rUpdateCountBar(); updateCountBar(); }
+  btn.textContent='✦ 전체 사진 저장'; btn.style.opacity='';
   rRefreshSim();
 }
 
-function rDownload() {
-  const a = document.createElement('a');
-  a.download = 'insta-resize.jpg';
-  a.href = rResultCanvas.toDataURL('image/jpeg', 1.0);
-  a.click();
-}
-
-// 횟수 표시
+/* ── 횟수 표시 ── */
 function rUpdateCountBar() {
-  const bar  = document.getElementById('rCountBar');
-  const dots = document.getElementById('rCountDots');
-  const text = document.getElementById('rCountText');
-  const warn = document.getElementById('rCountWarn');
+  const bar=document.getElementById('rCountBar');
+  const dots=document.getElementById('rCountDots');
+  const text=document.getElementById('rCountText');
+  const warn=document.getElementById('rCountWarn');
   if (!bar) return;
-  if (isPro) { bar.classList.add('hidden'); return; }
+  if (isPro){ bar.classList.add('hidden'); return; }
   bar.classList.remove('hidden');
-  const used = getSaveCount();
-  const left = Math.max(0, FREE_LIMIT - used);
-  dots.innerHTML = '';
-  for (let i = 0; i < FREE_LIMIT; i++) {
-    const d = document.createElement('div');
-    d.className = 'count-dot' + (i < used ? ' used' : '');
+  const used=getSaveCount(), left=Math.max(0,FREE_LIMIT-used);
+  dots.innerHTML='';
+  for(let i=0;i<FREE_LIMIT;i++){
+    const d=document.createElement('div');
+    d.className='count-dot'+(i<used?' used':'');
     dots.appendChild(d);
   }
-  text.textContent = `오늘 저장 ${used}/${FREE_LIMIT}회`;
-  warn.textContent = left === 0 ? '오늘 횟수 초과 · PRO 업그레이드' : left === 1 ? '오늘 1회 남음' : '';
+  text.textContent=`오늘 저장 ${used}/${FREE_LIMIT}회`;
+  warn.textContent=left===0?'오늘 횟수 초과 · PRO 업그레이드':left===1?'오늘 1회 남음':'';
 }
 
-// 리사이저2 (탭2 패널용)
-const resizer2El = document.getElementById('resizer2');
-const rSimPanelEl = document.getElementById('rSimPanel');
-let r2ing = false, r2x = 0, r2w = 0;
-if (resizer2El) {
-  resizer2El.addEventListener('mousedown', e => {
-    r2ing = true; r2x = e.clientX; r2w = rSimPanelEl.offsetWidth;
+/* ── 리사이저2 ── */
+const resizer2El=document.getElementById('resizer2');
+const rSimPanelEl=document.getElementById('rSimPanel');
+let r2ing=false,r2x=0,r2w=0;
+if(resizer2El){
+  resizer2El.addEventListener('mousedown',e=>{
+    r2ing=true;r2x=e.clientX;r2w=rSimPanelEl.offsetWidth;
     resizer2El.classList.add('active');
-    document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
+    document.body.style.cursor='col-resize';document.body.style.userSelect='none';
   });
-  document.addEventListener('mousemove', e => {
-    if (!r2ing) return;
-    const nw = Math.min(Math.max(r2w + (e.clientX - r2x), 240), window.innerWidth * 0.72);
-    rSimPanelEl.style.width = nw + 'px';
-    rRefreshSim();
+  document.addEventListener('mousemove',e=>{
+    if(!r2ing)return;
+    const nw=Math.min(Math.max(r2w+(e.clientX-r2x),240),window.innerWidth*0.72);
+    rSimPanelEl.style.width=nw+'px'; rRefreshSim();
   });
-  document.addEventListener('mouseup', () => {
-    if (!r2ing) return;
-    r2ing = false; resizer2El.classList.remove('active');
-    document.body.style.cursor = ''; document.body.style.userSelect = '';
+  document.addEventListener('mouseup',()=>{
+    if(!r2ing)return;
+    r2ing=false;resizer2El.classList.remove('active');
+    document.body.style.cursor='';document.body.style.userSelect='';
   });
 }
 
-// 초기화
-window.addEventListener('DOMContentLoaded', () => {
-  buildPalette();
+/* ── 스포이드 이벤트 ── */
+const rMainFrame=document.getElementById('rMainFrame');
+if(rMainFrame) rMainFrame.addEventListener('click', rPickColor);
+
+/* ── 초기화 ── */
+window.addEventListener('DOMContentLoaded',()=>{
   updateCountBar();
   rUpdateCountBar();
+  rBuildPalette();
+  rBuildTxtColors();
+  rBuildPosGrid();
+  buildPalette();
 });
 
 </script>
