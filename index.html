@@ -432,6 +432,98 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 </style>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL  = 'https://garzmqgpyghbiorehlta.supabase.co';
+  const SUPABASE_KEY  = 'sb_publishable_13OUnm9P_LQ42g1bn9NxnA_6yxsw1OL';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let currentUser = null;
+
+  // 로그인 상태 감지
+  sb.auth.onAuthStateChange(async (event, session) => {
+    currentUser = session?.user ?? null;
+    if (currentUser) {
+      await loadProStatus();
+    } else {
+      isPro = false;
+      updatePlanUI();
+      updateAuthUI(false);
+    }
+  });
+
+  // 초기 세션 확인
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    currentUser = session?.user ?? null;
+    if (currentUser) {
+      await loadProStatus();
+      updateAuthUI(true);
+    }
+  })();
+
+  // DB에서 PRO 상태 불러오기
+  async function loadProStatus() {
+    const { data, error } = await sb
+      .from('users')
+      .select('is_pro')
+      .eq('id', currentUser.id)
+      .single();
+
+    if (data) {
+      isPro = data.is_pro;
+    } else {
+      // 첫 로그인 시 users 테이블에 추가
+      await sb.from('users').upsert({
+        id: currentUser.id,
+        email: currentUser.email,
+        is_pro: false
+      });
+      isPro = false;
+    }
+    updatePlanUI();
+    updateAuthUI(true);
+    if (typeof refreshSim === 'function' && window.imgs?.before && window.imgs?.after) refreshSim();
+  }
+
+  // Google 로그인
+  async function loginWithGoogle() {
+    await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href }
+    });
+  }
+
+  // 로그아웃
+  async function logout() {
+    await sb.auth.signOut();
+    currentUser = null;
+    isPro = false;
+    updatePlanUI();
+    updateAuthUI(false);
+  }
+
+  // 로그인 UI 업데이트
+  function updateAuthUI(loggedIn) {
+    const loginBtn  = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userEmail = document.getElementById('userEmail');
+    if (!loginBtn) return;
+    if (loggedIn && currentUser) {
+      loginBtn.style.display  = 'none';
+      logoutBtn.style.display = 'inline-flex';
+      userEmail.textContent   = currentUser.email;
+      userEmail.style.display = 'inline';
+    } else {
+      loginBtn.style.display  = 'inline-flex';
+      logoutBtn.style.display = 'none';
+      userEmail.style.display = 'none';
+    }
+  }
+</script>
+
 </head>
 <body>
 
@@ -440,7 +532,16 @@ input[type="range"]::-webkit-slider-thumb {
     <h1>Before <em>&</em> After</h1>
     <p>인스타그램 4:5 고화질 이미지 제작</p>
   </div>
-  <span class="insta-badge">📐 1080 × 1350 px</span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span id="userEmail" style="display:none;font-size:.75rem;color:var(--muted);"></span>
+    <button id="loginBtn" onclick="loginWithGoogle()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ink);color:white;border:none;border-radius:100px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;">
+      🔑 로그인
+    </button>
+    <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:100px;font-family:var(--font);font-size:.78rem;cursor:pointer;">
+      로그아웃
+    </button>
+    <span class="insta-badge">📐 1080 × 1350 px</span>
+  </div>
 </header>
 
 <div class="workspace-wrap">
@@ -610,14 +711,21 @@ function openModal()  { document.getElementById('modalOverlay').classList.add('o
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 function closeModalOutside(e) { if(e.target===document.getElementById('modalOverlay')) closeModal(); }
 
-function activatePro() {
-  // 실제 서비스에서는 결제 완료 후 호출
+async function activatePro() {
+  if (!currentUser) {
+    alert('먼저 로그인해주세요!');
+    closeModal();
+    return;
+  }
+  // 실제 서비스: 토스페이먼츠 결제 완료 후 호출
+  await sb.from('users').upsert({ id: currentUser.id, is_pro: true });
   isPro = true;
   updatePlanUI();
   closeModal();
   if(imgs.before&&imgs.after) refreshSim();
 }
 function activateProDemo() {
+  // 테스트용 — 로그인 없이 PRO 체험
   isPro = true;
   updatePlanUI();
   closeModal();
