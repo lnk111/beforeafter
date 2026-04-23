@@ -1186,21 +1186,27 @@ input[type="color"] {
     if (msg) msg.textContent = '구글 로그인 중...';
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href }
+      options: { 
+        redirectTo: window.location.href,
+        scopes: 'profile_nickname profile_image'
+      }
     });
     if (error && msg) msg.textContent = '오류: ' + error.message;
   }
 
   // ── 카카오 로그인 ──
-  async function signInKakao() {
+async function signInKakao() {
     const msg = document.getElementById('authMsg');
     if (msg) msg.textContent = '카카오 로그인 중...';
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'kakao',
-      options: { redirectTo: window.location.href }
+      options: { 
+        redirectTo: window.location.href,
+        scopes: 'profile_nickname profile_image'
+      }
     });
     if (error && msg) msg.textContent = '오류: ' + error.message;
-  }
+}
 
   function openAuthModal()  { document.getElementById('authModalOverlay').classList.add('open'); }
   function closeAuthModal() { document.getElementById('authModalOverlay').classList.remove('open'); }
