@@ -1096,6 +1096,26 @@ input[type="color"] {
   0%,100%{ opacity:1; transform:scale(1); }
   50%{ opacity:.85; transform:scale(1.04); }
 }
+
+/* ── INSTAGRAM BUTTON ── */
+.insta-open-btn {
+  display: none;
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font);
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .02em;
+  transition: opacity .15s, transform .15s;
+}
+.insta-open-btn:hover { opacity: .88; transform: translateY(-1px); }
+.insta-open-btn.show { display: block; }
+
 </style>
 
 <!-- Supabase SDK -->
@@ -1510,6 +1530,7 @@ input[type="color"] {
       <button class="gen-btn" id="genBtn" onclick="generate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
       <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
       <button class="dl-btn" id="dlBtn" onclick="download()">⬇ JPG 다운로드</button>
+      <button class="insta-open-btn" id="instaBtn1" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
 
   </div>
@@ -1753,6 +1774,7 @@ input[type="color"] {
         <span class="count-warn" id="rCountWarn"></span>
       </div>
       <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 저장 — 인스타 최적화 1080×1350</button>
+      <button class="insta-open-btn" id="instaBtn2" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
 
   </div>
@@ -2088,7 +2110,8 @@ function download() {
   a.download='before-after-instagram.jpg';
   a.href=document.getElementById('resultCanvas').toDataURL('image/jpeg',1.0);
   a.click();
-  showToast('🎉 저장 완료! 인스타그램에 바로 올려보세요 🍑');
+  showToast('🎉 저장 완료! 아래 버튼으로 인스타에 올려보세요 🍑');
+  document.getElementById('instaBtn1').classList.add('show');
 }
 
 
@@ -2179,6 +2202,10 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function openInstagram() {
+  window.open('https://www.instagram.com', '_blank');
 }
 
 window.addEventListener('resize', ()=>{ if(imgs.before&&imgs.after) refreshSim(); });
@@ -2588,7 +2615,8 @@ async function rGenerate() {
   rSelIdx=origIdx;
   if (!isPro) { rUpdateCountBar(); updateCountBar(); }
   btn.textContent='✦ 전체 사진 저장'; btn.style.opacity='';
-  showToast('🎉 ' + total + '장 저장 완료! 인스타그램에 바로 올려보세요 🍑');
+  showToast('🎉 ' + total + '장 저장 완료! 아래 버튼으로 인스타에 올려보세요 🍑');
+  document.getElementById('instaBtn2').classList.add('show');
   rRefreshSim();
 }
 
