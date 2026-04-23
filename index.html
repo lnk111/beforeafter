@@ -189,7 +189,7 @@ body {
 }
 .upload-zone {
   background: var(--card);
-  border: 2px dashed var(--border);
+  border: 2.5px dashed #c8bfb5;
   border-radius: var(--radius);
   padding: 26px 14px;
   display: flex; flex-direction: column; align-items: center;
@@ -953,6 +953,30 @@ input[type="color"] {
 }
 .font-sel:focus { border-color: var(--accent); }
 
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #1a1816;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-size: .85rem;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  transition: transform .3s ease, opacity .3s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
 </style>
 
 <!-- Supabase SDK -->
@@ -1078,8 +1102,8 @@ input[type="color"] {
 <div class="tab-container">
 <!-- TAB BAR -->
 <div class="tab-bar">
-  <button class="tab-btn active" id="tab1Btn" onclick="switchTab(1)">✂️ 비포 &amp; 애프터</button>
-  <button class="tab-btn" id="tab2Btn" onclick="switchTab(2)">🖼️ 사진 리사이즈</button>
+  <button class="tab-btn active" id="tab1Btn" onclick="switchTab(1)">✂️ 비포&애프터 합치기</button>
+  <button class="tab-btn" id="tab2Btn" onclick="switchTab(2)">🖼️ 사진 인스타 맞추기</button>
 </div>
 
 <!-- TAB 1: Before & After -->
@@ -1096,7 +1120,21 @@ input[type="color"] {
     <div class="sim-frame" id="simFrame">
       <div class="sim-placeholder" id="simPh">
         <span>🖼️</span>
-        <p>사진을 업로드하면<br>여기에 미리보기가<br>실시간으로 표시됩니다</p>
+        <p style="font-weight:600;color:#48433e;font-size:.82rem;">미리보기</p>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
+            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:white;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">1</span>
+            오른쪽에서 Before · After 사진 업로드
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
+            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:white;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">2</span>
+            옵션 설정 (선택사항)
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
+            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:white;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">3</span>
+            저장 버튼 클릭 → 인스타에 바로 업로드!
+          </div>
+        </div>
       </div>
       <canvas id="simCanvas" style="display:none;"></canvas>
     </div>
@@ -1115,14 +1153,14 @@ input[type="color"] {
         <input type="file" accept="image/*" onchange="loadFile(event,'before')">
         <div class="up-icon">📷</div>
         <span class="up-label before">Before</span>
-        <span class="up-hint">클릭하거나 드래그</span>
+        <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
       </div>
       <div class="upload-zone" id="zone-after"
            ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
         <input type="file" accept="image/*" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
         <span class="up-label after">After</span>
-        <span class="up-hint">클릭하거나 드래그</span>
+        <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
       </div>
     </div>
 
@@ -1269,7 +1307,7 @@ input[type="color"] {
         <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO 업그레이드</button>
       </div>
 
-      <button class="gen-btn" id="genBtn" onclick="generate()">✦ 인스타 고화질 저장 (1080 × 1350)</button>
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
       <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
       <button class="dl-btn" id="dlBtn" onclick="download()">⬇ JPG 다운로드</button>
     </div>
@@ -1295,7 +1333,21 @@ input[type="color"] {
     <div class="rsim-main-frame" id="rMainFrame">
       <div class="sim-placeholder" id="rSimPh">
         <span>🖼️</span>
-        <p>사진을 업로드하면<br>실시간으로 표시됩니다</p>
+        <p style="font-weight:600;color:#48433e;font-size:.82rem;">미리보기</p>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
+            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:white;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">1</span>
+            오른쪽에서 사진 업로드 (최대 10장)
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
+            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:white;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">2</span>
+            여백 색상 · 배치 설정
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
+            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:white;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">3</span>
+            전체 저장 → 인스타에 바로 업로드!
+          </div>
+        </div>
       </div>
       <canvas id="rMainCanvas" style="display:none;"></canvas>
     </div>
@@ -1420,7 +1472,7 @@ input[type="color"] {
         </div>
         <span class="count-warn" id="rCountWarn"></span>
       </div>
-      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 사진 저장</button>
+      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 저장 — 인스타 최적화 1080×1350</button>
     </div>
 
   </div>
@@ -1428,6 +1480,9 @@ input[type="color"] {
 </div><!-- /resize-wrap -->
 </div><!-- /tab2Panel -->
 </div><!-- /tab-container -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <!-- PRO UPGRADE MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
@@ -1743,6 +1798,15 @@ function download() {
   a.download='before-after-instagram.jpg';
   a.href=document.getElementById('resultCanvas').toDataURL('image/jpeg',1.0);
   a.click();
+  showToast('🎉 저장 완료! 인스타그램에 바로 올려보세요 🍑');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 window.addEventListener('resize', ()=>{ if(imgs.before&&imgs.after) refreshSim(); });
@@ -2149,6 +2213,7 @@ async function rGenerate() {
   rSelIdx=origIdx;
   if (!isPro) { rUpdateCountBar(); updateCountBar(); }
   btn.textContent='✦ 전체 사진 저장'; btn.style.opacity='';
+  showToast('🎉 ' + total + '장 저장 완료! 인스타그램에 바로 올려보세요 🍑');
   rRefreshSim();
 }
 
