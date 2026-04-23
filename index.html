@@ -907,9 +907,10 @@ input[type="color"] {
   gap: 5px; width: 120px;
 }
 .pos-cell {
-  aspect-ratio: 1; border-radius: 6px;
+  width: 34px; height: 34px; border-radius: 6px;
   border: 1.5px solid var(--border); background: var(--card);
   cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
 }
 .pos-cell:hover { border-color: var(--accent); background: #fdf7f4; }
 .pos-cell.on { background: var(--accent); border-color: var(--accent); }
