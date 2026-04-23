@@ -1066,6 +1066,21 @@ input[type="color"] {
   font-size: .72rem; color: var(--muted);
 }
 
+
+/* ── FREE TRIAL BADGE ── */
+.free-trial-badge {
+  display: inline-flex; align-items: center;
+  background: linear-gradient(135deg, #f5a88e, #e8602c);
+  color: white; font-size: .68rem; font-weight: 700;
+  padding: 3px 10px; border-radius: 100px;
+  margin-left: 7px; vertical-align: middle;
+  letter-spacing: .02em; white-space: nowrap;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+@keyframes pulse-badge {
+  0%,100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:.85; transform:scale(1.04); }
+}
 </style>
 
 <!-- Supabase SDK -->
@@ -1473,7 +1488,7 @@ input[type="color"] {
           <span class="plan-badge free" id="planBadge">무료 플랜</span>
           <span class="plan-desc" id="planDesc">저장 시 워터마크가 삽입됩니다</span>
         </div>
-        <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO 업그레이드</button>
+        <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO 업그레이드 <span class="free-trial-badge">14일 무료</span></button>
       </div>
 
       <button class="gen-btn" id="genBtn" onclick="generate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
