@@ -103,17 +103,9 @@ body {
   min-width: 0;
 }
 .sim-header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.sim-header h2 {
-  font-family: var(--font);
-  font-size: .9rem;
-  font-weight: 600;
-  color: var(--ink);
-}
+.sim-header h2 { font-family: var(--font); font-size: .9rem; font-weight: 600; color: var(--ink); }
 .sim-live {
   display: flex; align-items: center; gap: 5px;
   font-size: .65rem; color: var(--muted); letter-spacing: .06em;
@@ -131,9 +123,8 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0,0,0,.1);
-  /* 4:5 비율 유지하며 패널 높이에 맞게 축소 */
   aspect-ratio: 4/5;
-  height: calc(100% - 80px);
+  height: calc(100% - 100px);
   max-height: calc(100vh - 200px);
   width: auto;
   max-width: 100%;
