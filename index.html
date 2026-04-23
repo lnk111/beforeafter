@@ -1032,6 +1032,40 @@ input[type="color"] {
   opacity: 0; cursor: pointer;
 }
 
+
+/* ── XY 슬라이더 ── */
+.xy-wrap {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 6px;
+}
+.xy-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.xy-axis {
+  font-size: .7rem; font-weight: 600; color: var(--accent);
+  min-width: 14px; text-align: center;
+}
+.xy-range { flex: 1; }
+.xy-val {
+  font-size: .7rem; color: var(--muted);
+  min-width: 32px; text-align: right;
+}
+/* px 크기 입력 */
+.size-px-row {
+  display: flex; align-items: center; gap: 6px;
+}
+.size-px-input {
+  width: 64px; padding: 5px 8px;
+  border: 1.5px solid var(--border); border-radius: 7px;
+  font-family: var(--font); font-size: .82rem;
+  color: var(--ink); background: var(--bg);
+  text-align: center; outline: none;
+}
+.size-px-input:focus { border-color: var(--accent); }
+.size-px-unit {
+  font-size: .72rem; color: var(--muted);
+}
+
 </style>
 
 <!-- Supabase SDK -->
@@ -1303,6 +1337,20 @@ input[type="color"] {
         <div>
           <div style="font-size:.65rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">위치</div>
           <div class="pos-grid" id="baPosGrid"></div>
+          <div class="xy-wrap">
+            <div class="xy-row">
+              <span class="xy-axis">X</span>
+              <input type="range" class="xy-range" min="-100" max="100" value="0" id="baOffsetX"
+                     oninput="document.getElementById('baOffsetXVal').textContent=this.value; refreshSim();">
+              <span class="xy-val" id="baOffsetXVal">0</span>
+            </div>
+            <div class="xy-row">
+              <span class="xy-axis">Y</span>
+              <input type="range" class="xy-range" min="-100" max="100" value="0" id="baOffsetY"
+                     oninput="document.getElementById('baOffsetYVal').textContent=this.value; refreshSim();">
+              <span class="xy-val" id="baOffsetYVal">0</span>
+            </div>
+          </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
           <div>
@@ -1322,12 +1370,12 @@ input[type="color"] {
           </div>
           <div>
             <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">크기</div>
-            <select class="font-size-sel" id="baOverlaySize" onchange="refreshSim()">
-              <option value="24">작게</option>
-              <option value="36" selected>보통</option>
-              <option value="52">크게</option>
-              <option value="72">매우 크게</option>
-            </select>
+            <div class="size-px-row">
+              <input type="number" class="size-px-input" id="baOverlaySize"
+                     min="8" max="300" value="36"
+                     oninput="refreshSim()">
+              <span class="size-px-unit">px</span>
+            </div>
           </div>
           <div>
             <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">색상</div>
@@ -1540,6 +1588,20 @@ input[type="color"] {
         <div>
           <div style="font-size:.65rem;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;">위치</div>
           <div class="pos-grid" id="posGrid"></div>
+          <div class="xy-wrap">
+            <div class="xy-row">
+              <span class="xy-axis">X</span>
+              <input type="range" class="xy-range" min="-100" max="100" value="0" id="rOffsetX"
+                     oninput="document.getElementById('rOffsetXVal').textContent=this.value; rRefreshSim();">
+              <span class="xy-val" id="rOffsetXVal">0</span>
+            </div>
+            <div class="xy-row">
+              <span class="xy-axis">Y</span>
+              <input type="range" class="xy-range" min="-100" max="100" value="0" id="rOffsetY"
+                     oninput="document.getElementById('rOffsetYVal').textContent=this.value; rRefreshSim();">
+              <span class="xy-val" id="rOffsetYVal">0</span>
+            </div>
+          </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
           <!-- 글씨체 -->
@@ -1561,12 +1623,12 @@ input[type="color"] {
           <!-- 글자 크기 -->
           <div>
             <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">크기</div>
-            <select class="font-size-sel" id="overlaySize" onchange="rRefreshSim()">
-              <option value="24">작게</option>
-              <option value="36" selected>보통</option>
-              <option value="52">크게</option>
-              <option value="72">매우 크게</option>
-            </select>
+            <div class="size-px-row">
+              <input type="number" class="size-px-input" id="overlaySize"
+                     min="8" max="300" value="36"
+                     oninput="rRefreshSim()">
+              <span class="size-px-unit">px</span>
+            </div>
           </div>
           <!-- 글자 색상 -->
           <div>
@@ -1942,8 +2004,13 @@ function drawAll(canvas, scale) {
     ctx.textBaseline = 'middle';
     const tw = ctx.measureText(baTxt).width;
     const col_ = pos % 3, row_ = Math.floor(pos / 3);
-    const x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
-    const y = row_===0 ? pad+fs/2 : row_===1 ? CH/2 : CH-pad-fs/2;
+    let x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
+    let y = row_===0 ? pad+fs/2 : row_===1 ? CH/2 : CH-pad-fs/2;
+    // XY 오프셋 (슬라이더 -100~100 → 캔버스 픽셀)
+    const baOx = parseInt(document.getElementById('baOffsetX')?.value || 0);
+    const baOy = parseInt(document.getElementById('baOffsetY')?.value || 0);
+    x += Math.round(baOx * scale * 4);
+    y += Math.round(baOy * scale * 4);
     ctx.textAlign = 'left';
     const baEffects = getTextEffects('ba');
     applyTextEffects(ctx, baTxt, x, y, scale, baEffects);
@@ -2427,9 +2494,13 @@ function rDraw(canvas, scale) {
     const row_  = Math.floor(pos / 3);
     let x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
     let y = row_===0 ? pad+th/2 : row_===1 ? CH/2 : CH-pad-th/2;
+    // XY 오프셋
+    const rOx = parseInt(document.getElementById('rOffsetX')?.value || 0);
+    const rOy = parseInt(document.getElementById('rOffsetY')?.value || 0);
+    x += Math.round(rOx * scale * 4);
+    y += Math.round(rOy * scale * 4);
     ctx.textAlign = 'left';
 
-    // 그림자
     const rEffects = getTextEffects('r');
     applyTextEffects(ctx, txt, x, y, scale, rEffects);
     ctx.restore();
@@ -2556,6 +2627,11 @@ function baBuildPosGrid() {
       window.baTextPos = i;
       document.querySelectorAll('#baPosGrid .pos-cell').forEach(c => c.classList.remove('on'));
       cell.classList.add('on');
+      // 기준점 바꾸면 XY 오프셋 리셋
+      const bx = document.getElementById('baOffsetX');
+      const by = document.getElementById('baOffsetY');
+      if(bx){ bx.value=0; document.getElementById('baOffsetXVal').textContent='0'; }
+      if(by){ by.value=0; document.getElementById('baOffsetYVal').textContent='0'; }
       refreshSim();
     };
     grid.appendChild(cell);
