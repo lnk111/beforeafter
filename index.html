@@ -1107,6 +1107,52 @@ input[type="color"] {
 .insta-open-btn:hover { opacity: .88; transform: translateY(-1px); }
 .insta-open-btn.show { display: block; }
 
+
+/* ── UX 개선 ── */
+
+/* 1. 헤더 서브타이틀 추가용 */
+.topbar-sub {
+  font-size: .72rem; color: var(--muted); margin-top: 2px;
+}
+
+/* 2. 업로드존 단계 번호 */
+.upload-step {
+  position: absolute; top: 10px; left: 10px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); color: white;
+  font-size: .68rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1;
+}
+
+/* 3. 섹션 구분 레이블 */
+.section-step {
+  font-size: .65rem; font-weight: 700; color: var(--accent);
+  text-transform: uppercase; letter-spacing: .08em;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: -4px;
+}
+.section-step::before {
+  content: attr(data-step);
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); color: white;
+  font-size: .6rem; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* 4. 저장 버튼 비활성 상태 안내 */
+.gen-btn-hint {
+  font-size: .7rem; color: var(--muted); text-align: center;
+  display: none;
+}
+.gen-btn-hint.show { display: block; }
+
+/* 5. opts-panel 구분선 */
+.opts-panel + .opts-panel {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
 </style>
 
 <!-- Supabase SDK -->
@@ -1226,6 +1272,7 @@ input[type="color"] {
     <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--muted);border:1.5px solid var(--border);border-radius:100px;font-family:var(--font);font-size:.78rem;cursor:pointer;">
       로그아웃
     </button>
+    <span style="font-size:.72rem;color:var(--muted);">인스타그램 4:5 · 1080×1350px 고화질</span>
     <span class="insta-badge">📐 1080 × 1350 px</span>
   </div>
 </header>
@@ -1279,24 +1326,26 @@ input[type="color"] {
   <div class="ctrl-panel">
 
     <div class="upload-grid">
-      <div class="upload-zone" id="zone-before"
+      <div class="upload-zone" id="zone-before" style="position:relative;"><div class="upload-step">1</div
+      <div class="upload-zone" id="zone-before-inner" style="display:none;">
            ondragover="onDrag(event,'before')" ondragleave="offDrag('before')" ondrop="onDrop(event,'before')">
         <input type="file" accept="image/*" onchange="loadFile(event,'before')">
         <div class="up-icon">📷</div>
-        <span class="up-label before">Before</span>
+        <span class="up-label before">Before <span style="font-size:.65rem;font-weight:400;color:var(--muted);">① 전</span></span>
         <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
       </div>
       <div class="upload-zone" id="zone-after"
            ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
         <input type="file" accept="image/*" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
-        <span class="up-label after">After</span>
+        <span class="up-label after">After <span style="font-size:.65rem;font-weight:400;color:var(--muted);">② 후</span></span>
         <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
       </div>
     </div>
 
     <div class="opts-panel">
-      <h2>옵션 설정</h2>
+      <div class="section-step" data-step="2">옵션 설정 <span style="font-weight:400;color:var(--muted);font-size:.62rem;text-transform:none;letter-spacing:0;">(선택사항)</span></div>
+      <h2 style="display:none;">옵션 설정</h2>
       <div class="opts-grid">
 
         <div class="opt-group">
@@ -1370,7 +1419,7 @@ input[type="color"] {
 
     <!-- 텍스트/로고 삽입 (비포&애프터 탭) -->
     <div class="opts-panel text-overlay-panel" id="baTextPanel">
-      <h2>텍스트 / 로고 삽입</h2>
+      <div class="section-step" data-step="3">텍스트 / 로고 삽입 <span style="font-weight:400;color:var(--muted);font-size:.62rem;text-transform:none;letter-spacing:0;">(선택사항)</span></div>
       <div class="text-input-row">
         <input type="text" id="baOverlayText" placeholder="예: @my_studio  /  브랜드명" maxlength="40"
                oninput="refreshSim()">
@@ -1518,6 +1567,7 @@ input[type="color"] {
         <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO 업그레이드 <span class="free-trial-badge">14일 무료</span></button>
       </div>
 
+      <div class="gen-btn-hint" id="genHint">⬆ Before · After 사진을 먼저 업로드하세요</div>
       <button class="gen-btn" id="genBtn" onclick="generate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
       <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
       <button class="dl-btn" id="dlBtn" onclick="download()">⬇ JPG 다운로드</button>
@@ -1579,7 +1629,7 @@ input[type="color"] {
     <!-- 업로드 섹션 -->
     <div class="r-upload-section">
       <div class="r-upload-header">
-        <h2>📁 업로드된 사진</h2>
+        <div class="section-step" data-step="1">사진 업로드 <span style="font-weight:400;color:var(--muted);font-size:.62rem;text-transform:none;letter-spacing:0;">최대 10장</span></div>
         <span class="r-upload-count" id="rUploadCount">0 / 10장</span>
       </div>
       <!-- 초기 드롭존 -->
@@ -1596,7 +1646,7 @@ input[type="color"] {
 
     <!-- 여백 색상 -->
     <div class="opts-panel">
-      <h2>여백 색상</h2>
+      <div class="section-step" data-step="2">여백 색상 선택</div>
       <div class="r-pal-row-label" style="margin-bottom:6px;">밝은 계열</div>
       <div class="r-palette-grid" id="rPalLight"></div>
       <div class="r-pal-row-label" style="margin:8px 0 6px;">어두운 계열</div>
@@ -1612,7 +1662,7 @@ input[type="color"] {
 
     <!-- 이미지 배치 -->
     <div class="opts-panel">
-      <h2>이미지 배치</h2>
+      <div class="section-step" data-step="3">이미지 배치</div>
       <div class="fit-mode-row">
         <button class="fit-btn on" onclick="setFitMode('contain',this)">여백 유지</button>
         <button class="fit-btn"   onclick="setFitMode('cover',this)">꽉 채우기</button>
@@ -1621,7 +1671,7 @@ input[type="color"] {
 
     <!-- 텍스트/로고 삽입 -->
     <div class="opts-panel text-overlay-panel">
-      <h2>텍스트 / 로고 삽입</h2>
+      <div class="section-step" data-step="4">텍스트 / 로고 삽입 <span style="font-weight:400;color:var(--muted);font-size:.62rem;text-transform:none;letter-spacing:0;">(선택사항)</span></div>
       <div class="text-input-row">
         <input type="text" id="overlayText" placeholder="예: @my_studio  /  브랜드명" maxlength="40"
                oninput="rRefreshSim()">
@@ -1764,7 +1814,16 @@ input[type="color"] {
         </div>
         <span class="count-warn" id="rCountWarn"></span>
       </div>
+      <div class="plan-banner" id="rPlanBanner">
+        <div class="plan-info">
+          <span class="plan-badge free" id="rPlanBadge">무료 플랜</span>
+          <span class="plan-desc" id="rPlanDesc">저장 시 워터마크가 삽입됩니다</span>
+        </div>
+        <button class="plan-btn upgrade" id="rPlanBtn" onclick="openModal()">✦ PRO 업그레이드 <span class="free-trial-badge">14일 무료</span></button>
+      </div>
+      <div class="gen-btn-hint" id="rGenHint">⬆ 사진을 먼저 업로드하세요</div>
       <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 저장 — 인스타 최적화 1080×1350</button>
+      <div class="wm-notice" id="rWmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
       <button class="insta-open-btn" id="instaBtn2" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
 
@@ -1896,6 +1955,25 @@ function updatePlanUI() {
     wm.classList.add('hidden');
   } else {
     wm.classList.remove('hidden');
+  }
+
+  // 탭2 플랜 배너 동기화
+  const rBadge = document.getElementById('rPlanBadge');
+  const rDesc  = document.getElementById('rPlanDesc');
+  const rBtn   = document.getElementById('rPlanBtn');
+  const rWm    = document.getElementById('rWmNotice');
+  if (rBadge && rDesc && rBtn) {
+    if (isPro) {
+      rBadge.textContent = '✦ PRO 플랜';
+      rBadge.className   = 'plan-badge pro';
+      rDesc.textContent  = '워터마크 없음 · 최고화질 저장';
+      rBtn.textContent   = '✓ PRO 이용중';
+      rBtn.className     = 'plan-btn active-pro';
+      rBtn.onclick       = null;
+      if (rWm) rWm.classList.add('hidden');
+    } else {
+      if (rWm) rWm.classList.remove('hidden');
+    }
   }
   updateCountBar();
 }
@@ -2049,6 +2127,7 @@ function drawAll(canvas, scale) {
     const pad = Math.round(40 * scale);
     ctx.save();
     ctx.globalAlpha = op;
+    ctx.fillStyle = col;
     const baFont = document.getElementById('baOverlayFont')?.value || '"Noto Sans KR",sans-serif';
     ctx.font = `600 ${fs}px ${baFont}`;
     ctx.textBaseline = 'middle';
@@ -2140,6 +2219,7 @@ function getTextEffects(prefix) {
 function applyTextEffects(ctx, txt, x, y, scale, effects) {
   const s = effects.shadow;
   const k = effects.stroke;
+  // fillStyle은 호출 전에 이미 ctx에 설정되어 있음
 
   // 그림자
   if (s) {
@@ -2339,7 +2419,7 @@ function rBuildTxtColors() {
     btn.style.background = c;
     if (c==='#ffffff') btn.style.boxShadow='inset 0 0 0 1px #ccc';
     btn.onclick = () => {
-      document.querySelectorAll('.txt-col-btn').forEach(b=>b.classList.remove('on'));
+      document.querySelectorAll('#txtColorRow .txt-col-btn').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
       rRefreshSim();
     };
@@ -2495,12 +2575,15 @@ function rOnDrop(e)  {
 }
 
 function rCheckReady() {
-  document.getElementById('rGenBtn').classList.toggle('ready', rImgs.length > 0);
+  const ready = rImgs.length > 0;
+  document.getElementById('rGenBtn').classList.toggle('ready', ready);
+  const hint = document.getElementById('rGenHint');
+  if (hint) hint.classList.toggle('show', !ready);
 }
 
 /* ── 텍스트 설정 getter ── */
 function getOverlayText()    { return (document.getElementById('overlayText')?.value || '').trim(); }
-function getOverlayColor()   { const b=document.querySelector('.txt-col-btn.on'); return b?b.style.background:'#ffffff'; }
+function getOverlayColor()   { const b=document.querySelector('#txtColorRow .txt-col-btn.on'); return b?b.style.background:'#ffffff'; }
 function getOverlayOpacity() { return (document.getElementById('overlayOpacity')?.value || 100) / 100; }
 function getOverlaySize()    { return parseInt(document.getElementById('overlaySize')?.value || 36); }
 
@@ -2539,6 +2622,7 @@ function rDraw(canvas, scale) {
 
     ctx.save();
     ctx.globalAlpha = op;
+    ctx.fillStyle = col;
     const rFont = document.getElementById('rOverlayFont')?.value || '"Noto Sans KR",sans-serif';
     ctx.font = `600 ${fs}px ${rFont}`;
     ctx.textBaseline = 'middle';
@@ -2661,6 +2745,8 @@ if(rMainFrame) rMainFrame.addEventListener('click', rPickColor);
 window.baTextPos = 8;
 window.addEventListener('DOMContentLoaded',()=>{
   updateCountBar();
+  checkReady();
+  rCheckReady();
   rUpdateCountBar();
   rBuildPalette();
   rBuildTxtColors();
