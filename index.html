@@ -1690,10 +1690,9 @@
      FOOTER
      ═══════════════════════════════════════ */
   footer {
-    padding: 48px 40px;
+    padding: 80px 40px 40px;
     background: var(--ink);
     color: rgba(250, 244, 236, 0.6);
-    text-align: center;
   }
   
   .footer-inner {
@@ -1701,19 +1700,138 @@
     margin: 0 auto;
   }
   
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  
+  .footer-brand {
+    max-width: 320px;
+  }
+  
   .footer-logo {
     font-family: var(--font-display);
     font-weight: 800;
     color: var(--peach);
-    font-size: 1.1rem;
-    letter-spacing: 0.2em;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
     margin-bottom: 16px;
   }
   
-  .footer-text {
+  .footer-tagline {
+    font-family: var(--font-soft);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(250, 244, 236, 0.55);
+  }
+  
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .footer-col-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--cream);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  
+  .footer-link {
     font-family: var(--font-body);
     font-size: 0.85rem;
+    color: rgba(250, 244, 236, 0.55);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .footer-link:hover {
+    color: var(--peach);
+  }
+  
+  .footer-divider {
+    height: 1px;
+    background: rgba(250, 244, 236, 0.1);
+    margin: 0 0 24px;
+  }
+  
+  .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .footer-legal {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
     line-height: 1.7;
+    color: rgba(250, 244, 236, 0.45);
+  }
+  
+  .footer-legal strong {
+    color: rgba(250, 244, 236, 0.7);
+    font-weight: 700;
+  }
+  
+  .footer-links-bottom {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+  }
+  
+  .footer-links-bottom a {
+    color: rgba(250, 244, 236, 0.55);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .footer-links-bottom a:hover {
+    color: var(--peach);
+  }
+  
+  .footer-dot {
+    color: rgba(250, 244, 236, 0.3);
+  }
+  
+  .footer-copyright {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: rgba(250, 244, 236, 0.35);
+    padding-top: 8px;
+  }
+  
+  @media (max-width: 768px) {
+    footer {
+      padding: 60px 24px 32px;
+    }
+    
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    
+    .footer-cols {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
   }
   
   /* ═══════════════════════════════════════
@@ -1857,16 +1975,16 @@
 <!-- ══════════════ NAVBAR ══════════════ -->
 <nav class="navbar" id="navbar">
   <div class="nav-inner">
-    <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="nav-logo" onclick="scrollToTop()" title="맨 위로">
       <span class="nav-logo-peach">🍑</span>
       <span class="nav-logo-text">PEACHPOST</span>
     </div>
     <div class="nav-menu">
-      <button class="nav-link" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">기능</button>
-      <button class="nav-link" onclick="document.getElementById('industries').scrollIntoView({behavior:'smooth'})">사용 업종</button>
-      <button class="nav-link" onclick="document.getElementById('counter').scrollIntoView({behavior:'smooth'})">성과</button>
-      <button class="nav-link nav-link-help" onclick="startApp()">로그인</button>
-      <button class="nav-cta" onclick="startApp()">회원가입</button>
+      <button class="nav-link" onclick="scrollToSection('features')">기능</button>
+      <button class="nav-link" onclick="scrollToSection('industries')">사용 업종</button>
+      <button class="nav-link" onclick="scrollToSection('counter')">성과</button>
+      <button class="nav-link nav-link-help" onclick="loginApp()">로그인</button>
+      <button class="nav-cta" onclick="signupApp()">회원가입</button>
     </div>
   </div>
 </nav>
@@ -1883,10 +2001,10 @@
       더 이상 야근하며 편집하지 마세요.
     </p>
     <div class="hook-buttons">
-      <button class="btn-primary" onclick="startApp()">
+      <button class="btn-primary" onclick="startApp()" title="피치포스트 앱으로 이동합니다">
         바로 시작하기
       </button>
-      <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+      <button class="btn-secondary" onclick="scrollToSection('features')" title="기능 소개를 확인해보세요">
         기능 보러가기
       </button>
     </div>
@@ -2473,10 +2591,10 @@
       <span style="color: var(--coral);">조용히 돈 버는 방법</span>
     </h2>
     <div class="final-buttons reveal reveal-delay-1">
-      <button class="btn-primary" onclick="startApp()">
+      <button class="btn-primary" onclick="startApp()" title="피치포스트를 무료로 시작해보세요">
         피치포스트 시작하기 →
       </button>
-      <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+      <button class="btn-secondary" onclick="scrollToSection('features')" title="기능을 다시 확인하세요">
         기능 다시 보기
       </button>
     </div>
@@ -2491,16 +2609,100 @@
 <!-- ══════════════ FOOTER ══════════════ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">🍑 PEACHPOST</div>
-    <div class="footer-text">
-      © 2026 디자인포 · 사업자등록번호 135-25-22394<br>
-      문의: hello@peachpost.com
+    <!-- Top: Logo + Links -->
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">🍑 PEACHPOST</div>
+        <div class="footer-tagline">
+          자영업 사장님의 인스타 포스팅,<br>
+          피치포스트로 5초 완성
+        </div>
+      </div>
+      
+      <div class="footer-cols">
+        <div class="footer-col">
+          <div class="footer-col-title">서비스</div>
+          <button class="footer-link" onclick="scrollToSection('features')">기능 소개</button>
+          <button class="footer-link" onclick="scrollToSection('industries')">사용 업종</button>
+          <button class="footer-link" onclick="scrollToSection('counter')">성과</button>
+          <button class="footer-link" onclick="startApp()">바로 시작하기</button>
+        </div>
+        
+        <div class="footer-col">
+          <div class="footer-col-title">계정</div>
+          <button class="footer-link" onclick="loginApp()">로그인</button>
+          <button class="footer-link" onclick="signupApp()">회원가입</button>
+        </div>
+        
+        <div class="footer-col">
+          <div class="footer-col-title">문의</div>
+          <a class="footer-link" href="mailto:hello@peachpost.com">이메일 문의</a>
+          <a class="footer-link" href="https://www.instagram.com/peachpost.official" target="_blank" rel="noopener">인스타그램</a>
+          <a class="footer-link" href="https://pf.kakao.com/peachpost" target="_blank" rel="noopener">카카오 채널</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Divider -->
+    <div class="footer-divider"></div>
+    
+    <!-- Bottom: Legal -->
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <strong>디자인포</strong> · 대표: 이남경 · 사업자등록번호: 135-25-22394<br>
+        통신판매업신고: 준비중 · 이메일: hello@peachpost.com
+      </div>
+      <div class="footer-links-bottom">
+        <a href="#" onclick="alert('이용약관 페이지 준비중입니다'); return false;">이용약관</a>
+        <span class="footer-dot">·</span>
+        <a href="#" onclick="alert('개인정보처리방침 페이지 준비중입니다'); return false;">개인정보처리방침</a>
+      </div>
+      <div class="footer-copyright">
+        © 2026 PEACHPOST. All rights reserved.
+      </div>
     </div>
   </div>
 </footer>
 
 <script>
-  // ─── Navbar scroll effect ───
+  // ═══════════════════════════════════════
+  // APP NAVIGATION — 피치포스트 앱 연결
+  // ═══════════════════════════════════════
+  const APP_URL = 'https://beforeafter-woad.vercel.app';
+  
+  // 바로 시작하기 / 회원가입 / CTA 버튼
+  function startApp() {
+    window.location.href = APP_URL;
+  }
+  
+  // 로그인 버튼 (로그인 모드로 이동)
+  function loginApp() {
+    window.location.href = APP_URL + '?mode=login';
+  }
+  
+  // 회원가입 버튼 (회원가입 모드로 이동)
+  function signupApp() {
+    window.location.href = APP_URL + '?mode=signup';
+  }
+  
+  // 섹션 스크롤 (네비 메뉴)
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const navHeight = 70; // 네비 높이 보정
+      const top = el.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+  
+  // 맨 위로 스크롤 (로고)
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  // ═══════════════════════════════════════
+  // NAVBAR scroll effect
+  // ═══════════════════════════════════════
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
     if (window.scrollY > 40) {
@@ -2588,7 +2790,7 @@
     dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.idx, 10)));
   });
   
-  // Touch swipe
+  // ─── Touch swipe (slider) ───
   const viewport = document.querySelector('.slider-viewport');
   if (viewport) {
     let sx = 0, ex = 0;
@@ -2598,12 +2800,6 @@
       const d = sx - ex;
       if (Math.abs(d) > 50) changeSlide(d > 0 ? 1 : -1);
     }, { passive: true });
-  }
-  
-  // ─── Start App ───
-  function startApp() {
-    // Redirect to the actual PeachPost app
-    window.location.href = 'https://beforeafter-woad.vercel.app';
   }
 </script>
 
