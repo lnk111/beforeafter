@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>피치포스트 — 도입부 프리뷰</title>
+<title>피치포스트 — 조용히 돈을 쓸어담는 사장님들의 비밀</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
   
   :root {
     --cream: #faf4ec;
@@ -23,6 +24,10 @@
     --font-display: 'Nanum Myeongjo', serif;
     --font-body: 'Gowun Dodum', sans-serif;
     --font-soft: 'Gowun Batang', serif;
+    
+    /* Web-first container widths */
+    --container-wide: 1200px;
+    --container-narrow: 780px;
   }
   
   body {
@@ -37,106 +42,190 @@
     content: '';
     position: fixed;
     inset: 0;
-    background-image: radial-gradient(circle at 1px 1px, rgba(90,61,45,0.08) 1px, transparent 0);
-    background-size: 3px 3px;
+    background-image: radial-gradient(circle at 1px 1px, rgba(90,61,45,0.06) 1px, transparent 0);
+    background-size: 4px 4px;
     pointer-events: none;
     z-index: 1;
-    opacity: 0.4;
+    opacity: 0.3;
   }
   
-  /* ═══════════ LOGO BAR ═══════════ */
-  .top-bar {
+  section {
     position: relative;
-    z-index: 3;
-    padding: 28px 24px 0;
-    text-align: center;
+    z-index: 2;
+    padding: 100px 40px;
   }
   
-  .brand {
+  .container {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+  }
+  
+  .container-narrow {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+  }
+  
+  /* ═══════════════════════════════════════
+     NAVIGATION BAR
+     ═══════════════════════════════════════ */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(250, 244, 236, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(232, 221, 201, 0.5);
+    padding: 16px 40px;
+    transition: padding 0.3s, background 0.3s;
+  }
+  
+  .navbar.scrolled {
+    padding: 12px 40px;
+    background: rgba(250, 244, 236, 0.95);
+  }
+  
+  .nav-inner {
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  
+  .nav-logo-peach {
+    font-size: 1.4rem;
+  }
+  
+  .nav-logo-text {
     font-family: var(--font-display);
     font-weight: 800;
+    font-size: 1rem;
+    color: var(--ink);
+    letter-spacing: 0.15em;
+  }
+  
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  
+  .nav-link {
+    font-family: var(--font-body);
     font-size: 0.9rem;
-    color: var(--peach);
-    letter-spacing: 0.35em;
-    margin-bottom: 4px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-weight: 500;
   }
   
-  .brand-peach {
-    font-size: 1.4rem;
-    display: inline-block;
-    margin-top: 6px;
+  .nav-link:hover {
+    color: var(--coral);
   }
   
-  /* ═══════════ HOOK (main) ═══════════ */
+  .nav-cta {
+    padding: 10px 22px;
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(255, 107, 90, 0.3);
+  }
+  
+  .nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 107, 90, 0.4);
+  }
+  
+  /* ═══════════════════════════════════════
+     HOOK (Hero)
+     ═══════════════════════════════════════ */
   .hook {
-    min-height: 85vh;
-    padding: 80px 24px 60px;
-    max-width: none;
-    background: var(--cream);
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 160px 40px 100px;
     position: relative;
-    z-index: 2;
     overflow: hidden;
   }
   
   .hook::before {
     content: '';
     position: absolute;
-    top: -150px;
-    right: -150px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, var(--peach-soft) 0%, transparent 70%);
-    opacity: 0.35;
+    top: -200px;
+    right: -200px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, var(--peach-soft) 0%, transparent 65%);
+    opacity: 0.4;
     border-radius: 50%;
-    pointer-events: none;
-    animation: gentle-float 6s ease-in-out infinite;
+    animation: floatSlow 8s ease-in-out infinite;
   }
   
   .hook::after {
     content: '';
     position: absolute;
-    bottom: -100px;
-    left: -100px;
-    width: 400px;
-    height: 400px;
+    bottom: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
     background: radial-gradient(circle, var(--coral) 0%, transparent 70%);
-    opacity: 0.15;
+    opacity: 0.18;
     border-radius: 50%;
-    pointer-events: none;
   }
   
-  .hook-inner {
-    max-width: 560px;
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-30px) rotate(5deg); }
+  }
+  
+  .hook-content {
+    max-width: 900px;
     margin: 0 auto;
     text-align: center;
     position: relative;
     z-index: 2;
-    animation: fadeInUp 1s ease-out;
   }
   
-  .hook-tag {
+  .hook-peach {
+    font-size: 4rem;
+    margin-bottom: 24px;
     display: inline-block;
-    font-family: var(--font-soft);
-    font-size: 0.78rem;
-    color: var(--peach);
-    letter-spacing: 0.35em;
-    margin-bottom: 36px;
-    padding: 8px 20px;
-    background: rgba(255, 138, 107, 0.1);
-    border-radius: 100px;
-    border: 1px solid rgba(255, 138, 107, 0.2);
+    animation: bounce-peach 3s ease-in-out infinite;
+  }
+  
+  @keyframes bounce-peach {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
   }
   
   .hook-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 2.1rem;
-    line-height: 1.45;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    line-height: 1.35;
     color: var(--ink);
     letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    animation: fadeInUp 1s ease-out 0.2s backwards;
   }
   
   .hook-accent {
@@ -149,9 +238,9 @@
   .hook-accent::after {
     content: '';
     position: absolute;
-    left: -4px;
-    right: -4px;
-    bottom: 0;
+    bottom: -4px;
+    left: 0;
+    right: 0;
     height: 12px;
     background: var(--peach-soft);
     opacity: 0.45;
@@ -159,73 +248,158 @@
     border-radius: 6px;
   }
   
-  .hook-scroll {
-    margin-top: 50px;
+  .hook-subtitle {
+    font-family: var(--font-soft);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--ink-soft);
+    margin-bottom: 48px;
+    animation: fadeInUp 1s ease-out 0.4s backwards;
+  }
+  
+  .hook-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    animation: fadeInUp 1s ease-out 0.6s backwards;
+  }
+  
+  .btn-primary {
+    padding: 18px 42px;
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: 100px;
     font-family: var(--font-display);
-    font-size: 1.3rem;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 8px 24px rgba(255, 107, 90, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(255, 107, 90, 0.45);
+  }
+  
+  .btn-secondary {
+    padding: 18px 36px;
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn-secondary:hover {
+    border-color: var(--peach);
+    color: var(--coral);
+    background: rgba(255, 138, 107, 0.06);
+  }
+  
+  .hook-badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    animation: fadeInUp 1s ease-out 0.8s backwards;
+  }
+  
+  .hook-badge {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 7px 14px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+  }
+  
+  .hook-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
     color: var(--peach);
-    animation: bounce-scroll 2s ease-in-out infinite;
+    animation: scrollBounce 2s ease-in-out infinite;
   }
   
-  @keyframes bounce-scroll {
-    0%, 100% { transform: translateY(0); opacity: 0.5; }
-    50% { transform: translateY(10px); opacity: 1; }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.4; }
+    50% { transform: translateX(-50%) translateY(10px); opacity: 1; }
   }
   
-  /* ═══════════ OPENING (quote bubbles) ═══════════ */
+  /* ═══════════════════════════════════════
+     OPENING (quote bubbles)
+     ═══════════════════════════════════════ */
   .opening {
-    position: relative;
-    z-index: 2;
-    padding: 80px 28px 90px !important;
-    max-width: 560px;
-    margin: 0 auto;
+    background: var(--cream-deep);
+    padding: 120px 40px;
+  }
+  
+  .opening-header {
     text-align: center;
+    margin-bottom: 56px;
   }
   
   .opening-label {
     display: inline-block;
     font-family: var(--font-soft);
-    font-size: 0.72rem;
+    font-size: 0.85rem;
     color: var(--muted);
-    padding: 7px 16px;
+    padding: 8px 20px;
     border: 1px solid var(--line);
     border-radius: 100px;
-    margin-bottom: 36px;
+    background: var(--cream);
     letter-spacing: 0.1em;
-    background: var(--cream-deep);
-    animation: fadeInUp 0.8s ease-out;
+  }
+  
+  .bubble-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: var(--container-wide);
+    margin: 0 auto;
   }
   
   .opening-bubble {
     background: var(--cream);
     border: 1.5px solid var(--line);
     border-radius: 24px;
-    padding: 28px 28px 28px 42px;
-    margin: 18px auto;
-    max-width: 440px;
-    text-align: left;
+    padding: 40px 32px 40px 48px;
     position: relative;
     box-shadow: 0 4px 14px rgba(45, 24, 16, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
   }
   
-  .opening-bubble:nth-child(2) {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .opening-bubble:nth-child(3) {
-    margin-left: auto;
-    margin-right: auto;
-    background: var(--cream-deep);
+  .opening-bubble:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(45, 24, 16, 0.08);
   }
   
   .bubble-quote {
     position: absolute;
-    top: 12px;
-    left: 18px;
+    top: 16px;
+    left: 20px;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 2.8rem;
+    font-size: 3.5rem;
     color: var(--peach);
     line-height: 1;
     opacity: 0.5;
@@ -234,50 +408,51 @@
   .bubble-text {
     font-family: var(--font-soft);
     font-weight: 700;
-    font-size: 1.1rem;
-    line-height: 1.65;
+    font-size: 1.15rem;
+    line-height: 1.7;
     color: var(--ink);
-    margin: 0;
-    padding-left: 4px;
   }
   
-  /* ═══════════ HEADLINE ═══════════ */
+  /* ═══════════════════════════════════════
+     HEADLINE
+     ═══════════════════════════════════════ */
   .headline-section {
-    padding: 100px 24px 120px;
-    max-width: 720px;
-    margin: 0 auto;
+    padding: 140px 40px;
     text-align: center;
-    position: relative;
-    z-index: 2;
   }
   
-  .headline-label {
+  .headline-tag {
+    display: inline-block;
     font-family: var(--font-soft);
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
+    font-size: 0.85rem;
     color: var(--peach);
-    margin-bottom: 28px;
+    padding: 8px 20px;
+    background: rgba(255, 138, 107, 0.1);
+    border-radius: 100px;
+    letter-spacing: 0.15em;
+    margin-bottom: 36px;
   }
   
-  .headline {
+  .headline-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 2.2rem;
+    font-size: clamp(1.8rem, 4vw, 3rem);
     line-height: 1.4;
     color: var(--ink);
-    letter-spacing: -0.02em;
+    max-width: 800px;
+    margin: 0 auto 40px;
   }
   
-  .headline .accent {
+  .headline-title .accent {
     color: var(--coral);
     position: relative;
     white-space: nowrap;
   }
   
-  .headline .accent::after {
+  .headline-title .accent::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: 0;
     left: 0;
     right: 0;
     height: 10px;
@@ -288,232 +463,152 @@
   }
   
   .headline-sub {
-    margin-top: 36px;
-    font-family: var(--font-soft);
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--ink-soft);
-  }
-  
-  .headline-secondary {
-    margin-top: 60px;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
     line-height: 1.5;
     color: var(--ink-soft);
-    letter-spacing: -0.01em;
+    margin-top: 56px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
-  .headline-secondary .accent {
+  .headline-sub .accent {
     color: var(--coral);
     position: relative;
-    white-space: nowrap;
   }
   
-  .headline-secondary .accent::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    right: 0;
-    height: 8px;
-    background: var(--peach-soft);
-    opacity: 0.4;
-    z-index: -1;
-    border-radius: 4px;
-  }
-  
-  /* ═══════════ QUESTIONS ═══════════ */
-  .questions {
-    padding: 100px 28px;
-    background: var(--cream-deep);
-    max-width: none;
-    position: relative;
-    z-index: 2;
-  }
-  
-  .questions-inner {
-    max-width: 560px;
-    margin: 0 auto;
-  }
-  
-  .q-tag {
-    display: block;
+  /* ═══════════════════════════════════════
+     PROMISE
+     ═══════════════════════════════════════ */
+  .promise {
+    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
+    padding: 140px 40px;
     text-align: center;
-    font-family: var(--font-soft);
-    font-size: 0.72rem;
-    letter-spacing: 0.3em;
-    color: var(--muted);
-    margin-bottom: 40px;
   }
   
-  .question {
+  .promise-strikes {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  
+  .promise-strike {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--muted);
+    position: relative;
+    padding: 0 8px;
+  }
+  
+  .promise-strike::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 52%;
+    height: 3px;
+    background: var(--coral);
+    transform: rotate(-4deg);
+    opacity: 0.75;
+  }
+  
+  .promise-arrow {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--peach);
+    margin-bottom: 32px;
+  }
+  
+  .promise-answer {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1.5;
     color: var(--ink);
-    text-align: center;
-    margin: 60px 0;
-    position: relative;
   }
   
-  .question::before {
-    content: '—';
-    display: block;
-    color: var(--peach);
-    font-size: 1rem;
-    margin-bottom: 20px;
-    letter-spacing: 0.3em;
-  }
-  
-  .question-soft {
-    color: var(--ink-soft);
-  }
-  
-  /* ═══════════ HARD TRUTH ═══════════ */
-  .truth {
-    padding: 130px 28px;
-    background: var(--ink);
-    color: var(--cream);
-    max-width: none;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-  }
-  
-  .truth::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(255, 107, 90, 0.18) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  
-  .truth-inner {
-    max-width: 560px;
-    margin: 0 auto;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-  }
-  
-  .truth-label {
-    font-family: var(--font-soft);
-    font-size: 0.72rem;
-    color: var(--peach);
-    letter-spacing: 0.35em;
-    margin-bottom: 40px;
-  }
-  
-  .truth-text {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 1.3rem;
-    line-height: 1.8;
-    color: rgba(250, 244, 236, 0.85);
-    margin-bottom: 20px;
-  }
-  
-  .truth-text strong {
-    color: var(--cream);
-    font-weight: 800;
-  }
-  
-  .truth-punch {
-    margin-top: 40px;
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 1.8rem;
-    line-height: 1.5;
-    color: var(--cream);
-  }
-  
-  .truth-punch em {
+  .promise-answer em {
     font-style: normal;
-    color: var(--peach);
-    position: relative;
     display: inline-block;
+    color: var(--coral);
+    padding: 0 16px;
+    position: relative;
+    font-size: 1.3em;
   }
   
-  .truth-punch em::before {
+  .promise-answer em::before {
     content: '';
     position: absolute;
-    left: -6px;
-    right: -6px;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 100%;
-    border: 2px solid var(--peach);
-    border-radius: 6px;
-    opacity: 0.5;
+    inset: -4px -12px;
+    background: var(--peach-soft);
+    opacity: 0.3;
+    border-radius: 10px;
+    z-index: -1;
   }
   
-  .truth-sigh {
-    display: block;
-    margin-top: 60px;
-    font-family: var(--font-soft);
-    font-size: 1.5rem;
-    opacity: 0.4;
-    letter-spacing: 0.3em;
-  }
-  
-  /* ═══════════ RELIEF / PROMISE ═══════════ */
+  /* ═══════════════════════════════════════
+     RELIEF (dark)
+     ═══════════════════════════════════════ */
   .relief {
-    padding: 120px 28px;
     background: var(--ink);
     color: var(--cream);
-    max-width: none;
-    position: relative;
-    z-index: 2;
+    padding: 160px 40px;
     text-align: center;
     overflow: hidden;
+    position: relative;
   }
   
   .relief::before {
     content: '';
     position: absolute;
     top: -100px;
-    left: -100px;
-    width: 400px;
-    height: 400px;
+    left: 10%;
+    width: 500px;
+    height: 500px;
     background: radial-gradient(circle, var(--coral) 0%, transparent 70%);
-    opacity: 0.18;
+    opacity: 0.2;
     border-radius: 50%;
   }
   
   .relief::after {
     content: '';
     position: absolute;
-    bottom: -120px;
-    right: -100px;
-    width: 450px;
-    height: 450px;
+    bottom: -150px;
+    right: 10%;
+    width: 500px;
+    height: 500px;
     background: radial-gradient(circle, var(--peach) 0%, transparent 70%);
     opacity: 0.15;
     border-radius: 50%;
   }
   
   .relief-inner {
-    max-width: 560px;
-    margin: 0 auto;
     position: relative;
     z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .relief-peach {
+    font-size: 3rem;
+    margin-bottom: 24px;
+    animation: bounce-peach 3s ease-in-out infinite;
+    display: inline-block;
   }
   
   .relief-tag {
     display: inline-block;
     font-family: var(--font-soft);
-    font-size: 0.78rem;
-    letter-spacing: 0.3em;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
     color: var(--peach);
     margin-bottom: 40px;
-    padding: 7px 16px;
+    padding: 8px 20px;
     background: rgba(255, 138, 107, 0.15);
     border-radius: 100px;
   }
@@ -521,10 +616,10 @@
   .relief-top {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.7rem;
-    line-height: 1.55;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.5;
     color: var(--cream);
-    margin-bottom: 10px;
+    margin-bottom: 24px;
   }
   
   .relief-top strong {
@@ -533,7 +628,7 @@
   }
   
   .relief-divider {
-    width: 40px;
+    width: 60px;
     height: 2px;
     background: var(--peach);
     margin: 40px auto;
@@ -542,7 +637,7 @@
   .relief-bottom {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: clamp(1.4rem, 3vw, 2rem);
     line-height: 1.65;
     color: rgba(250, 244, 236, 0.85);
   }
@@ -551,150 +646,89 @@
     font-style: normal;
     color: var(--peach);
     font-weight: 800;
-    font-size: 2rem;
-    display: inline-block;
-    margin: 6px 0;
+    font-size: 1.3em;
   }
   
-  /* ═══════════ CORE PROMISE ═══════════ */
-  .promise {
-    padding: 120px 28px;
-    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
-    max-width: none;
+  /* ═══════════════════════════════════════
+     FEATURES (3-col on web, stacked on mobile)
+     ═══════════════════════════════════════ */
+  .features {
+    padding: 140px 40px;
+  }
+  
+  .features-header {
     text-align: center;
-    position: relative;
-    z-index: 2;
+    margin-bottom: 80px;
   }
   
-  .promise-inner {
-    max-width: 560px;
-    margin: 0 auto;
-  }
-  
-  .promise-row {
-    margin: 14px 0;
-  }
-  
-  .promise-strike {
+  .features-tag {
     display: inline-block;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: var(--muted);
-    position: relative;
-    padding: 0 6px;
-  }
-  
-  .promise-strike::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 2px;
-    background: var(--coral);
-    transform: rotate(-4deg);
-    opacity: 0.7;
-  }
-  
-  .promise-arrow {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
+    font-family: var(--font-soft);
+    font-size: 0.85rem;
     color: var(--peach);
-    margin: 30px 0;
-    font-weight: 700;
+    padding: 8px 20px;
+    background: rgba(255, 138, 107, 0.1);
+    border-radius: 100px;
+    letter-spacing: 0.15em;
+    margin-bottom: 24px;
   }
   
-  .promise-answer {
+  .features-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 2rem;
-    line-height: 1.5;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
     color: var(--ink);
-    letter-spacing: -0.02em;
+    line-height: 1.4;
   }
   
-  .promise-answer em {
-    font-style: normal;
-    display: inline-block;
-    font-size: 2.8rem;
-    color: var(--coral);
-    padding: 0 12px;
-    position: relative;
-  }
-  
-  .promise-answer em::before {
-    content: '';
-    position: absolute;
-    inset: -4px -8px;
-    background: var(--peach-soft);
-    opacity: 0.35;
-    border-radius: 8px;
-    z-index: -1;
-  }
-  
-  /* ═══════════ HOW IT WORKS ═══════════ */
-  .how {
-    padding: 100px 24px;
-    background: var(--cream-deep);
-    max-width: none;
-    position: relative;
-    z-index: 2;
-  }
-  
-  .how-inner {
-    max-width: 560px;
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: var(--container-wide);
     margin: 0 auto;
-  }
-  
-  .how-tag {
-    display: block;
-    text-align: center;
-    font-family: var(--font-soft);
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    color: var(--peach);
-    margin-bottom: 50px;
   }
   
   .feature-card {
     background: var(--cream);
     border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 32px 26px 32px 80px;
-    margin-bottom: 20px;
+    border-radius: 24px;
+    padding: 40px 32px;
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(45, 24, 16, 0.04);
+    box-shadow: 0 4px 14px rgba(45, 24, 16, 0.04);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(45, 24, 16, 0.1);
   }
   
   .feature-num {
-    position: absolute;
-    left: 24px;
-    top: 26px;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     color: var(--peach-soft);
     line-height: 1;
+    margin-bottom: 20px;
   }
   
   .feature-pain {
     font-family: var(--font-body);
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: var(--muted);
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     text-decoration: line-through;
     text-decoration-color: var(--coral);
-    text-decoration-thickness: 1.5px;
+    text-decoration-thickness: 2px;
   }
   
   .feature-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: var(--ink);
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     line-height: 1.4;
   }
   
@@ -702,7 +736,7 @@
     font-family: var(--font-soft);
     font-size: 0.95rem;
     color: var(--ink-soft);
-    line-height: 1.7;
+    line-height: 1.75;
   }
   
   .feature-desc strong {
@@ -710,223 +744,583 @@
     font-weight: 700;
   }
   
-  /* ═══════════ INDUSTRIES (case-study style) ═══════════ */
-  .industries {
-    padding: 110px 24px;
-    background: var(--cream);
-    max-width: none;
-    position: relative;
-    z-index: 2;
+  /* ═══════════════════════════════════════
+     INSTAGRAM COMPARE DEMO
+     ═══════════════════════════════════════ */
+  .demo-section {
+    background: var(--cream-deep);
+    padding: 140px 40px;
   }
   
-  .industries-inner {
-    max-width: 620px;
+  .demo-header {
+    text-align: center;
+    margin-bottom: 80px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .demo-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  
+  .demo-title .accent {
+    color: var(--coral);
+  }
+  
+  .demo-desc {
+    font-family: var(--font-soft);
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+  }
+  
+  .insta-compare {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: center;
+    max-width: 900px;
     margin: 0 auto;
+  }
+  
+  .insta-post {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(45, 24, 16, 0.12);
+    display: flex;
+    flex-direction: column;
+    max-width: 380px;
+    width: 100%;
+    justify-self: center;
+  }
+  
+  .insta-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .insta-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  
+  .ia-before {
+    background: linear-gradient(135deg, #e0e0e0, #a0a0a0);
+  }
+  
+  .ia-after {
+    background: linear-gradient(135deg, #ffb89e, #ff6b5a);
+  }
+  
+  .insta-name {
+    flex: 1;
+  }
+  
+  .insta-username {
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #262626;
+  }
+  
+  .insta-label {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-top: 1px;
+  }
+  
+  .label-before {
+    color: var(--coral);
+  }
+  
+  .label-after {
+    color: var(--peach);
+  }
+  
+  .insta-dots {
+    color: #8e8e8e;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+  
+  .insta-image-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+  
+  .insta-img-cropped svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  
+  .crop-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255, 107, 90, 0.5),
+      rgba(255, 107, 90, 0.5) 8px,
+      rgba(255, 107, 90, 0.7) 8px,
+      rgba(255, 107, 90, 0.7) 16px
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(255, 255, 255, 0.85);
+  }
+  
+  .crop-top {
+    top: 0;
+    height: 15%;
+    border-top: none;
+  }
+  
+  .crop-bottom {
+    bottom: 0;
+    height: 15%;
+    border-bottom: none;
+  }
+  
+  .crop-indicator span {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.78rem;
+    color: white;
+    background: rgba(0, 0, 0, 0.65);
+    padding: 4px 10px;
+    border-radius: 5px;
+  }
+  
+  .insta-img-perfect {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fff3ec 0%, #ffd4c2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  
+  .perfect-photo {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 
+      0 6px 18px rgba(45, 24, 16, 0.2),
+      0 0 0 3px rgba(255, 255, 255, 0.95);
+  }
+  
+  .perfect-photo svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  
+  .insta-actions {
+    padding: 10px 14px 4px;
+    display: flex;
+    gap: 14px;
+  }
+  
+  .insta-icon {
+    font-size: 1.15rem;
+  }
+  
+  .insta-bookmark {
+    margin-left: auto;
+  }
+  
+  .insta-caption {
+    padding: 6px 14px 14px;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  
+  .caption-bad {
+    color: var(--coral);
+  }
+  
+  .caption-good {
+    color: var(--peach);
+  }
+  
+  .compare-arrow {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--peach);
+    text-align: center;
+    padding: 16px;
+    background: var(--cream);
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(255, 138, 107, 0.3);
+    align-self: center;
+    justify-self: center;
+  }
+  
+  /* ═══════════════════════════════════════
+     INDUSTRIES (Slider)
+     ═══════════════════════════════════════ */
+  .industries {
+    padding: 140px 40px;
+  }
+  
+  .ind-header {
+    text-align: center;
+    margin-bottom: 64px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .ind-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.7rem;
-    line-height: 1.45;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
     color: var(--ink);
-    text-align: center;
+    line-height: 1.4;
     margin-bottom: 24px;
   }
   
   .ind-title strong {
-    font-weight: 800;
     color: var(--coral);
     background: linear-gradient(180deg, transparent 65%, var(--peach-soft) 65%);
-    padding: 0 4px;
+    padding: 0 6px;
   }
   
   .ind-divider {
-    width: 50px;
+    width: 60px;
     height: 1px;
     background: var(--ink-soft);
-    opacity: 0.3;
+    opacity: 0.25;
     margin: 0 auto 20px;
   }
   
   .ind-subtitle {
-    text-align: center;
     font-family: var(--font-soft);
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: var(--muted);
-    margin-bottom: 50px;
   }
   
-  /* Case Card - chart background + overlay */
-  .case-card {
-    position: relative;
+  .slider-card {
     background: #fefaf3;
     border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 40px 24px;
-    box-shadow: 0 8px 24px rgba(45, 24, 16, 0.06);
-    overflow: hidden;
-    margin-bottom: 40px;
-    min-height: 580px;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 10px 30px rgba(45, 24, 16, 0.06);
+    max-width: 900px;
+    margin: 0 auto 48px;
   }
   
-  .case-chart {
-    position: absolute;
-    inset: 40px 24px;
-    opacity: 0.7;
-    pointer-events: none;
-  }
-  
-  .case-chart svg {
-    width: 100%;
-    height: 100%;
-  }
-  
-  .case-overlay {
-    position: relative;
-    z-index: 2;
-    background: #1a0d08;
-    color: var(--cream);
-    border-radius: 14px;
-    padding: 22px 20px 18px;
-    max-width: 340px;
-    margin: 20px auto 0;
-    box-shadow: 
-      0 8px 24px rgba(0, 0, 0, 0.2),
-      0 2px 6px rgba(45, 24, 16, 0.15);
-  }
-  
-  .case-header {
+  .slider-tabs {
     display: flex;
-    align-items: center;
     gap: 10px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(250, 244, 236, 0.15);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
   
-  .case-peach {
-    width: 32px;
-    height: 32px;
-    background: var(--cream);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-  }
+  .slider-tabs::-webkit-scrollbar { display: none; }
   
-  .case-title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 0.9rem;
-    color: var(--peach);
-    letter-spacing: 0.02em;
-  }
-  
-  .case-list {
+  .tab-btn {
+    flex: 1;
+    min-width: 90px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 12px;
+    background: transparent;
+    border: 1.5px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
   }
   
-  .case-item {
+  .tab-btn:hover {
+    background: var(--cream-deep);
+  }
+  
+  .tab-active {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  
+  .tab-emoji {
+    font-size: 1.6rem;
+  }
+  
+  .tab-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  
+  .tab-active .tab-name {
+    color: var(--peach);
+  }
+  
+  .slider-viewport {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #1a0d08;
+    min-height: 420px;
+  }
+  
+  .slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(250, 244, 236, 0.95);
+    border: none;
+    cursor: pointer;
+    font-size: 1.6rem;
+    color: var(--ink);
     display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    line-height: 1;
+    padding-bottom: 3px;
   }
   
-  .case-emoji {
-    flex-shrink: 0;
-    font-size: 1.2rem;
-    width: 26px;
-    height: 26px;
-    background: rgba(255, 138, 107, 0.15);
-    border-radius: 6px;
+  .slider-arrow:hover {
+    background: var(--peach);
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .arrow-prev { left: 16px; }
+  .arrow-next { right: 16px; }
+  
+  .slide {
+    display: none;
+    padding: 32px;
+    animation: slideIn 0.4s ease-out;
+  }
+  
+  .slide.slide-active {
+    display: block;
+  }
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  .slide-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(250, 244, 236, 0.12);
+  }
+  
+  .slide-emoji {
+    font-size: 1.8rem;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 138, 107, 0.2);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
-  .case-text {
-    flex: 1;
-    min-width: 0;
+  .slide-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--cream);
   }
   
-  .case-name {
+  .slide-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: rgba(250, 244, 236, 0.6);
+  }
+  
+  .slide-layout {
+    margin-left: auto;
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--cream);
-    margin-bottom: 2px;
+    font-size: 0.78rem;
+    color: var(--peach);
+    padding: 5px 12px;
+    background: rgba(255, 138, 107, 0.18);
+    border-radius: 100px;
   }
   
-  .case-desc {
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    color: rgba(250, 244, 236, 0.6);
-    line-height: 1.4;
+  .ba-frame {
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--cream-deep);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    max-width: 600px;
+    margin: 0 auto;
   }
   
-  .case-timestamp {
-    margin-top: 16px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(250, 244, 236, 0.1);
-    text-align: right;
-    font-family: var(--font-soft);
-    font-size: 0.72rem;
-    color: rgba(255, 138, 107, 0.7);
-    letter-spacing: 0.05em;
+  .ba-horizontal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    background: #1a0d08;
+    aspect-ratio: 16 / 9;
+  }
+  
+  .ba-vertical {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 3px;
+    background: #1a0d08;
+    aspect-ratio: 4 / 5;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  
+  .ba-half {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .ba-half svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  
+  .ba-label-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 5px;
+    letter-spacing: 0.1em;
+    backdrop-filter: blur(4px);
+  }
+  
+  .ba-after-tag {
+    background: var(--coral);
+  }
+  
+  .slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--line);
+    cursor: pointer;
+    transition: all 0.25s;
+    border: none;
+    padding: 0;
+  }
+  
+  .dot-active {
+    width: 28px;
+    border-radius: 100px;
+    background: var(--coral);
   }
   
   .ind-more {
+    max-width: 900px;
+    margin: 0 auto 32px;
     text-align: center;
-    padding: 22px 18px;
+    padding: 24px 28px;
     background: var(--cream-deep);
-    border-radius: 14px;
+    border-radius: 16px;
     border: 1px dashed var(--line);
-    margin-bottom: 40px;
   }
   
   .ind-more-tag {
     display: inline-block;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 0.68rem;
-    letter-spacing: 0.25em;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
     color: var(--peach);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   
   .ind-more-text {
     font-family: var(--font-body);
-    font-size: 0.82rem;
+    font-size: 0.95rem;
     line-height: 1.75;
     color: var(--ink-soft);
   }
   
   .ind-common {
+    max-width: 900px;
+    margin: 0 auto;
     background: linear-gradient(180deg, #fff3ec 0%, #ffe1d2 100%);
-    border-radius: 20px;
-    padding: 32px 24px;
+    border-radius: 24px;
+    padding: 40px 32px;
     text-align: center;
     border: 1.5px solid var(--peach-soft);
-    box-shadow: 0 6px 20px rgba(255, 138, 107, 0.18);
+    box-shadow: 0 6px 20px rgba(255, 138, 107, 0.15);
   }
   
   .ind-common-line {
     font-family: var(--font-soft);
-    font-size: 0.88rem;
+    font-size: 1rem;
     color: var(--coral);
-    margin-bottom: 14px;
-    letter-spacing: 0.05em;
+    margin-bottom: 16px;
   }
   
   .ind-common-msg {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.15rem;
-    line-height: 1.65;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    line-height: 1.7;
     color: var(--ink);
   }
   
@@ -940,300 +1334,210 @@
     font-weight: 800;
     color: var(--ink);
     background: var(--cream);
-    padding: 2px 10px;
-    border-radius: 8px;
+    padding: 4px 14px;
+    border-radius: 10px;
     display: inline-block;
-    margin-top: 4px;
-    box-shadow: 0 2px 6px rgba(45, 24, 16, 0.08);
+    margin-top: 6px;
+    box-shadow: 0 2px 8px rgba(45, 24, 16, 0.08);
   }
   
-  /* ═══════════ BEFORE / AFTER ═══════════ */
+  /* ═══════════════════════════════════════
+     BEFORE / AFTER LIFESTYLE
+     ═══════════════════════════════════════ */
   .ba-section {
-    padding: 100px 20px;
-    background: var(--cream);
-    max-width: none;
-    position: relative;
-    z-index: 2;
+    padding: 140px 40px;
+    background: var(--cream-deep);
   }
   
-  .ba-inner {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  
-  .ba-tag {
-    display: block;
+  .ba-section-header {
     text-align: center;
+    margin-bottom: 64px;
+  }
+  
+  .ba-section-tag {
+    display: inline-block;
     font-family: var(--font-soft);
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
+    font-size: 0.85rem;
     color: var(--peach);
-    margin-bottom: 40px;
+    padding: 8px 20px;
+    background: rgba(255, 138, 107, 0.1);
+    border-radius: 100px;
+    letter-spacing: 0.15em;
   }
   
   .ba-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 24px;
+    max-width: var(--container-wide);
+    margin: 0 auto;
   }
   
   .ba-col {
-    padding: 28px 20px;
-    border-radius: 18px;
+    padding: 48px 40px;
+    border-radius: 24px;
     border: 1px solid var(--line);
   }
   
-  .ba-before {
+  .ba-col-before {
     background: #f5efe4;
     color: var(--muted);
   }
   
-  .ba-after {
+  .ba-col-after {
     background: linear-gradient(180deg, #fff3ec 0%, #ffe1d2 100%);
     border-color: var(--peach-soft);
-    box-shadow: 0 4px 16px rgba(255, 138, 107, 0.15);
+    box-shadow: 0 8px 24px rgba(255, 138, 107, 0.15);
   }
   
-  .ba-label {
+  .ba-col-label {
     font-family: var(--font-soft);
-    font-size: 0.78rem;
-    letter-spacing: 0.15em;
-    margin-bottom: 8px;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
     opacity: 0.7;
   }
   
-  .ba-after .ba-label {
+  .ba-col-after .ba-col-label {
     color: var(--coral);
     opacity: 1;
     font-weight: 700;
   }
   
-  .ba-time {
+  .ba-col-time {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.4rem;
-    margin-bottom: 18px;
+    font-size: 2rem;
+    margin-bottom: 28px;
     color: inherit;
   }
   
-  .ba-after .ba-time {
+  .ba-col-after .ba-col-time {
     color: var(--ink);
   }
   
-  .ba-list {
+  .ba-col-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 20px 0;
+    margin: 0 0 32px 0;
   }
   
-  .ba-list li {
+  .ba-col-list li {
     font-family: var(--font-body);
-    font-size: 0.82rem;
-    line-height: 1.6;
-    padding: 6px 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    padding: 10px 0;
     position: relative;
-    padding-left: 14px;
+    padding-left: 18px;
   }
   
-  .ba-list li::before {
+  .ba-col-list li::before {
     content: '·';
     position: absolute;
     left: 0;
-    top: 2px;
     font-weight: 700;
+    font-size: 1.2rem;
   }
   
-  .ba-after .ba-list li {
+  .ba-col-after .ba-col-list li {
     color: var(--ink);
   }
   
-  .ba-feeling {
+  .ba-col-feeling {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     text-align: center;
-    padding-top: 16px;
+    padding-top: 20px;
     border-top: 1px dashed var(--line);
   }
   
-  .ba-after .ba-feeling {
+  .ba-col-after .ba-col-feeling {
     color: var(--coral);
     border-top-color: var(--peach-soft);
   }
   
-  /* ═══════════ CLOSING ═══════════ */
-  .closing {
-    padding: 130px 28px;
-    background: var(--ink);
-    color: var(--cream);
-    max-width: none;
+  /* ═══════════════════════════════════════
+     COUNTER
+     ═══════════════════════════════════════ */
+  .counter-section {
+    padding: 140px 40px;
     text-align: center;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-  }
-  
-  .closing::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    left: -100px;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, var(--coral) 0%, transparent 70%);
-    opacity: 0.18;
-    border-radius: 50%;
-  }
-  
-  .closing::after {
-    content: '';
-    position: absolute;
-    bottom: -120px;
-    right: -100px;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, var(--peach) 0%, transparent 70%);
-    opacity: 0.15;
-    border-radius: 50%;
-  }
-  
-  .closing-inner {
-    max-width: 560px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-  }
-  
-  .closing-peach {
-    font-size: 3rem;
-    margin-bottom: 30px;
-    display: inline-block;
-    animation: gentle-float 3s ease-in-out infinite;
-  }
-  
-  @keyframes gentle-float {
-    0%, 100% { transform: translateY(0) rotate(-3deg); }
-    50% { transform: translateY(-10px) rotate(3deg); }
-  }
-  
-  .closing-text {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.8rem;
-    line-height: 1.55;
-    color: var(--cream);
-  }
-  
-  .closing-text strong {
-    color: var(--peach);
-    font-weight: 800;
-  }
-  
-  .closing-divider {
-    width: 40px;
-    height: 2px;
-    background: var(--peach);
-    margin: 40px auto;
-  }
-  
-  .closing-promise {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.5rem;
-    line-height: 1.65;
-    color: rgba(250, 244, 236, 0.85);
-  }
-  
-  .closing-promise em {
-    font-style: normal;
-    color: var(--peach);
-    font-weight: 800;
-    font-size: 2rem;
-    display: inline-block;
-    margin: 6px 0;
-  }
-  /* ═══════════ TIME COUNTER ═══════════ */
-  .counter {
-    padding: 110px 24px;
-    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
-    max-width: none;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-  }
-  
-  .counter-inner {
-    max-width: 560px;
-    margin: 0 auto;
   }
   
   .counter-tag {
+    display: inline-block;
     font-family: var(--font-soft);
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
+    font-size: 0.85rem;
     color: var(--peach);
+    letter-spacing: 0.25em;
     margin-bottom: 24px;
+    padding: 8px 20px;
+    background: rgba(255, 138, 107, 0.1);
+    border-radius: 100px;
   }
   
   .counter-title {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.5rem;
-    line-height: 1.5;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
     color: var(--ink);
-    margin-bottom: 40px;
+    line-height: 1.5;
+    margin-bottom: 48px;
   }
   
   .counter-title strong {
     color: var(--coral);
-    font-weight: 800;
     background: linear-gradient(180deg, transparent 65%, var(--peach-soft) 65%);
-    padding: 0 4px;
+    padding: 0 6px;
   }
   
   .counter-card {
+    max-width: 600px;
+    margin: 0 auto;
     background: var(--cream);
     border: 1px solid var(--line);
     border-radius: 24px;
-    padding: 36px 28px 32px;
+    padding: 48px 32px 40px;
     position: relative;
     box-shadow: 
-      0 4px 16px rgba(45, 24, 16, 0.06),
-      0 20px 40px rgba(255, 138, 107, 0.12);
+      0 8px 24px rgba(45, 24, 16, 0.06),
+      0 30px 60px rgba(255, 138, 107, 0.15);
     overflow: hidden;
   }
   
   .counter-card::before {
     content: '';
     position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
+    top: -60px;
+    right: -60px;
+    width: 250px;
+    height: 250px;
     background: radial-gradient(circle, var(--peach-soft) 0%, transparent 70%);
-    opacity: 0.25;
+    opacity: 0.3;
     border-radius: 50%;
-    pointer-events: none;
   }
   
   .counter-live {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     background: rgba(255, 107, 90, 0.1);
     color: var(--coral);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.7rem;
-    padding: 5px 12px;
+    font-size: 0.8rem;
+    padding: 6px 16px;
     border-radius: 100px;
     letter-spacing: 0.15em;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
   }
   
   .live-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     background: var(--coral);
     border-radius: 50%;
     animation: pulse 1.5s ease-in-out infinite;
@@ -1247,74 +1551,65 @@
   .counter-number {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 5rem;
+    font-size: clamp(4rem, 10vw, 7rem);
     line-height: 1;
     color: var(--coral);
-    letter-spacing: -0.03em;
     margin: 8px 0 4px;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
-    transition: transform 0.1s;
-  }
-  
-  .counter-number.tick {
-    transform: scale(1.02);
+    position: relative;
+    z-index: 2;
   }
   
   .counter-unit {
     font-family: var(--font-soft);
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: var(--ink);
-    margin-bottom: 28px;
+    margin-bottom: 32px;
   }
   
   .counter-subcount {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    padding-top: 24px;
+    gap: 32px;
+    padding-top: 28px;
     border-top: 1px dashed var(--line);
     position: relative;
     z-index: 2;
   }
   
-  .sub-item { flex: 1; }
+  .sub-item { text-align: center; }
   
   .sub-label {
     font-family: var(--font-body);
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     color: var(--muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
   
   .sub-num {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: var(--ink);
     font-variant-numeric: tabular-nums;
   }
   
-  .sub-unit {
-    font-family: var(--font-soft);
-    font-size: 0.8rem;
-    color: var(--muted);
-  }
-  
   .sub-divider {
     width: 1px;
-    height: 40px;
+    height: 48px;
     background: var(--line);
   }
   
   .counter-desc {
+    max-width: 500px;
+    margin: 40px auto 0;
     font-family: var(--font-soft);
-    font-size: 1rem;
-    line-height: 1.8;
+    font-size: 1.05rem;
+    line-height: 1.7;
     color: var(--ink-soft);
-    margin: 36px 0 28px;
   }
   
   .counter-desc strong {
@@ -1323,19 +1618,15 @@
   }
   
   .counter-translate {
+    max-width: 500px;
+    margin: 24px auto 0;
     font-family: var(--font-body);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--muted);
-    line-height: 1.8;
-    padding: 18px 20px;
+    padding: 20px 24px;
     background: var(--cream);
     border-radius: 14px;
     border: 1px dashed var(--line);
-  }
-  
-  .counter-translate span {
-    display: inline-block;
-    margin: 0 4px;
   }
   
   .counter-translate em {
@@ -1343,122 +1634,124 @@
     font-family: var(--font-display);
     font-weight: 800;
     color: var(--peach);
-    font-size: 1rem;
   }
   
-  /* ═══════════ FINAL CTA ═══════════ */
+  /* ═══════════════════════════════════════
+     FINAL CTA
+     ═══════════════════════════════════════ */
   .final-cta {
-    padding: 100px 24px 110px;
-    background: var(--cream-deep);
+    padding: 160px 40px;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
     text-align: center;
-    max-width: none;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .final-cta::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, var(--peach-soft) 0%, transparent 60%);
+    opacity: 0.35;
+    border-radius: 50%;
+  }
+  
+  .final-inner {
     position: relative;
     z-index: 2;
-  }
-  
-  .final-cta-inner {
-    max-width: 560px;
+    max-width: 700px;
     margin: 0 auto;
   }
   
   .final-peach {
-    font-size: 3rem;
-    margin-bottom: 20px;
+    font-size: 4rem;
+    margin-bottom: 28px;
     display: inline-block;
-    animation: gentle-float 3s ease-in-out infinite;
+    animation: bounce-peach 3s ease-in-out infinite;
   }
   
   .final-title {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.8rem;
-    line-height: 1.5;
+    font-size: clamp(2rem, 4vw, 2.8rem);
     color: var(--ink);
-    margin-bottom: 36px;
+    line-height: 1.45;
+    margin-bottom: 48px;
   }
   
-  .final-btn {
-    display: inline-block;
-    padding: 18px 44px;
-    background: var(--coral);
-    color: white;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.05rem;
-    border-radius: 100px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 10px 28px rgba(255, 107, 90, 0.4);
-    letter-spacing: 0.05em;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  
-  .final-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 36px rgba(255, 107, 90, 0.5);
-  }
-  
-  .final-tags {
+  .final-buttons {
     display: flex;
+    gap: 16px;
     justify-content: center;
-    gap: 8px;
-    margin-top: 28px;
     flex-wrap: wrap;
   }
   
-  .final-tags span {
+  .final-badges {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  
+  .final-badges span {
     font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--muted);
-    padding: 6px 12px;
+    padding: 7px 14px;
+    background: var(--cream);
     border: 1px solid var(--line);
     border-radius: 100px;
-    background: var(--cream);
   }
   
-  .pause {
-    padding: 100px 28px;
+  /* ═══════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════ */
+  footer {
+    padding: 48px 40px;
+    background: var(--ink);
+    color: rgba(250, 244, 236, 0.6);
     text-align: center;
-    background: var(--cream);
-    max-width: none;
-    position: relative;
-    z-index: 2;
   }
   
-  .pause-inner {
-    max-width: 560px;
+  .footer-inner {
+    max-width: var(--container-wide);
     margin: 0 auto;
   }
   
-  .pause-dots {
+  .footer-logo {
+    font-family: var(--font-display);
+    font-weight: 800;
     color: var(--peach);
-    font-size: 1.5rem;
-    letter-spacing: 0.5em;
-    margin-bottom: 24px;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 16px;
   }
   
-  .pause-text {
-    font-family: var(--font-soft);
-    color: var(--muted);
-    font-size: 0.9rem;
+  .footer-text {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    line-height: 1.7;
   }
   
-  .pause-text strong {
-    color: var(--peach);
-    font-weight: 700;
-  }
-  
-  /* ─── animations ─── */
+  /* ═══════════════════════════════════════
+     ANIMATIONS & REVEAL
+     ═══════════════════════════════════════ */
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
   
   .reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 1s ease-out, transform 1s ease-out;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease-out, transform 0.9s ease-out;
   }
+  
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
@@ -1467,104 +1760,221 @@
   .reveal-delay-1 { transition-delay: 0.15s; }
   .reveal-delay-2 { transition-delay: 0.3s; }
   .reveal-delay-3 { transition-delay: 0.45s; }
+  
+  /* ═══════════════════════════════════════
+     RESPONSIVE — TABLET (max 980px)
+     ═══════════════════════════════════════ */
+  @media (max-width: 980px) {
+    section {
+      padding: 80px 32px;
+    }
+    
+    .features-grid {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+    }
+    
+    .bubble-grid {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+    }
+    
+    .insta-compare {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .compare-arrow {
+      transform: rotate(90deg);
+    }
+    
+    .nav-menu {
+      gap: 16px;
+    }
+    
+    .nav-link {
+      display: none;
+    }
+    
+    .ba-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* ═══════════════════════════════════════
+     RESPONSIVE — MOBILE (max 640px)
+     ═══════════════════════════════════════ */
+  @media (max-width: 640px) {
+    section {
+      padding: 70px 20px;
+    }
+    
+    .navbar {
+      padding: 12px 20px;
+    }
+    
+    .hook {
+      padding: 120px 20px 80px;
+    }
+    
+    .hook-buttons {
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .hook-buttons .btn-primary,
+    .hook-buttons .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .promise-strikes {
+      gap: 16px;
+    }
+    
+    .slider-card {
+      padding: 20px;
+    }
+    
+    .slide {
+      padding: 20px;
+    }
+    
+    .tab-btn {
+      min-width: 70px;
+      padding: 10px 8px;
+    }
+    
+    .tab-name {
+      font-size: 0.72rem;
+    }
+    
+    .counter-subcount {
+      gap: 20px;
+    }
+    
+    .ba-col {
+      padding: 32px 24px;
+    }
+    
+    .final-buttons {
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .final-buttons .btn-primary,
+    .final-buttons .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 </style>
 </head>
 <body>
 
-<!-- ══════════════ LOGO ══════════════ -->
-<div class="top-bar">
-  <div class="brand">PEACHPOST</div>
-  <div class="brand-peach">🍑</div>
-</div>
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <span class="nav-logo-peach">🍑</span>
+      <span class="nav-logo-text">PEACHPOST</span>
+    </div>
+    <div class="nav-menu">
+      <button class="nav-link" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">기능</button>
+      <button class="nav-link" onclick="document.getElementById('industries').scrollIntoView({behavior:'smooth'})">사용 업종</button>
+      <button class="nav-link" onclick="document.getElementById('counter').scrollIntoView({behavior:'smooth'})">성과</button>
+      <button class="nav-cta" onclick="startApp()">시작하기 →</button>
+    </div>
+  </div>
+</nav>
 
-<!-- ══════════════ HOOK (메인 훅) ══════════════ -->
+<!-- ══════════════ HOOK ══════════════ -->
 <section class="hook">
-  <div class="hook-inner">
+  <div class="hook-content">
+    <div class="hook-peach">🍑</div>
     <h1 class="hook-title">
-      조용히 돈을 쓸어담은<br>
-      사장님들이<br>
+      조용히 돈을 쓸어담은 사장님들이<br>
       <span class="hook-accent">일찍 퇴근하는 이유</span>,<br>
       알고 싶으신가요?
     </h1>
-    <div class="hook-scroll">
-      <span>↓</span>
+    <p class="hook-subtitle">
+      사장님은 사진만 찍어서 올려주세요. 나머지는 피치포스트가 다 해드릴게요.
+    </p>
+    <div class="hook-buttons">
+      <button class="btn-primary" onclick="startApp()">
+        피치포스트 시작하기 →
+      </button>
+      <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+        기능 알아보기
+      </button>
+    </div>
+    <div class="hook-badges">
+      <span class="hook-badge">✓ 무료로 시작</span>
+      <span class="hook-badge">✓ 카드 등록 불필요</span>
+      <span class="hook-badge">✓ 하루 3장 무료</span>
     </div>
   </div>
+  <div class="hook-scroll">↓</div>
 </section>
 
-<!-- ══════════════ OPENING (한 숨 고르기) ══════════════ -->
+<!-- ══════════════ OPENING ══════════════ -->
 <section class="opening">
-  <div class="opening-label">여러분들은 어떠신가요?</div>
-  
-  <div class="opening-bubble reveal">
-    <div class="bubble-quote">"</div>
-    <p class="bubble-text">
-      업무가 많아지니까<br>
-      홍보까지 할 시간이 없어요
-    </p>
+  <div class="opening-header">
+    <div class="opening-label reveal">여러분들은 어떠신가요?</div>
   </div>
-  
-  <div class="opening-bubble reveal reveal-delay-1">
-    <div class="bubble-quote">"</div>
-    <p class="bubble-text">
-      홍보는 마케팅 외주를<br>
-      맡기고 있어요
-    </p>
-  </div>
-  
-  <div class="opening-bubble reveal reveal-delay-2">
-    <div class="bubble-quote">"</div>
-    <p class="bubble-text">
-      아이디어는 많이 떠올렸지만<br>
-      만들지 못했어요
-    </p>
+  <div class="bubble-grid">
+    <div class="opening-bubble reveal">
+      <div class="bubble-quote">"</div>
+      <p class="bubble-text">
+        업무가 많아지니까<br>
+        홍보까지 할 시간이 없어요
+      </p>
+    </div>
+    <div class="opening-bubble reveal reveal-delay-1">
+      <div class="bubble-quote">"</div>
+      <p class="bubble-text">
+        홍보는 마케팅 외주를<br>
+        맡기고 있어요
+      </p>
+    </div>
+    <div class="opening-bubble reveal reveal-delay-2">
+      <div class="bubble-quote">"</div>
+      <p class="bubble-text">
+        아이디어는 많이 떠올렸지만<br>
+        만들지 못했어요
+      </p>
+    </div>
   </div>
 </section>
 
 <!-- ══════════════ HEADLINE ══════════════ -->
 <section class="headline-section">
-  <div class="headline-label reveal">— 매일 야근하는 우리 업계 —</div>
-  <h1 class="headline reveal reveal-delay-1">
-    SNS로 꾸준하게<br>
-    우리 회사를 <span class="accent">알리는 일</span>,<br>
-    쉽지 않으시죠?
-  </h1>
-  <h2 class="headline-secondary reveal reveal-delay-2">
-    사진은 찍어뒀는데<br>
-    막상 <span class="accent">올릴 사진</span>은 없어요
-  </h2>
-</section>
-
-<!-- ══════════════ RELIEF / TRANSITION ══════════════ -->
-<section class="relief">
-  <div class="relief-inner">
-    <div class="relief-tag reveal">— 그래서 만들었어요 —</div>
-    <p class="relief-top reveal reveal-delay-1">
-      사장님은<br>
-      <strong>사진만 찍어서</strong><br>
-      올려주세요.
-    </p>
-    <div class="relief-divider reveal reveal-delay-2"></div>
-    <p class="relief-bottom reveal reveal-delay-2">
-      나머지는<br>
-      <em>피치포스트가</em><br>
-      다 해드릴게요
+  <div class="container-narrow">
+    <div class="headline-tag reveal">— 매일 야근하는 우리 업계 —</div>
+    <h2 class="headline-title reveal reveal-delay-1">
+      SNS로 꾸준하게<br>
+      우리 회사를 <span class="accent">알리는 일</span>,<br>
+      쉽지 않으시죠?
+    </h2>
+    <p class="headline-sub reveal reveal-delay-2">
+      사진은 찍어뒀는데<br>
+      막상 <span class="accent">올릴 사진</span>은 없어요
     </p>
   </div>
 </section>
 
-<!-- ══════════════ CORE PROMISE ══════════════ -->
+<!-- ══════════════ PROMISE ══════════════ -->
 <section class="promise">
-  <div class="promise-inner">
-    <div class="promise-row reveal">
-      <span class="promise-strike">귀찮은 포스팅</span>
+  <div class="container-narrow">
+    <div class="promise-strikes">
+      <span class="promise-strike reveal">귀찮은 포스팅</span>
+      <span class="promise-strike reveal reveal-delay-1">어려운 포스팅</span>
     </div>
-    <div class="promise-row reveal reveal-delay-1">
-      <span class="promise-strike">어려운 포스팅</span>
-    </div>
-    
     <div class="promise-arrow reveal reveal-delay-2">↓</div>
-    
     <div class="promise-answer reveal reveal-delay-2">
       피치포스트는<br>
       <em>쉽게</em> 만들어드려요
@@ -1572,368 +1982,656 @@
   </div>
 </section>
 
-<!-- ══════════════ HOW IT WORKS ══════════════ -->
-<section class="how">
-  <div class="how-inner">
-    <div class="how-tag reveal">— 어떻게 쉬워지냐면요 —</div>
-    
-    <!-- Feature 1 -->
+<!-- ══════════════ RELIEF ══════════════ -->
+<section class="relief">
+  <div class="relief-inner">
+    <div class="relief-peach">🍑</div>
+    <div class="relief-tag reveal">— 그래서 만들었어요 —</div>
+    <p class="relief-top reveal reveal-delay-1">
+      사장님은<br>
+      <strong>사진만 찍어서</strong> 올려주세요.
+    </p>
+    <div class="relief-divider reveal reveal-delay-2"></div>
+    <p class="relief-bottom reveal reveal-delay-2">
+      나머지는<br>
+      <em>피치포스트가</em> 다 해드릴게요
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════ FEATURES ══════════════ -->
+<section class="features" id="features">
+  <div class="features-header">
+    <div class="features-tag reveal">— 어떻게 쉬워지냐면요 —</div>
+    <h2 class="features-title reveal reveal-delay-1">
+      사장님이 편해지는 3가지 방법
+    </h2>
+  </div>
+  <div class="features-grid">
     <div class="feature-card reveal">
       <div class="feature-num">01</div>
-      <div class="feature-body">
-        <div class="feature-pain">❌ 인스타 사이즈 안 맞아서 자르고 또 자르고</div>
-        <div class="feature-title">사이즈, 자동으로 딱 맞춰드려요</div>
-        <div class="feature-desc">
-          가로 사진이든 정사각이든 상관없어요.<br>
-          인스타 세로 사이즈에 맞게<br>
-          <strong>자동으로 배치</strong>해드립니다.
-        </div>
+      <div class="feature-pain">인스타 사이즈 안 맞아서 자르고 또 자르고</div>
+      <div class="feature-title">사이즈, 자동으로 딱 맞춰드려요</div>
+      <div class="feature-desc">
+        가로 사진이든 정사각이든 상관없어요. 인스타 세로 사이즈에 맞게 <strong>자동으로 배치</strong>해드립니다.
       </div>
     </div>
-    
-    <!-- Feature 2 -->
-    <div class="feature-card reveal">
+    <div class="feature-card reveal reveal-delay-1">
       <div class="feature-num">02</div>
-      <div class="feature-body">
-        <div class="feature-pain">❌ 포토샵 켜고, 캔바 켜고, 또 다른 앱 켜고…</div>
-        <div class="feature-title">앱 하나로 끝나요</div>
-        <div class="feature-desc">
-          비포&애프터 합치기, 사이즈 조절,<br>
-          텍스트 삽입, 워터마크까지<br>
-          <strong>전부 피치포스트 안에서</strong>.
-        </div>
+      <div class="feature-pain">포토샵 켜고, 캔바 켜고, 또 다른 앱 켜고…</div>
+      <div class="feature-title">앱 하나로 끝나요</div>
+      <div class="feature-desc">
+        비포&애프터 합치기, 사이즈 조절, 텍스트 삽입, 워터마크까지 <strong>전부 피치포스트 안에서</strong>.
       </div>
     </div>
-    
-    <!-- Feature 3 -->
-    <div class="feature-card reveal">
+    <div class="feature-card reveal reveal-delay-2">
       <div class="feature-num">03</div>
-      <div class="feature-body">
-        <div class="feature-pain">❌ 한 장 만드는 데 30분씩 걸림</div>
-        <div class="feature-title">한 장에 딱 5초면 끝</div>
-        <div class="feature-desc">
-          사진 선택 → 탭 한 번 →<br>
-          <strong>바로 인스타에 올릴 수 있어요</strong>.<br>
-          마감 후 10분이면 일주일치 끝!
-        </div>
+      <div class="feature-pain">한 장 만드는 데 30분씩 걸림</div>
+      <div class="feature-title">한 장에 딱 5초면 끝</div>
+      <div class="feature-desc">
+        사진 선택 → 탭 한 번 → 바로 인스타에 올릴 수 있어요. <strong>마감 후 10분이면 일주일치 끝</strong>!
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════ INDUSTRY EXAMPLES (Case Study Style) ══════════════ -->
-<section class="industries">
-  <div class="industries-inner">
+<!-- ══════════════ INSTAGRAM DEMO ══════════════ -->
+<section class="demo-section">
+  <div class="demo-header">
+    <h2 class="demo-title reveal">
+      혹시 이런 경험<br>
+      <span class="accent">없으셨어요?</span>
+    </h2>
+    <p class="demo-desc reveal reveal-delay-1">
+      그냥 올리면 사진이 잘리고, 신경 쓰면 시간이 걸리고…
+    </p>
+  </div>
+  
+  <div class="insta-compare">
+    <!-- BEFORE -->
+    <div class="insta-post reveal">
+      <div class="insta-header">
+        <div class="insta-avatar ia-before"></div>
+        <div class="insta-name">
+          <div class="insta-username">my_shop</div>
+          <div class="insta-label label-before">그냥 올렸을 때</div>
+        </div>
+        <div class="insta-dots">···</div>
+      </div>
+      <div class="insta-image-wrap">
+        <div class="insta-img-cropped">
+          <svg viewBox="0 0 100 125" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bg-before" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffb89e"/>
+                <stop offset="100%" stop-color="#ff6b5a"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(-20, -25) scale(1.8)">
+              <rect width="100" height="60" fill="url(#bg-before)"/>
+              <circle cx="75" cy="18" r="8" fill="#fff4de" opacity="0.85"/>
+              <path d="M0,45 Q25,35 50,40 T100,38 L100,60 L0,60 Z" fill="#fa8a68" opacity="0.6"/>
+            </g>
+          </svg>
+        </div>
+        <div class="crop-indicator crop-top">
+          <span>✂️ 위가 잘렸어요</span>
+        </div>
+        <div class="crop-indicator crop-bottom">
+          <span>✂️ 아래도 잘렸어요</span>
+        </div>
+      </div>
+      <div class="insta-actions">
+        <span class="insta-icon">♡</span>
+        <span class="insta-icon">💬</span>
+        <span class="insta-icon">↗</span>
+        <span class="insta-icon insta-bookmark">🔖</span>
+      </div>
+      <div class="insta-caption caption-bad">
+        😩 중요한 부분이 다 잘렸어요...
+      </div>
+    </div>
+    
+    <!-- Arrow -->
+    <div class="compare-arrow reveal reveal-delay-1">→</div>
+    
+    <!-- AFTER -->
+    <div class="insta-post reveal reveal-delay-2">
+      <div class="insta-header">
+        <div class="insta-avatar ia-after">🍑</div>
+        <div class="insta-name">
+          <div class="insta-username">my_shop</div>
+          <div class="insta-label label-after">피치포스트로 올렸을 때</div>
+        </div>
+        <div class="insta-dots">···</div>
+      </div>
+      <div class="insta-image-wrap">
+        <div class="insta-img-perfect">
+          <div class="perfect-photo">
+            <svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="bg-after" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ffb89e"/>
+                  <stop offset="100%" stop-color="#ff6b5a"/>
+                </linearGradient>
+              </defs>
+              <rect width="100" height="60" fill="url(#bg-after)"/>
+              <circle cx="75" cy="18" r="8" fill="#fff4de" opacity="0.85"/>
+              <path d="M0,45 Q25,35 50,40 T100,38 L100,60 L0,60 Z" fill="#fa8a68" opacity="0.6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="insta-actions">
+        <span class="insta-icon">♡</span>
+        <span class="insta-icon">💬</span>
+        <span class="insta-icon">↗</span>
+        <span class="insta-icon insta-bookmark">🔖</span>
+      </div>
+      <div class="insta-caption caption-good">
+        ✨ 원본 그대로 예쁘게!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ INDUSTRIES ══════════════ -->
+<section class="industries" id="industries">
+  <div class="ind-header">
     <h2 class="ind-title reveal">
       비포 & 애프터 사진이<br>
       매력인 <strong>모든 업종</strong>
     </h2>
     <div class="ind-divider reveal reveal-delay-1"></div>
     <p class="ind-subtitle reveal reveal-delay-1">
-      사장님 업종을 찾아보세요
+      사장님 업종의 실제 사례를 확인해보세요
     </p>
+  </div>
+  
+  <div class="slider-card reveal reveal-delay-2">
+    <div class="slider-tabs">
+      <button class="tab-btn tab-active" data-idx="0">
+        <span class="tab-emoji">🏠</span><span class="tab-name">인테리어</span>
+      </button>
+      <button class="tab-btn" data-idx="1">
+        <span class="tab-emoji">💆‍♀️</span><span class="tab-name">피부관리</span>
+      </button>
+      <button class="tab-btn" data-idx="2">
+        <span class="tab-emoji">💅</span><span class="tab-name">네일</span>
+      </button>
+      <button class="tab-btn" data-idx="3">
+        <span class="tab-emoji">✂️</span><span class="tab-name">미용실</span>
+      </button>
+      <button class="tab-btn" data-idx="4">
+        <span class="tab-emoji">🚗</span><span class="tab-name">세차</span>
+      </button>
+      <button class="tab-btn" data-idx="5">
+        <span class="tab-emoji">🎨</span><span class="tab-name">타투</span>
+      </button>
+    </div>
     
-    <!-- Case Study Card — mimics the reference -->
-    <div class="case-card reveal reveal-delay-2">
-      <!-- Chart Background -->
-      <div class="case-chart">
-        <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-          <!-- Grid lines -->
-          <line x1="0" y1="50" x2="500" y2="50" stroke="#e8ddc9" stroke-width="0.5"/>
-          <line x1="0" y1="100" x2="500" y2="100" stroke="#e8ddc9" stroke-width="0.5"/>
-          <line x1="0" y1="150" x2="500" y2="150" stroke="#e8ddc9" stroke-width="0.5"/>
-          <line x1="0" y1="200" x2="500" y2="200" stroke="#e8ddc9" stroke-width="0.5"/>
-          
-          <!-- Sales line - rising trend with peak -->
-          <polyline 
-            points="0,220 40,215 80,218 120,212 160,210 200,200 240,190 280,175 320,150 360,80 400,130 440,125 480,210"
-            fill="none" 
-            stroke="#ff6b5a" 
-            stroke-width="2.5"
-            stroke-linejoin="round"
-          />
-          
-          <!-- Data points -->
-          <circle cx="360" cy="80" r="5" fill="#ff6b5a"/>
-          <circle cx="0" cy="220" r="3" fill="#ff8a6b"/>
-          <circle cx="120" cy="212" r="3" fill="#ff8a6b"/>
-          <circle cx="240" cy="190" r="3" fill="#ff8a6b"/>
-          <circle cx="480" cy="210" r="3" fill="#ff8a6b"/>
-          
-          <!-- Y-axis labels -->
-          <text x="5" y="45" fill="#8a6f5a" font-size="8" font-family="sans-serif">5,000</text>
-          <text x="5" y="95" fill="#8a6f5a" font-size="8" font-family="sans-serif">4,000</text>
-          <text x="5" y="145" fill="#8a6f5a" font-size="8" font-family="sans-serif">3,000</text>
-          <text x="5" y="195" fill="#8a6f5a" font-size="8" font-family="sans-serif">2,000</text>
-          <text x="5" y="245" fill="#8a6f5a" font-size="8" font-family="sans-serif">1,000</text>
-          
-          <!-- X-axis labels -->
-          <text x="0" y="240" fill="#8a6f5a" font-size="7" font-family="sans-serif">1월</text>
-          <text x="80" y="240" fill="#8a6f5a" font-size="7" font-family="sans-serif">3월</text>
-          <text x="160" y="240" fill="#8a6f5a" font-size="7" font-family="sans-serif">5월</text>
-          <text x="240" y="240" fill="#8a6f5a" font-size="7" font-family="sans-serif">7월</text>
-          <text x="320" y="240" fill="#8a6f5a" font-size="7" font-family="sans-serif">9월</text>
-          <text x="400" y="240" fill="#8a6f5a" font-size="7" font-family="sans-serif">11월</text>
-        </svg>
+    <div class="slider-viewport">
+      <button class="slider-arrow arrow-prev" onclick="changeSlide(-1)">‹</button>
+      
+      <!-- Slide 1: 인테리어 (horizontal) -->
+      <div class="slide slide-active" data-idx="0">
+        <div class="slide-header">
+          <span class="slide-emoji">🏠</span>
+          <div>
+            <div class="slide-title">인테리어 시공</div>
+            <div class="slide-desc">공사 전/후 비교</div>
+          </div>
+          <span class="slide-layout">가로</span>
+        </div>
+        <div class="ba-frame ba-horizontal">
+          <div class="ba-half">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="120" fill="#8a8070"/>
+              <rect x="15" y="30" width="70" height="60" fill="#5a5040" opacity="0.5"/>
+              <rect x="20" y="70" width="25" height="25" fill="#3a302a"/>
+              <rect x="55" y="65" width="28" height="30" fill="#4a3f35"/>
+              <line x1="0" y1="100" x2="100" y2="100" stroke="#2a2018" stroke-width="1"/>
+            </svg>
+            <div class="ba-label-tag">BEFORE</div>
+          </div>
+          <div class="ba-half">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs><linearGradient id="ia" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff4de"/><stop offset="100%" stop-color="#f0e4cc"/></linearGradient></defs>
+              <rect width="100" height="120" fill="url(#ia)"/>
+              <rect x="10" y="25" width="80" height="55" fill="#d4b896" stroke="#b89876" stroke-width="0.5"/>
+              <rect x="20" y="75" width="28" height="20" rx="2" fill="#8a6f5a"/>
+              <rect x="55" y="70" width="30" height="25" rx="2" fill="#a88670"/>
+              <circle cx="80" cy="40" r="4" fill="#ffcc88"/>
+            </svg>
+            <div class="ba-label-tag ba-after-tag">AFTER</div>
+          </div>
+        </div>
       </div>
       
-      <!-- Industries grid overlay (like chat message in reference) -->
-      <div class="case-overlay">
-        <div class="case-header">
-          <div class="case-peach">🍑</div>
-          <div class="case-title">피치포스트 사용 업종</div>
+      <!-- Slide 2: 피부관리 (vertical) -->
+      <div class="slide" data-idx="1">
+        <div class="slide-header">
+          <span class="slide-emoji">💆‍♀️</span>
+          <div>
+            <div class="slide-title">피부관리</div>
+            <div class="slide-desc">시술 전/후 비교</div>
+          </div>
+          <span class="slide-layout">세로</span>
         </div>
-        
-        <div class="case-list">
-          <div class="case-item">
-            <span class="case-emoji">🏠</span>
-            <div class="case-text">
-              <div class="case-name">인테리어</div>
-              <div class="case-desc">시공 전/후 차이가 곧 포트폴리오</div>
-            </div>
+        <div class="ba-frame ba-vertical">
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#d4a88a"/>
+              <ellipse cx="50" cy="30" rx="22" ry="26" fill="#c89878"/>
+              <circle cx="43" cy="22" r="1.2" fill="#8a5040"/>
+              <circle cx="55" cy="20" r="1" fill="#8a5040"/>
+              <circle cx="48" cy="32" r="1.5" fill="#8a5040"/>
+              <circle cx="58" cy="35" r="1.2" fill="#8a5040"/>
+              <ellipse cx="45" cy="25" rx="1.5" ry="1" fill="#7a4030"/>
+            </svg>
+            <div class="ba-label-tag">BEFORE</div>
           </div>
-          <div class="case-item">
-            <span class="case-emoji">💆‍♀️</span>
-            <div class="case-text">
-              <div class="case-name">피부관리</div>
-              <div class="case-desc">관리 전/후 변화가 최고의 광고</div>
-            </div>
-          </div>
-          <div class="case-item">
-            <span class="case-emoji">💅</span>
-            <div class="case-text">
-              <div class="case-name">네일아트</div>
-              <div class="case-desc">손 전/후 비교로 실력 증명</div>
-            </div>
-          </div>
-          <div class="case-item">
-            <span class="case-emoji">✂️</span>
-            <div class="case-text">
-              <div class="case-name">미용실</div>
-              <div class="case-desc">커트 전/후 변신, 신규 손님 유입</div>
-            </div>
-          </div>
-          <div class="case-item">
-            <span class="case-emoji">🚗</span>
-            <div class="case-text">
-              <div class="case-name">세차/디테일링</div>
-              <div class="case-desc">세차 전/후 광택이 한눈에</div>
-            </div>
-          </div>
-          <div class="case-item">
-            <span class="case-emoji">🎨</span>
-            <div class="case-text">
-              <div class="case-name">타투/반영구</div>
-              <div class="case-desc">시술 전/후로 작품 보여주기</div>
-            </div>
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#ffd4b3"/>
+              <ellipse cx="50" cy="30" rx="22" ry="26" fill="#ffc99a"/>
+              <ellipse cx="50" cy="28" rx="18" ry="22" fill="#ffd6b3" opacity="0.5"/>
+              <circle cx="75" cy="20" r="3" fill="#fff4de" opacity="0.7"/>
+            </svg>
+            <div class="ba-label-tag ba-after-tag">AFTER</div>
           </div>
         </div>
-        
-        <div class="case-timestamp">매출은 꾸준함에서 나옵니다</div>
       </div>
+      
+      <!-- Slide 3: 네일 -->
+      <div class="slide" data-idx="2">
+        <div class="slide-header">
+          <span class="slide-emoji">💅</span>
+          <div>
+            <div class="slide-title">네일아트</div>
+            <div class="slide-desc">손 전/후 비교</div>
+          </div>
+          <span class="slide-layout">세로</span>
+        </div>
+        <div class="ba-frame ba-vertical">
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#e8d5c0"/>
+              <ellipse cx="50" cy="50" rx="35" ry="15" fill="#e0b89a"/>
+              <ellipse cx="25" cy="20" rx="5" ry="7" fill="#d4a080"/>
+              <ellipse cx="38" cy="12" rx="5" ry="7" fill="#d4a080"/>
+              <ellipse cx="50" cy="10" rx="5" ry="7" fill="#d4a080"/>
+              <ellipse cx="62" cy="13" rx="5" ry="7" fill="#d4a080"/>
+              <ellipse cx="75" cy="22" rx="5" ry="7" fill="#d4a080"/>
+            </svg>
+            <div class="ba-label-tag">BEFORE</div>
+          </div>
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#fff0e6"/>
+              <ellipse cx="50" cy="50" rx="35" ry="15" fill="#f0c8a8"/>
+              <ellipse cx="25" cy="20" rx="5" ry="7" fill="#ff6b9e"/>
+              <ellipse cx="38" cy="12" rx="5" ry="7" fill="#ffcc66"/>
+              <ellipse cx="50" cy="10" rx="5" ry="7" fill="#ff6b9e"/>
+              <ellipse cx="62" cy="13" rx="5" ry="7" fill="#cc88ff"/>
+              <ellipse cx="75" cy="22" rx="5" ry="7" fill="#ff6b9e"/>
+              <circle cx="38" cy="10" r="1" fill="white"/>
+              <circle cx="50" cy="8" r="1" fill="white"/>
+              <circle cx="62" cy="11" r="1" fill="white"/>
+            </svg>
+            <div class="ba-label-tag ba-after-tag">AFTER</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Slide 4: 미용실 -->
+      <div class="slide" data-idx="3">
+        <div class="slide-header">
+          <span class="slide-emoji">✂️</span>
+          <div>
+            <div class="slide-title">미용실</div>
+            <div class="slide-desc">커트 전/후 비교</div>
+          </div>
+          <span class="slide-layout">세로</span>
+        </div>
+        <div class="ba-frame ba-vertical">
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#b8a088"/>
+              <path d="M35,0 Q30,25 28,50 L35,60 L65,60 L72,50 Q70,25 65,0 Z" fill="#3a2a1a"/>
+              <ellipse cx="50" cy="28" rx="13" ry="15" fill="#e0b89a"/>
+              <path d="M35,15 Q32,35 30,55 M40,18 Q38,38 36,58 M60,18 Q62,38 64,58 M65,15 Q68,35 70,55" stroke="#2a1a10" stroke-width="0.5" fill="none" opacity="0.6"/>
+            </svg>
+            <div class="ba-label-tag">BEFORE</div>
+          </div>
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#f0e0d0"/>
+              <path d="M37,5 Q32,20 35,38 L40,42 L60,42 L65,38 Q68,20 63,5 Q50,0 37,5 Z" fill="#5a3a2a"/>
+              <ellipse cx="50" cy="35" rx="12" ry="13" fill="#ffd4b3"/>
+              <path d="M40,12 Q42,18 45,22 M55,12 Q53,18 50,22" stroke="#8a5a3a" stroke-width="0.8" fill="none" opacity="0.5"/>
+            </svg>
+            <div class="ba-label-tag ba-after-tag">AFTER</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Slide 5: 세차 -->
+      <div class="slide" data-idx="4">
+        <div class="slide-header">
+          <span class="slide-emoji">🚗</span>
+          <div>
+            <div class="slide-title">세차/디테일링</div>
+            <div class="slide-desc">세차 전/후 비교</div>
+          </div>
+          <span class="slide-layout">가로</span>
+        </div>
+        <div class="ba-frame ba-horizontal">
+          <div class="ba-half">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="120" fill="#8a7060"/>
+              <rect x="10" y="55" width="80" height="35" rx="6" fill="#5a4a3a"/>
+              <rect x="20" y="45" width="60" height="25" rx="10" fill="#4a3a2a"/>
+              <circle cx="28" cy="92" r="8" fill="#2a1a10"/>
+              <circle cx="72" cy="92" r="8" fill="#2a1a10"/>
+              <circle cx="25" cy="65" r="2" fill="#3a2a1a" opacity="0.7"/>
+              <circle cx="35" cy="70" r="3" fill="#3a2a1a" opacity="0.7"/>
+              <circle cx="60" cy="60" r="2" fill="#3a2a1a" opacity="0.7"/>
+              <circle cx="70" cy="75" r="2.5" fill="#3a2a1a" opacity="0.7"/>
+            </svg>
+            <div class="ba-label-tag">BEFORE</div>
+          </div>
+          <div class="ba-half">
+            <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <defs><linearGradient id="cb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#cae0f0"/><stop offset="100%" stop-color="#e8f0f8"/></linearGradient></defs>
+              <rect width="100" height="120" fill="url(#cb)"/>
+              <rect x="10" y="55" width="80" height="35" rx="6" fill="#1a2838"/>
+              <rect x="20" y="45" width="60" height="25" rx="10" fill="#0a1828"/>
+              <rect x="22" y="48" width="20" height="18" fill="#aac0d8" opacity="0.6"/>
+              <rect x="58" y="48" width="20" height="18" fill="#aac0d8" opacity="0.6"/>
+              <circle cx="28" cy="92" r="8" fill="#1a1a1a"/>
+              <circle cx="72" cy="92" r="8" fill="#1a1a1a"/>
+              <rect x="15" y="58" width="70" height="2" fill="white" opacity="0.6"/>
+            </svg>
+            <div class="ba-label-tag ba-after-tag">AFTER</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Slide 6: 타투 -->
+      <div class="slide" data-idx="5">
+        <div class="slide-header">
+          <span class="slide-emoji">🎨</span>
+          <div>
+            <div class="slide-title">타투/반영구</div>
+            <div class="slide-desc">시술 전/후 비교</div>
+          </div>
+          <span class="slide-layout">세로</span>
+        </div>
+        <div class="ba-frame ba-vertical">
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#e0b89a"/>
+              <rect x="0" y="20" width="100" height="40" fill="#d4a080"/>
+              <line x1="0" y1="35" x2="100" y2="35" stroke="#c0906a" stroke-width="0.3" opacity="0.5"/>
+            </svg>
+            <div class="ba-label-tag">BEFORE</div>
+          </div>
+          <div class="ba-half">
+            <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+              <rect width="100" height="60" fill="#e0b89a"/>
+              <rect x="0" y="20" width="100" height="40" fill="#d4a080"/>
+              <path d="M30,30 Q35,22 40,30 Q45,38 50,30 Q55,22 60,30 Q65,38 70,30" stroke="#1a0d08" stroke-width="1.5" fill="none"/>
+              <circle cx="45" cy="42" r="4" fill="none" stroke="#1a0d08" stroke-width="1.2"/>
+              <circle cx="55" cy="42" r="4" fill="none" stroke="#1a0d08" stroke-width="1.2"/>
+              <path d="M40,48 L50,52 L60,48" stroke="#1a0d08" stroke-width="1" fill="none"/>
+            </svg>
+            <div class="ba-label-tag ba-after-tag">AFTER</div>
+          </div>
+        </div>
+      </div>
+      
+      <button class="slider-arrow arrow-next" onclick="changeSlide(1)">›</button>
     </div>
     
-    <!-- AND MORE -->
-    <div class="ind-more reveal">
-      <div class="ind-more-tag">AND MORE</div>
-      <div class="ind-more-text">
-        청소업체 · 수선집 · 도배장판 · 홈케어 · 정리수납<br>
-        치과·교정 · 헬스/PT · 페인팅 · 사진관 · 복원공방…
-      </div>
+    <div class="slider-dots">
+      <button class="dot dot-active" data-idx="0"></button>
+      <button class="dot" data-idx="1"></button>
+      <button class="dot" data-idx="2"></button>
+      <button class="dot" data-idx="3"></button>
+      <button class="dot" data-idx="4"></button>
+      <button class="dot" data-idx="5"></button>
     </div>
-    
-    <!-- Inclusive message -->
-    <div class="ind-common reveal">
-      <div class="ind-common-line">
-        그리고 무엇보다 —
-      </div>
-      <div class="ind-common-msg">
-        세로나 가로 사진이 많아서<br>
-        <strong>인스타에 올리면 잘려서 불편한</strong><br>
-        <em>모든 자영업자 사장님들</em>
-      </div>
+  </div>
+  
+  <div class="ind-more reveal">
+    <div class="ind-more-tag">AND MORE</div>
+    <div class="ind-more-text">
+      청소업체 · 수선집 · 도배장판 · 홈케어 · 정리수납 · 치과·교정 · 헬스/PT · 페인팅 · 사진관 · 복원공방…
+    </div>
+  </div>
+  
+  <div class="ind-common reveal">
+    <div class="ind-common-line">그리고 무엇보다 —</div>
+    <div class="ind-common-msg">
+      세로나 가로 사진이 많아서<br>
+      <strong>인스타에 올리면 잘려서 불편한</strong><br>
+      <em>모든 자영업자 사장님들</em>
     </div>
   </div>
 </section>
+
+<!-- ══════════════ BEFORE/AFTER LIFESTYLE ══════════════ -->
 <section class="ba-section">
-  <div class="ba-inner">
-    <div class="ba-tag reveal">— 달라지는 사장님 하루 —</div>
-    
-    <div class="ba-grid">
-      <div class="ba-col ba-before reveal">
-        <div class="ba-label">예전의 하루</div>
-        <div class="ba-time">밤 11시</div>
-        <ul class="ba-list">
-          <li>마감 끝나고도 편집 작업…</li>
-          <li>포토샵, 캔바, 스냅시드 돌리기</li>
-          <li>사이즈 맞추다가 사진 잘림</li>
-          <li>너무 피곤해서 그대로 잠</li>
-          <li>내일 포스팅은 또 내일로…</li>
-        </ul>
-        <div class="ba-feeling">😮‍💨 피곤…</div>
-      </div>
-      
-      <div class="ba-col ba-after reveal reveal-delay-1">
-        <div class="ba-label">이제의 하루</div>
-        <div class="ba-time">저녁 6시</div>
-        <ul class="ba-list">
-          <li>마감 후 핸드폰 쓱 꺼내기</li>
-          <li>피치포스트 열고 사진 선택</li>
-          <li>5초 컷으로 편집 완성</li>
-          <li>바로 인스타 업로드</li>
-          <li>집 가서 편히 쉬기 🛋️</li>
-        </ul>
-        <div class="ba-feeling">🍑 여유로워!</div>
-      </div>
+  <div class="ba-section-header">
+    <div class="ba-section-tag reveal">— 달라지는 사장님 하루 —</div>
+  </div>
+  <div class="ba-grid">
+    <div class="ba-col ba-col-before reveal">
+      <div class="ba-col-label">예전의 하루</div>
+      <div class="ba-col-time">밤 11시</div>
+      <ul class="ba-col-list">
+        <li>마감 끝나고도 편집 작업…</li>
+        <li>포토샵, 캔바, 스냅시드 돌리기</li>
+        <li>사이즈 맞추다가 사진 잘림</li>
+        <li>너무 피곤해서 그대로 잠</li>
+        <li>내일 포스팅은 또 내일로…</li>
+      </ul>
+      <div class="ba-col-feeling">😮‍💨 피곤…</div>
+    </div>
+    <div class="ba-col ba-col-after reveal reveal-delay-1">
+      <div class="ba-col-label">이제의 하루</div>
+      <div class="ba-col-time">저녁 6시</div>
+      <ul class="ba-col-list">
+        <li>마감 후 핸드폰 쓱 꺼내기</li>
+        <li>피치포스트 열고 사진 선택</li>
+        <li>5초 컷으로 편집 완성</li>
+        <li>바로 인스타 업로드</li>
+        <li>집 가서 편히 쉬기 🛋️</li>
+      </ul>
+      <div class="ba-col-feeling">🍑 여유로워!</div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════ TIME SAVED COUNTER ══════════════ -->
-<section class="counter">
-  <div class="counter-inner">
-    <div class="counter-tag reveal">— 함께 만들어가는 변화 —</div>
-    
-    <h2 class="counter-title reveal reveal-delay-1">
-      사장님들이<br>
-      피치포스트로 <strong>되찾은 시간</strong>
-    </h2>
-    
-    <div class="counter-card reveal reveal-delay-2">
-      <div class="counter-live">
-        <span class="live-dot"></span>
-        <span>LIVE</span>
+<!-- ══════════════ COUNTER ══════════════ -->
+<section class="counter-section" id="counter">
+  <div class="counter-tag reveal">— 함께 만들어가는 변화 —</div>
+  <h2 class="counter-title reveal reveal-delay-1">
+    사장님들이<br>
+    피치포스트로 <strong>되찾은 시간</strong>
+  </h2>
+  
+  <div class="counter-card reveal reveal-delay-2">
+    <div class="counter-live">
+      <span class="live-dot"></span>
+      <span>LIVE</span>
+    </div>
+    <div class="counter-number" id="mainCounter" data-target="1247">0</div>
+    <div class="counter-unit">시간</div>
+    <div class="counter-subcount">
+      <div class="sub-item">
+        <div class="sub-label">오늘</div>
+        <div class="sub-num" id="todayCounter" data-target="47">0</div>
       </div>
-      
-      <div class="counter-number" id="mainCounter" data-target="1247">0</div>
-      <div class="counter-unit">시간</div>
-      
-      <div class="counter-subcount">
-        <div class="sub-item">
-          <div class="sub-label">오늘</div>
-          <div class="sub-num" id="todayCounter" data-target="47">0</div>
-          <div class="sub-unit">시간</div>
-        </div>
-        <div class="sub-divider"></div>
-        <div class="sub-item">
-          <div class="sub-label">이번 주</div>
-          <div class="sub-num" id="weekCounter" data-target="312">0</div>
-          <div class="sub-unit">시간</div>
-        </div>
+      <div class="sub-divider"></div>
+      <div class="sub-item">
+        <div class="sub-label">이번 주</div>
+        <div class="sub-num" id="weekCounter" data-target="312">0</div>
       </div>
     </div>
-    
-    <p class="counter-desc reveal reveal-delay-2">
-      편집 한 장에 <strong>25분</strong>씩,<br>
-      피치포스트가 사장님 대신 일하고 있어요 🍑
-    </p>
-    
-    <div class="counter-translate reveal reveal-delay-2">
-      이 시간이면…<br>
-      <span>영화 <em>623</em>편</span> · 
-      <span>저녁 식사 <em>2,494</em>번</span>
-    </div>
+  </div>
+  
+  <p class="counter-desc reveal reveal-delay-2">
+    편집 한 장에 <strong>25분</strong>씩,<br>
+    피치포스트가 사장님 대신 일하고 있어요 🍑
+  </p>
+  <div class="counter-translate reveal reveal-delay-2">
+    이 시간이면… 영화 <em>623</em>편 · 저녁 식사 <em>2,494</em>번
   </div>
 </section>
 
-<!-- ══════════════ CTA BUTTON ══════════════ -->
+<!-- ══════════════ FINAL CTA ══════════════ -->
 <section class="final-cta">
-  <div class="final-cta-inner">
-    <div class="final-peach reveal">🍑</div>
-    <h3 class="final-title reveal reveal-delay-1">
+  <div class="final-inner">
+    <div class="final-peach">🍑</div>
+    <h2 class="final-title reveal">
       사장님의 시간도<br>
       되찾아드릴게요
-    </h3>
-    <button class="final-btn reveal reveal-delay-2">
-      피치포스트 시작하기 →
-    </button>
-    <div class="final-tags reveal reveal-delay-2">
-      <span>무료로 시작</span>
-      <span>카드 등록 불필요</span>
-      <span>하루 3장 무료</span>
+    </h2>
+    <div class="final-buttons reveal reveal-delay-1">
+      <button class="btn-primary" onclick="startApp()">
+        피치포스트 시작하기 →
+      </button>
+      <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+        기능 다시 보기
+      </button>
+    </div>
+    <div class="final-badges reveal reveal-delay-2">
+      <span>✓ 무료로 시작</span>
+      <span>✓ 카드 등록 불필요</span>
+      <span>✓ 하루 3장 무료</span>
     </div>
   </div>
 </section>
 
-<!-- ══════════════ END-OF-PREVIEW ══════════════ -->
-<section class="pause">
-  <div class="pause-inner">
-    <div class="pause-dots">· · ·</div>
-    <p class="pause-text">
-      <strong>랜딩페이지 전체 프리뷰 완성!</strong><br>
-      실제 서비스엔 진짜 카운터 연동해드릴게요 🚀
-    </p>
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">🍑 PEACHPOST</div>
+    <div class="footer-text">
+      © 2026 디자인포 · 사업자등록번호 135-25-22394<br>
+      문의: hello@peachpost.com
+    </div>
   </div>
-</section>
+</footer>
 
 <script>
+  // ─── Navbar scroll effect ───
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+  
+  // ─── Reveal on scroll ───
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) e.target.classList.add('visible');
     });
   }, { threshold: 0.15 });
-  
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   
   // ─── Counter Animation ───
   const animateCounter = (el, target, duration = 2200) => {
     const start = performance.now();
-    const startVal = 0;
-    
     const step = (now) => {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out cubic for smooth deceleration
       const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(startVal + (target - startVal) * eased);
-      
+      const current = Math.floor(target * eased);
       el.textContent = current.toLocaleString('ko-KR');
-      
-      // Tiny tick effect
-      if (progress < 1) {
-        el.classList.add('tick');
-        setTimeout(() => el.classList.remove('tick'), 80);
-        requestAnimationFrame(step);
-      } else {
-        el.textContent = target.toLocaleString('ko-KR');
-      }
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString('ko-KR');
     };
-    
     requestAnimationFrame(step);
   };
   
-  // Trigger counter when visible (only once)
-  const counterObserver = new IntersectionObserver((entries) => {
+  const counterObs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const el = entry.target;
         if (!el.dataset.animated) {
           el.dataset.animated = 'true';
           const target = parseInt(el.dataset.target, 10);
-          // Slight delay for visual effect
-          const delay = el.id === 'mainCounter' ? 300 : 
-                        el.id === 'todayCounter' ? 800 : 1100;
+          const delay = el.id === 'mainCounter' ? 200 : 
+                        el.id === 'todayCounter' ? 600 : 900;
           setTimeout(() => animateCounter(el, target), delay);
         }
       }
     });
   }, { threshold: 0.4 });
+  document.querySelectorAll('[data-target]').forEach(el => counterObs.observe(el));
   
-  document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
-  
-  // Live increment (simulates real-time new edits every ~8-15 seconds)
+  // ─── Live increment ───
   setInterval(() => {
     const main = document.getElementById('mainCounter');
     const today = document.getElementById('todayCounter');
     if (main && main.dataset.animated === 'true') {
-      const currentMain = parseInt(main.textContent.replace(/,/g, ''), 10);
-      const currentToday = parseInt(today.textContent.replace(/,/g, ''), 10);
-      main.textContent = (currentMain + 1).toLocaleString('ko-KR');
-      today.textContent = (currentToday + 1).toLocaleString('ko-KR');
-      main.classList.add('tick');
-      setTimeout(() => main.classList.remove('tick'), 200);
+      const cm = parseInt(main.textContent.replace(/,/g, ''), 10);
+      const ct = parseInt(today.textContent.replace(/,/g, ''), 10);
+      main.textContent = (cm + 1).toLocaleString('ko-KR');
+      today.textContent = (ct + 1).toLocaleString('ko-KR');
     }
   }, 11000);
+  
+  // ─── Slider ───
+  const slides = document.querySelectorAll('.slide');
+  const tabs = document.querySelectorAll('.tab-btn');
+  const dots = document.querySelectorAll('.dot');
+  let currentIdx = 0;
+  const total = slides.length;
+  
+  function goToSlide(idx) {
+    if (idx < 0) idx = total - 1;
+    if (idx >= total) idx = 0;
+    currentIdx = idx;
+    slides.forEach((s, i) => s.classList.toggle('slide-active', i === idx));
+    tabs.forEach((t, i) => t.classList.toggle('tab-active', i === idx));
+    dots.forEach((d, i) => d.classList.toggle('dot-active', i === idx));
+  }
+  
+  function changeSlide(dir) {
+    goToSlide(currentIdx + dir);
+  }
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => goToSlide(parseInt(tab.dataset.idx, 10)));
+  });
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.idx, 10)));
+  });
+  
+  // Touch swipe
+  const viewport = document.querySelector('.slider-viewport');
+  if (viewport) {
+    let sx = 0, ex = 0;
+    viewport.addEventListener('touchstart', e => { sx = e.changedTouches[0].screenX; }, { passive: true });
+    viewport.addEventListener('touchend', e => {
+      ex = e.changedTouches[0].screenX;
+      const d = sx - ex;
+      if (Math.abs(d) > 50) changeSlide(d > 0 ? 1 : -1);
+    }, { passive: true });
+  }
+  
+  // ─── Start App ───
+  function startApp() {
+    // Redirect to the actual PeachPost app
+    window.location.href = 'https://beforeafter-woad.vercel.app';
+  }
 </script>
 
 </body>
