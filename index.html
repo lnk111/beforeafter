@@ -19,6 +19,7 @@
   body.app-mode > footer { display: none !important; }
   body.app-mode #editor-app-root { display: flex !important; }
   #editor-app-root { display: none; }
+  body.app-mode { overflow: hidden !important; }
   
   :root {
     --cream: #faf4ec;
@@ -2683,15 +2684,17 @@
   function startApp() {
     document.body.classList.add('app-mode');
     window.scrollTo(0, 0);
-    try { history.pushState({view:'app'}, '', '#app'); } catch(e){}
-    // 편집 앱 초기화
+    // 앱 초기화
     setTimeout(() => {
       if (typeof updateCountBar === 'function') updateCountBar();
       if (typeof rUpdateCountBar === 'function') rUpdateCountBar();
       if (typeof rBuildPalette === 'function') rBuildPalette();
       if (typeof rBuildTxtColors === 'function') rBuildTxtColors();
       if (typeof rBuildPosGrid === 'function') rBuildPosGrid();
+      if (typeof baBuildPosGrid === 'function') baBuildPosGrid();
+      if (typeof baBuildTxtColors === 'function') baBuildTxtColors();
     }, 100);
+    try { history.pushState({view:'app'}, '', '#app'); } catch(e){}
   }
   
   // 로그인 버튼 - 앱 열고 로그인 모달 자동 열기
@@ -2702,7 +2705,7 @@
     }, 300);
   }
   
-  // 회원가입 버튼 - 앱 열고 로그인 모달 자동 열기
+  // 회원가입 버튼 - 동일하게 처리
   function signupApp() {
     startApp();
     setTimeout(() => {
@@ -2710,14 +2713,14 @@
     }, 300);
   }
   
-  // 홈으로 돌아가기
+  // 홈으로 가기
   function backToLanding() {
     document.body.classList.remove('app-mode');
     window.scrollTo(0, 0);
     try { history.pushState({view:'landing'}, '', window.location.pathname); } catch(e){}
   }
   
-  // 브라우저 뒤로가기 지원
+  // 브라우저 뒤로가기
   window.addEventListener('popstate', () => {
     if (window.location.hash === '#app') {
       document.body.classList.add('app-mode');
@@ -2726,7 +2729,7 @@
     }
   });
   
-  // 페이지 로드 시 해시 확인
+  // 새로고침 시 해시 감지
   window.addEventListener('DOMContentLoaded', () => {
     if (window.location.hash === '#app') {
       document.body.classList.add('app-mode');
@@ -2854,10 +2857,10 @@
 <!-- ════════════════════════════════════════
      🎨 EDITOR APP (피치포스트 편집 앱)
 ════════════════════════════════════════ -->
-<div id="editor-app-root" style="display:none;flex-direction:column;height:100vh;width:100%;position:fixed;inset:0;background:#f4f1ed;z-index:9998;font-family:'Noto Sans KR',sans-serif;">
+<div id="editor-app-root" style="display:none;flex-direction:column;height:100vh;width:100%;position:fixed;inset:0;background:#f4f1ed;z-index:9998;font-family:'Noto Sans KR',sans-serif;overflow:hidden;">
 
 <style>
-/* 편집 앱 전용 스타일 - editor-app-root 안에만 적용 */
+/* ── 편집 앱 전용 스타일 (editor-app-root 안에서만 적용) ── */
 #editor-app-root {
   --ea-bg: #f4f1ed;
   --ea-card: #ffffff;
@@ -2866,20 +2869,16 @@
   --ea-accent: #b85c38;
   --ea-border: #e0dbd4;
   --ea-radius: 12px;
-  overflow: hidden;
 }
-#editor-app-root * { box-sizing: border-box; }
+#editor-app-root *, #editor-app-root *::before, #editor-app-root *::after {
+  box-sizing: border-box;
+}
+
 #editor-app-root .ea-topbar {
   display: flex; align-items: center; justify-content: space-between;
   padding: 10px 16px; background: #fff;
   border-bottom: 1px solid var(--ea-border); flex-shrink: 0;
 }
-#editor-app-root .ea-topbar h1 {
-  font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1;
-  color: var(--ea-ink); margin: 0;
-}
-#editor-app-root .ea-topbar h1 em { font-style: normal; color: var(--ea-accent); font-weight: 400; }
-#editor-app-root .ea-topbar p { font-size: 0.78rem; color: var(--ea-muted); margin: 3px 0 0; }
 #editor-app-root .ea-back-btn {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 7px 14px; background: var(--ea-bg); color: var(--ea-muted);
@@ -2893,31 +2892,27 @@
   color: var(--ea-accent); background: #fdf0eb;
   padding: 5px 12px; border-radius: 100px; border: 1px solid #f0cdc0;
 }
-
 #editor-app-root .tab-container { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 #editor-app-root .tab-bar {
   display: flex; background: #fff; border-bottom: 1px solid var(--ea-border);
   padding: 0 20px; flex-shrink: 0;
 }
-#editor-app-root .ea-tab-btn {
+#editor-app-root .tab-btn {
   padding: 13px 22px; font-family: inherit;
   font-size: .85rem; font-weight: 500; color: var(--ea-muted);
   background: transparent; border: none;
   border-bottom: 2.5px solid transparent; cursor: pointer;
   transition: all .15s;
 }
-#editor-app-root .ea-tab-btn:hover { color: var(--ea-ink); }
-#editor-app-root .ea-tab-btn.active { color: var(--ea-accent); border-bottom-color: var(--ea-accent); font-weight: 700; }
-
+#editor-app-root .tab-btn:hover { color: var(--ea-ink); }
+#editor-app-root .tab-btn.active { color: var(--ea-accent); border-bottom-color: var(--ea-accent); font-weight: 700; }
 #editor-app-root .tab-panel { display: none; flex: 1; flex-direction: column; min-height: 0; overflow: hidden; }
 #editor-app-root .tab-panel.active { display: flex; }
-
 #editor-app-root .workspace-wrap {
   flex: 1; background: #fff; padding: 0 100px 24px 100px;
   display: flex; min-height: 0; overflow: hidden; flex-direction: column;
 }
 #editor-app-root .workspace { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-
 #editor-app-root .sim-panel {
   background: #fff; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -2925,59 +2920,21 @@
 }
 #editor-app-root .sim-header { width: 100%; display: flex; align-items: center; justify-content: space-between; }
 #editor-app-root .sim-header h2 { font-size: .9rem; font-weight: 600; color: var(--ea-ink); margin: 0; }
-#editor-app-root .sim-live {
-  display: flex; align-items: center; gap: 5px;
-  font-size: .65rem; color: var(--ea-muted); letter-spacing: .06em;
-}
-#editor-app-root .sim-live::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: #6bcb8b; animation: ea-blink 1.8s ease-in-out infinite;
-}
+#editor-app-root .sim-live { display: flex; align-items: center; gap: 5px; font-size: .65rem; color: var(--ea-muted); letter-spacing: .06em; }
+#editor-app-root .sim-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #6bcb8b; animation: ea-blink 1.8s ease-in-out infinite; }
 @keyframes ea-blink { 0%,100%{opacity:1} 50%{opacity:.25} }
-
-#editor-app-root .sim-frame {
-  background: var(--ea-bg); border-radius: var(--ea-radius);
-  overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.1);
-  aspect-ratio: 4/5; height: calc(100% - 80px);
-  max-height: calc(100vh - 200px); width: auto; max-width: 100%;
-}
-#editor-app-root .sim-placeholder {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 10px; color: #48433e;
-}
+#editor-app-root .sim-frame { background: var(--ea-bg); border-radius: var(--ea-radius); overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.1); aspect-ratio: 4/5; height: calc(100% - 100px); max-height: calc(100vh - 200px); width: auto; max-width: 100%; }
+#editor-app-root .sim-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #48433e; }
 #editor-app-root .sim-placeholder > span { font-size: 2rem; opacity: .45; }
+#editor-app-root .sim-placeholder p { font-size: .72rem; text-align: center; line-height: 1.6; }
 #editor-app-root #simCanvas, #editor-app-root #rMainCanvas { display: block; width: 100%; height: 100%; object-fit: contain; }
 #editor-app-root .sim-label { font-size: .65rem; color: var(--ea-muted); letter-spacing: .04em; }
-
-#editor-app-root .resizer {
-  width: 5px; background: var(--ea-border); cursor: col-resize;
-  flex-shrink: 0; position: relative; transition: background .15s;
-}
+#editor-app-root .resizer { width: 5px; background: var(--ea-border); cursor: col-resize; flex-shrink: 0; position: relative; transition: background .15s; }
 #editor-app-root .resizer:hover, #editor-app-root .resizer.active { background: var(--ea-accent); }
-#editor-app-root .resizer::after {
-  content: '⋮'; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%); font-size: 13px;
-  color: var(--ea-muted); pointer-events: none;
-}
-
-#editor-app-root .ctrl-panel {
-  width: 602px; min-width: 602px; flex-shrink: 0;
-  background: var(--ea-bg); overflow-y: auto;
-  padding: 20px 28px 36px 24px;
-  display: flex; flex-direction: column; gap: 16px;
-}
-
+#editor-app-root .resizer::after { content: '⋮'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 13px; color: var(--ea-muted); pointer-events: none; }
+#editor-app-root .ctrl-panel { width: 602px; min-width: 602px; flex-shrink: 0; background: var(--ea-bg); overflow-y: auto; padding: 20px 28px 36px 24px; display: flex; flex-direction: column; gap: 16px; }
 #editor-app-root .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-#editor-app-root .upload-zone {
-  background: #fff; border: 2.5px dashed #c8bfb5;
-  border-radius: var(--ea-radius); padding: 26px 14px;
-  display: flex; flex-direction: column; align-items: center;
-  gap: 9px; cursor: pointer; transition: all .2s;
-  position: relative; overflow: hidden;
-  min-height: 175px; justify-content: center;
-}
+#editor-app-root .upload-zone { background: var(--ea-card); border: 2.5px dashed #c8bfb5; border-radius: var(--ea-radius); padding: 26px 14px; display: flex; flex-direction: column; align-items: center; gap: 9px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; min-height: 175px; justify-content: center; }
 #editor-app-root .upload-zone:hover { border-color: var(--ea-accent); background: #fdf7f4; transform: translateY(-2px); }
 #editor-app-root .upload-zone.has-image { border-style: solid; border-color: var(--ea-accent); padding: 0; }
 #editor-app-root .upload-zone.drag-over { border-color: var(--ea-accent); background: #fdf7f4; }
@@ -2985,142 +2942,55 @@
 #editor-app-root .up-icon { width: 44px; height: 44px; background: var(--ea-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 19px; }
 #editor-app-root .up-label { font-size: 1.15rem; font-weight: 600; }
 #editor-app-root .up-label.before { color: #555; }
-#editor-app-root .up-label.after  { color: var(--ea-accent); }
+#editor-app-root .up-label.after { color: var(--ea-accent); }
 #editor-app-root .up-hint { font-size: .7rem; color: var(--ea-muted); text-align: center; }
 #editor-app-root .preview-img { width: 100%; height: 100%; object-fit: cover; border-radius: calc(var(--ea-radius) - 2px); display: block; min-height: 175px; max-height: 240px; }
-#editor-app-root .remove-btn {
-  position: absolute; top: 6px; right: 6px;
-  width: 24px; height: 24px; background: rgba(0,0,0,.5); color: white;
-  border: none; border-radius: 50%; font-size: 14px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; z-index: 10;
-}
-
-#editor-app-root .opts-panel {
-  background: #fff; border-radius: var(--ea-radius);
-  padding: 14px 16px; border: 1px solid var(--ea-border);
-}
-#editor-app-root .opts-panel h2 {
-  font-size: .78rem; font-weight: 600;
-  color: var(--ea-muted); margin: 0 0 12px;
-  letter-spacing: .05em; text-transform: uppercase;
-}
+#editor-app-root .remove-btn { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; background: rgba(0,0,0,.5); color: white; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
+#editor-app-root .opts-panel { background: #fff; border-radius: var(--ea-radius); padding: 14px 16px; border: 1px solid var(--ea-border); }
+#editor-app-root .opts-panel h2 { font-size: .78rem; font-weight: 600; color: var(--ea-muted); margin: 0 0 12px; letter-spacing: .05em; text-transform: uppercase; }
 #editor-app-root .opts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 12px; align-items: end; }
 #editor-app-root .opt-group { display: flex; flex-direction: column; gap: 5px; }
-#editor-app-root .opt-group label {
-  font-size: .62rem; font-weight: 500;
-  text-transform: uppercase; letter-spacing: .06em;
-  color: var(--ea-muted); white-space: nowrap;
-}
+#editor-app-root .opt-group label { font-size: .62rem; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; color: var(--ea-muted); white-space: nowrap; }
 #editor-app-root .tog-row { display: flex; gap: 4px; }
-#editor-app-root .ea-tog-btn {
-  flex: 1; padding: 7px 0;
-  border: 1.5px solid var(--ea-border); background: transparent;
-  border-radius: 7px; font-family: inherit; font-size: .78rem;
-  cursor: pointer; color: var(--ea-ink); transition: all .15s;
-}
-#editor-app-root .ea-tog-btn.on { background: var(--ea-accent); border-color: var(--ea-accent); color: #fff; font-weight: 600; }
+#editor-app-root .tog-btn { flex: 1; padding: 7px 0; border: 1.5px solid var(--ea-border); background: transparent; border-radius: 7px; font-family: inherit; font-size: .78rem; cursor: pointer; color: var(--ea-ink); transition: all .15s; }
+#editor-app-root .tog-btn.on { background: var(--ea-accent); border-color: var(--ea-accent); color: #fff; font-weight: 600; }
 #editor-app-root .rng-row { display: flex; align-items: center; gap: 7px; }
-#editor-app-root input[type="range"] {
-  flex: 1; -webkit-appearance: none; height: 4px;
-  background: var(--ea-border); border-radius: 4px; outline: none;
-}
-#editor-app-root input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 15px; height: 15px;
-  background: var(--ea-accent); border-radius: 50%; cursor: pointer;
-}
+#editor-app-root input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; background: var(--ea-border); border-radius: 4px; outline: none; }
+#editor-app-root input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--ea-accent); border-radius: 50%; cursor: pointer; }
 #editor-app-root .rng-val { font-size: .72rem; color: var(--ea-muted); min-width: 28px; text-align: right; }
-#editor-app-root .lbl-input {
-  padding: 7px 9px; border: 1.5px solid var(--ea-border); border-radius: 7px;
-  font-family: inherit; font-size: .88rem;
-  color: var(--ea-ink); background: var(--ea-bg); width: 100%; outline: none;
-}
+#editor-app-root .lbl-input { padding: 7px 9px; border: 1.5px solid var(--ea-border); border-radius: 7px; font-family: inherit; font-size: .88rem; color: var(--ea-ink); background: var(--ea-bg); width: 100%; outline: none; }
 #editor-app-root .color-row { display: flex; gap: 7px; align-items: center; }
-#editor-app-root .col-btn {
-  width: 27px; height: 27px; border-radius: 50%;
-  border: 2.5px solid transparent; cursor: pointer; transition: all .15s;
-}
+#editor-app-root .col-btn { width: 27px; height: 27px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; transition: all .15s; }
 #editor-app-root .col-btn.on { border-color: var(--ea-accent); }
 #editor-app-root .col-btn.cw { background: #fff; box-shadow: 0 0 0 1px #ccc; }
 #editor-app-root .col-btn.cg { background: #aaa; }
 #editor-app-root .col-btn.cb { background: #111; }
 #editor-app-root .fsz-row { display: flex; gap: 4px; }
-#editor-app-root .fsz-btn {
-  flex: 1; padding: 7px 0;
-  border: 1.5px solid var(--ea-border); background: transparent;
-  border-radius: 7px; font-family: inherit; font-size: .72rem;
-  cursor: pointer; color: var(--ea-ink); transition: all .15s;
-}
+#editor-app-root .fsz-btn { flex: 1; padding: 7px 0; border: 1.5px solid var(--ea-border); background: transparent; border-radius: 7px; font-family: inherit; font-size: .72rem; cursor: pointer; color: var(--ea-ink); transition: all .15s; }
 #editor-app-root .fsz-btn.on { background: var(--ea-accent); border-color: var(--ea-accent); color: #fff; font-weight: 600; }
-
 #editor-app-root .ratio-row { display: flex; align-items: center; gap: 7px; }
 #editor-app-root .ratio-lbl { font-size: .65rem; color: var(--ea-muted); white-space: nowrap; min-width: 32px; }
 #editor-app-root .ratio-lbl.r { text-align: right; }
-#editor-app-root .ratio-reset {
-  width: 22px; height: 22px; background: transparent;
-  border: 1.5px solid var(--ea-border); border-radius: 50%;
-  font-size: 12px; cursor: pointer; color: var(--ea-muted);
-  display: flex; align-items: center; justify-content: center;
-}
-
+#editor-app-root .ratio-reset { width: 22px; height: 22px; background: transparent; border: 1.5px solid var(--ea-border); border-radius: 50%; font-size: 12px; cursor: pointer; color: var(--ea-muted); display: flex; align-items: center; justify-content: center; }
 #editor-app-root .action-area { display: flex; flex-direction: column; gap: 9px; }
-#editor-app-root .ea-gen-btn {
-  background: var(--ea-ink); color: #fff; border: none;
-  padding: 14px 20px; font-family: inherit;
-  font-size: .92rem; font-weight: 600; border-radius: 100px;
-  cursor: pointer; transition: all .2s;
-  opacity: .3; pointer-events: none; width: 100%;
-}
-#editor-app-root .ea-gen-btn.ready { opacity: 1; pointer-events: auto; background: var(--ea-accent); }
-#editor-app-root .dl-btn {
-  background: #fff; color: var(--ea-ink);
-  border: 1.5px solid var(--ea-border);
-  padding: 11px 20px; font-family: inherit;
-  font-size: .85rem; font-weight: 500; border-radius: 100px;
-  cursor: pointer; width: 100%; display: none;
-}
+#editor-app-root .gen-btn { background: var(--ea-ink); color: #fff; border: none; padding: 14px 20px; font-family: inherit; font-size: .92rem; font-weight: 600; border-radius: 100px; cursor: pointer; transition: all .2s; opacity: .3; pointer-events: none; width: 100%; }
+#editor-app-root .gen-btn.ready { opacity: 1; pointer-events: auto; background: var(--ea-accent); }
+#editor-app-root .dl-btn { background: #fff; color: var(--ea-ink); border: 1.5px solid var(--ea-border); padding: 11px 20px; font-family: inherit; font-size: .85rem; font-weight: 500; border-radius: 100px; cursor: pointer; width: 100%; display: none; }
 #editor-app-root .dl-btn.show { display: block; }
-
-#editor-app-root .plan-banner {
-  background: #fff; border: 1.5px solid var(--ea-border);
-  border-radius: var(--ea-radius); padding: 14px 16px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-}
+#editor-app-root .plan-banner { background: #fff; border: 1.5px solid var(--ea-border); border-radius: var(--ea-radius); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 #editor-app-root .plan-info { display: flex; flex-direction: column; gap: 3px; }
-#editor-app-root .plan-badge {
-  font-size: .65rem; font-weight: 700; letter-spacing: .06em;
-  text-transform: uppercase; padding: 2px 8px; border-radius: 100px; width: fit-content;
-}
+#editor-app-root .plan-badge { font-size: .65rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; width: fit-content; }
 #editor-app-root .plan-badge.free { background: #f0ece8; color: var(--ea-muted); }
 #editor-app-root .plan-badge.pro { background: #fff3cd; color: #9a6c00; }
 #editor-app-root .plan-desc { font-size: .75rem; color: var(--ea-muted); line-height: 1.5; }
-#editor-app-root .plan-btn {
-  white-space: nowrap; padding: 9px 18px;
-  font-family: inherit; font-size: .8rem; font-weight: 600;
-  border-radius: 100px; border: none; cursor: pointer; flex-shrink: 0;
-}
-#editor-app-root .plan-btn.upgrade {
-  background: linear-gradient(135deg, #f5a623, #e8820c);
-  color: #fff; box-shadow: 0 2px 8px rgba(232,130,12,.3);
-}
+#editor-app-root .plan-btn { white-space: nowrap; padding: 9px 18px; font-family: inherit; font-size: .8rem; font-weight: 600; border-radius: 100px; border: none; cursor: pointer; flex-shrink: 0; }
+#editor-app-root .plan-btn.upgrade { background: linear-gradient(135deg, #f5a623, #e8820c); color: #fff; box-shadow: 0 2px 8px rgba(232,130,12,.3); }
 #editor-app-root .plan-btn.active-pro { background: #eaf7f0; color: #2d9e6b; border: 1.5px solid #b6e8d0; cursor: default; }
-#editor-app-root .wm-notice {
-  font-size: .68rem; color: var(--ea-muted);
-  text-align: center; padding: 4px 0;
-  display: flex; align-items: center; justify-content: center; gap: 5px;
-}
+#editor-app-root .wm-notice { font-size: .68rem; color: var(--ea-muted); text-align: center; padding: 4px 0; display: flex; align-items: center; justify-content: center; gap: 5px; }
 #editor-app-root .wm-notice.hidden { display: none; }
-
-#editor-app-root .modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.55); z-index: 10000;
-  align-items: center; justify-content: center;
-}
+#editor-app-root .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10000; align-items: center; justify-content: center; }
 #editor-app-root .modal-overlay.open { display: flex; }
-#editor-app-root .modal {
-  background: #fff; border-radius: 20px;
-  padding: 36px 32px; max-width: 420px; width: 90%;
-  text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,.25);
-}
+#editor-app-root .modal { background: #fff; border-radius: 20px; padding: 36px 32px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,.25); }
 #editor-app-root .modal-icon { font-size: 2.8rem; margin-bottom: 10px; }
 #editor-app-root .modal h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; color: var(--ea-ink); }
 #editor-app-root .modal-price { font-size: 2rem; font-weight: 700; color: var(--ea-accent); margin: 14px 0 4px; }
@@ -3128,281 +2998,161 @@
 #editor-app-root .modal-features { list-style: none; text-align: left; margin: 16px 0 24px; display: flex; flex-direction: column; gap: 8px; padding: 0; }
 #editor-app-root .modal-features li { font-size: .88rem; display: flex; align-items: center; gap: 8px; color: var(--ea-ink); }
 #editor-app-root .modal-features li::before { content: '✓'; color: #2d9e6b; font-weight: 700; }
-#editor-app-root .modal-cta {
-  width: 100%; padding: 15px; border: none; border-radius: 100px;
-  font-family: inherit; font-size: 1rem; font-weight: 700;
-  background: linear-gradient(135deg, #f5a623, #e8820c);
-  color: #fff; cursor: pointer;
-}
+#editor-app-root .modal-cta { width: 100%; padding: 15px; border: none; border-radius: 100px; font-family: inherit; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #f5a623, #e8820c); color: #fff; cursor: pointer; }
 #editor-app-root .modal-close { display: block; margin-top: 14px; font-size: .8rem; color: var(--ea-muted); cursor: pointer; background: none; border: none; font-family: inherit; }
 #editor-app-root .modal-demo { margin-top: 10px; font-size: .75rem; color: #2d9e6b; cursor: pointer; background: none; border: none; font-family: inherit; text-decoration: underline; }
-
-#editor-app-root .auth-modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.55); z-index: 10001;
-  align-items: center; justify-content: center;
-}
+#editor-app-root .auth-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10001; align-items: center; justify-content: center; }
 #editor-app-root .auth-modal-overlay.open { display: flex; }
-#editor-app-root .auth-modal {
-  background: #fff; border-radius: 20px;
-  padding: 36px 32px; max-width: 380px; width: 90%;
-}
+#editor-app-root .auth-modal { background: #fff; border-radius: 20px; padding: 36px 32px; max-width: 380px; width: 90%; }
 #editor-app-root .auth-modal h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; color: var(--ea-ink); }
 #editor-app-root .auth-modal p { font-size: .8rem; color: var(--ea-muted); margin-bottom: 20px; }
-#editor-app-root .auth-input {
-  width: 100%; padding: 11px 14px; margin-bottom: 10px;
-  border: 1.5px solid var(--ea-border); border-radius: 9px;
-  font-family: inherit; font-size: .9rem; outline: none;
-}
-#editor-app-root .auth-btn-row { display: flex; gap: 8px; margin-top: 4px; }
-#editor-app-root .auth-btn {
-  flex: 1; padding: 12px; border: none; border-radius: 9px;
-  font-family: inherit; font-size: .88rem; font-weight: 600; cursor: pointer;
-}
-#editor-app-root .auth-btn.primary { background: var(--ea-accent); color: #fff; }
-#editor-app-root .auth-btn.secondary { background: var(--ea-bg); color: var(--ea-ink); border: 1.5px solid var(--ea-border); }
-#editor-app-root #authMsg { font-size: .75rem; margin-top: 10px; min-height: 18px; text-align: center; }
-#editor-app-root .auth-reset, #editor-app-root .auth-close {
-  display: block; text-align: center; margin-top: 12px; font-size: .75rem;
-  color: var(--ea-muted); cursor: pointer; background: none; border: none; font-family: inherit;
-}
-
-#editor-app-root .count-bar {
-  background: #fff; border: 1px solid var(--ea-border);
-  border-radius: 10px; padding: 10px 14px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; font-size: .78rem;
-}
+#editor-app-root .auth-close { display: block; text-align: center; margin-top: 8px; font-size: .75rem; color: var(--ea-muted); cursor: pointer; background: none; border: none; font-family: inherit; }
+#editor-app-root .social-btn { width: 100%; padding: 13px; border-radius: 10px; border: 1.5px solid var(--ea-border); background: #fff; font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all .15s; margin-bottom: 10px; color: var(--ea-ink); }
+#editor-app-root .social-btn:hover { background: #faf8f5; border-color: #c8bfb5; }
+#editor-app-root .social-btn.kakao { background: #FEE500; border-color: #FEE500; color: #3C1E1E; }
+#editor-app-root .social-btn.kakao:hover { background: #f0d800; border-color: #f0d800; }
+#editor-app-root .social-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+#editor-app-root .count-bar { background: #fff; border: 1px solid var(--ea-border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .78rem; min-height: 48px; }
 #editor-app-root .count-bar.hidden { display: none; }
-#editor-app-root .count-dots { display: flex; gap: 5px; }
-#editor-app-root .count-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ea-accent); }
-#editor-app-root .count-dot.used { background: var(--ea-border); }
+#editor-app-root .count-dots { display: flex; gap: 4px; align-items: center; }
+#editor-app-root .count-dot { width: 22px; height: 22px; background: #b85c38; border-radius: 50%; transition: all .2s; flex-shrink: 0; }
+#editor-app-root .count-dot.used { background: #ddd; opacity: 0.5; }
 #editor-app-root .count-text { color: var(--ea-muted); font-size: .75rem; }
 #editor-app-root .count-warn { color: var(--ea-accent); font-weight: 600; font-size: .75rem; }
-
-/* Resize tab */
 #editor-app-root .resize-workspace { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-#editor-app-root .resize-sim-panel {
-  background: #fff; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 20px; gap: 10px; overflow: hidden; flex: 1; min-width: 0;
-}
+#editor-app-root .resize-sim-panel { background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; gap: 10px; overflow: hidden; flex: 1; min-width: 0; }
 #editor-app-root .rsim-header { display: flex; align-items: center; justify-content: space-between; width: 100%; }
 #editor-app-root .rsim-header h2 { font-size: .9rem; font-weight: 600; color: var(--ea-ink); margin: 0; }
-#editor-app-root .rsim-main-frame {
-  background: var(--ea-bg); border-radius: var(--ea-radius);
-  overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.1);
-  aspect-ratio: 4/5; height: calc(100% - 100px);
-  max-height: calc(100vh - 200px);
-  width: auto; max-width: 100%; position: relative;
-}
+#editor-app-root .rsim-main-frame { background: var(--ea-bg); border-radius: var(--ea-radius); overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,.1); aspect-ratio: 4/5; height: calc(100% - 100px); max-height: calc(100vh - 200px); width: auto; max-width: 100%; position: relative; }
 #editor-app-root .rsim-main-frame.eyedrop-mode { cursor: crosshair; }
 #editor-app-root .rsim-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; min-height: 60px; align-items: center; }
-#editor-app-root .rsim-thumb {
-  width: 52px; height: 52px; border-radius: 6px;
-  overflow: hidden; flex-shrink: 0; cursor: pointer;
-  border: 2.5px solid transparent; position: relative;
-}
+#editor-app-root .rsim-thumb { width: 52px; height: 52px; border-radius: 6px; overflow: hidden; flex-shrink: 0; cursor: pointer; border: 2.5px solid transparent; position: relative; }
 #editor-app-root .rsim-thumb.active { border-color: var(--ea-accent); }
 #editor-app-root .rsim-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-#editor-app-root .rsim-thumb-num {
-  position: absolute; bottom: 2px; right: 3px;
-  font-size: .55rem; font-weight: 700; color: #fff;
-  background: rgba(0,0,0,.5); padding: 1px 3px; border-radius: 3px;
-}
-
-#editor-app-root .resize-ctrl {
-  width: 602px; min-width: 602px; flex-shrink: 0; background: var(--ea-bg);
-  overflow-y: auto; padding: 20px 28px 36px 24px;
-  display: flex; flex-direction: column; gap: 16px;
-}
+#editor-app-root .rsim-thumb-num { position: absolute; bottom: 2px; right: 3px; font-size: .55rem; font-weight: 700; color: #fff; background: rgba(0,0,0,.5); padding: 1px 3px; border-radius: 3px; }
+#editor-app-root .resize-ctrl { width: 602px; min-width: 602px; flex-shrink: 0; background: var(--ea-bg); overflow-y: auto; padding: 20px 28px 36px 24px; display: flex; flex-direction: column; gap: 16px; }
 #editor-app-root .r-upload-section { display: flex; flex-direction: column; gap: 10px; }
 #editor-app-root .r-upload-header { display: flex; align-items: center; justify-content: space-between; }
-#editor-app-root .r-upload-header h2 { font-size: .85rem; font-weight: 700; color: var(--ea-ink); margin: 0; }
 #editor-app-root .r-upload-count { font-size: .72rem; color: var(--ea-muted); }
 #editor-app-root .r-thumb-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-#editor-app-root .r-thumb-card {
-  aspect-ratio: 1; border-radius: 8px; overflow: hidden;
-  position: relative; cursor: pointer;
-  border: 2px solid var(--ea-border); background: #eee;
-}
+#editor-app-root .r-thumb-card { aspect-ratio: 1; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer; border: 2px solid var(--ea-border); background: #eee; }
 #editor-app-root .r-thumb-card.active { border-color: var(--ea-accent); }
 #editor-app-root .r-thumb-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-#editor-app-root .r-thumb-del {
-  position: absolute; top: 3px; right: 3px;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: rgba(0,0,0,.6); color: #fff; font-size: 11px;
-  border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity .15s; z-index: 5;
-}
+#editor-app-root .r-thumb-del { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .15s; z-index: 5; }
 #editor-app-root .r-thumb-card:hover .r-thumb-del { opacity: 1; }
-#editor-app-root .r-thumb-add {
-  aspect-ratio: 1; border-radius: 8px;
-  border: 2px dashed var(--ea-border); background: #fff;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; cursor: pointer; position: relative;
-  font-size: .65rem; color: var(--ea-muted);
-}
+#editor-app-root .r-thumb-add { aspect-ratio: 1; border-radius: 8px; border: 2px dashed var(--ea-border); background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; position: relative; font-size: .65rem; color: var(--ea-muted); }
 #editor-app-root .r-thumb-add input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 #editor-app-root .r-thumb-add-icon { font-size: 1.2rem; }
-
-#editor-app-root .r-dropzone {
-  background: #fff; border: 2px dashed var(--ea-border);
-  border-radius: var(--ea-radius); padding: 28px 16px;
-  display: flex; flex-direction: column; align-items: center;
-  gap: 8px; cursor: pointer; position: relative; text-align: center;
-}
+#editor-app-root .r-dropzone { background: #fff; border: 2px dashed var(--ea-border); border-radius: var(--ea-radius); padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; position: relative; text-align: center; }
 #editor-app-root .r-dropzone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-
 #editor-app-root .r-palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-#editor-app-root .r-pal-row-label {
-  font-size: .65rem; font-weight: 600; color: var(--ea-muted);
-  text-transform: uppercase; letter-spacing: .05em;
-}
-#editor-app-root .r-pal-btn {
-  height: 44px; border-radius: 8px;
-  border: 2px solid transparent; cursor: pointer;
-}
+#editor-app-root .r-pal-row-label { font-size: .65rem; font-weight: 600; color: var(--ea-muted); text-transform: uppercase; letter-spacing: .05em; }
+#editor-app-root .r-pal-btn { height: 44px; border-radius: 8px; border: 2px solid transparent; cursor: pointer; }
 #editor-app-root .r-pal-btn.on { border-color: var(--ea-accent); }
 #editor-app-root .r-color-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-#editor-app-root .eyedrop-btn {
-  padding: 6px 12px; border-radius: 8px;
-  border: 1.5px solid var(--ea-border); background: #fff;
-  font-family: inherit; font-size: .75rem; cursor: pointer;
-  display: flex; align-items: center; gap: 5px; color: var(--ea-ink);
-}
+#editor-app-root .eyedrop-btn { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--ea-border); background: #fff; font-family: inherit; font-size: .75rem; cursor: pointer; display: flex; align-items: center; gap: 5px; color: var(--ea-ink); }
 #editor-app-root .eyedrop-btn.active { background: var(--ea-accent); border-color: var(--ea-accent); color: #fff; }
 #editor-app-root .r-cur-color { width: 28px; height: 28px; border-radius: 6px; border: 1.5px solid var(--ea-border); flex-shrink: 0; }
 #editor-app-root .r-cur-hex { font-size: .75rem; color: var(--ea-muted); }
-
 #editor-app-root .fit-mode-row { display: flex; gap: 8px; }
-#editor-app-root .fit-btn {
-  flex: 1; padding: 9px 0;
-  border: 1.5px solid var(--ea-border); background: transparent;
-  border-radius: 8px; font-family: inherit; font-size: .8rem;
-  cursor: pointer; color: var(--ea-ink);
-}
+#editor-app-root .fit-btn { flex: 1; padding: 9px 0; border: 1.5px solid var(--ea-border); background: transparent; border-radius: 8px; font-family: inherit; font-size: .8rem; cursor: pointer; color: var(--ea-ink); }
 #editor-app-root .fit-btn.on { background: var(--ea-accent); border-color: var(--ea-accent); color: #fff; font-weight: 600; }
-
 #editor-app-root .text-overlay-panel { display: flex; flex-direction: column; gap: 10px; }
 #editor-app-root .text-input-row { display: flex; gap: 8px; }
-#editor-app-root .text-input-row input[type="text"] {
-  flex: 1; padding: 8px 11px; border: 1.5px solid var(--ea-border);
-  border-radius: 8px; font-family: inherit; font-size: .9rem;
-  color: var(--ea-ink); background: var(--ea-bg); outline: none;
-}
+#editor-app-root .text-input-row input[type="text"] { flex: 1; padding: 8px 11px; border: 1.5px solid var(--ea-border); border-radius: 8px; font-family: inherit; font-size: .9rem; color: var(--ea-ink); background: var(--ea-bg); outline: none; }
 #editor-app-root .pos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 120px; }
-#editor-app-root .pos-cell {
-  aspect-ratio: 1; border-radius: 6px;
-  border: 1.5px solid var(--ea-border); background: #fff;
-  cursor: pointer;
-}
+#editor-app-root .pos-cell { width: 34px; height: 34px; border-radius: 6px; border: 1.5px solid var(--ea-border); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 #editor-app-root .pos-cell.on { background: var(--ea-accent); border-color: var(--ea-accent); }
-
 #editor-app-root .text-color-row { display: flex; gap: 5px; }
-#editor-app-root .txt-col-btn {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 2px solid transparent; cursor: pointer;
-}
+#editor-app-root .txt-col-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
 #editor-app-root .txt-col-btn.on { border-color: var(--ea-accent); }
 #editor-app-root .opacity-row { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 120px; }
 #editor-app-root .opacity-row label { font-size: .7rem; color: var(--ea-muted); white-space: nowrap; }
 #editor-app-root .opacity-val { font-size: .72rem; color: var(--ea-muted); min-width: 30px; }
-#editor-app-root .font-size-sel, #editor-app-root .font-sel {
-  width: 100%;
-  padding: 7px 10px; border: 1.5px solid var(--ea-border);
-  border-radius: 8px; font-family: inherit; font-size: .85rem;
-  background: var(--ea-bg); color: var(--ea-ink); outline: none; cursor: pointer;
-}
-
-#editor-app-root .toast {
-  position: fixed; bottom: 32px; left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: #1a1816; color: #fff;
-  padding: 12px 24px; border-radius: 100px;
-  font-size: .85rem; font-weight: 500;
-  z-index: 99999; opacity: 0;
-  transition: all .3s; white-space: nowrap; pointer-events: none;
-}
+#editor-app-root .font-sel, #editor-app-root .font-size-sel, #editor-app-root .size-px-input { width: 100%; padding: 7px 10px; border: 1.5px solid var(--ea-border); border-radius: 8px; font-family: inherit; font-size: .85rem; background: var(--ea-bg); color: var(--ea-ink); outline: none; cursor: pointer; }
+#editor-app-root .size-px-row { display: flex; align-items: center; gap: 6px; }
+#editor-app-root .size-px-input { width: 64px; text-align: center; }
+#editor-app-root .size-px-unit { font-size: .72rem; color: var(--ea-muted); }
+#editor-app-root .xy-wrap { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+#editor-app-root .xy-row { display: flex; align-items: center; gap: 8px; }
+#editor-app-root .xy-axis { font-size: .7rem; font-weight: 600; color: var(--ea-accent); min-width: 14px; text-align: center; }
+#editor-app-root .xy-val { font-size: .7rem; color: var(--ea-muted); min-width: 32px; text-align: right; }
+#editor-app-root .effect-toggle-row { display: flex; gap: 8px; }
+#editor-app-root .effect-toggle { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; border: 1.5px solid var(--ea-border); background: #fff; font-family: inherit; font-size: .78rem; font-weight: 500; color: var(--ea-ink); cursor: pointer; }
+#editor-app-root .effect-toggle.on { border-color: var(--ea-accent); background: #fdf7f4; color: var(--ea-accent); }
+#editor-app-root .effect-toggle .tog-switch { width: 28px; height: 16px; border-radius: 100px; background: var(--ea-border); position: relative; flex-shrink: 0; }
+#editor-app-root .effect-toggle.on .tog-switch { background: var(--ea-accent); }
+#editor-app-root .effect-toggle .tog-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform .15s; }
+#editor-app-root .effect-toggle.on .tog-switch::after { transform: translateX(12px); }
+#editor-app-root .effect-panel { display: none; flex-direction: column; gap: 8px; background: #faf8f5; border-radius: 8px; padding: 12px; border: 1px solid #ede8de; margin-top: 2px; }
+#editor-app-root .effect-panel.open { display: flex; }
+#editor-app-root .effect-row { display: flex; align-items: center; gap: 10px; }
+#editor-app-root .effect-label { font-size: .7rem; color: var(--ea-muted); min-width: 44px; text-transform: uppercase; }
+#editor-app-root .effect-val { font-size: .72rem; color: var(--ea-ink); min-width: 36px; text-align: right; }
+#editor-app-root .effect-color-btn { width: 26px; height: 26px; border-radius: 6px; border: 1.5px solid var(--ea-border); cursor: pointer; flex-shrink: 0; padding: 0; position: relative; overflow: hidden; }
+#editor-app-root .effect-color-btn input[type="color"] { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); opacity: 0; cursor: pointer; }
+#editor-app-root .free-trial-badge { display: inline-flex; align-items: center; background: linear-gradient(135deg, #f5a88e, #e8602c); color: #fff; font-size: .68rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-left: 7px; vertical-align: middle; letter-spacing: .02em; white-space: nowrap; animation: ea-pulse-badge 2s ease-in-out infinite; }
+@keyframes ea-pulse-badge { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.85; transform:scale(1.04); } }
+#editor-app-root .insta-open-btn { display: none; width: 100%; padding: 13px; background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; border: none; border-radius: 100px; font-family: inherit; font-size: .9rem; font-weight: 700; cursor: pointer; }
+#editor-app-root .insta-open-btn.show { display: block; }
+#editor-app-root .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1816; color: #fff; padding: 12px 24px; border-radius: 100px; font-size: .85rem; font-weight: 500; z-index: 99999; opacity: 0; transition: all .3s; white-space: nowrap; pointer-events: none; }
 #editor-app-root .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
 #editor-app-root .hidden-canvas { display: none; }
 </style>
 
 <header class="ea-topbar">
   <div style="display:flex;align-items:center;gap:14px;">
-    <button class="ea-back-btn" onclick="backToLanding()">← 홈으로</button>
+    <button class="ea-back-btn" onclick="backToLanding()" title="홈으로 돌아가기">← 홈</button>
     <div>
-      <h1>🍑 Before <em>&</em> After</h1>
-      <p>인스타그램 4:5 고화질 이미지 제작</p>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--ea-ink);">🍑 피치포스트</div>
+      <div style="font-size:.72rem;color:var(--ea-muted);margin-top:2px;">인스타그램 4:5 · 1080×1350px 고화질</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <span id="userEmail" style="display:none;font-size:.75rem;color:var(--ea-muted);"></span>
-    <button id="loginBtn" onclick="openAuthModal()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#1c1a17;color:#fff;border:none;border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;">
-      🔑 로그인
-    </button>
-    <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:#928c84;border:1.5px solid #e0dbd4;border-radius:100px;font-family:inherit;font-size:.78rem;cursor:pointer;">
-      로그아웃
-    </button>
+    <button id="loginBtn" onclick="openAuthModal()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ea-ink);color:#fff;border:none;border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;">🔑 로그인</button>
+    <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--ea-muted);border:1.5px solid var(--ea-border);border-radius:100px;font-family:inherit;font-size:.78rem;cursor:pointer;">로그아웃</button>
     <span class="insta-badge">📐 1080 × 1350 px</span>
   </div>
 </header>
 
 <div class="tab-container">
 <div class="tab-bar">
-  <button class="ea-tab-btn active" id="tab1Btn" onclick="eaSwitchTab(1)">✂️ 비포&애프터 합치기</button>
-  <button class="ea-tab-btn" id="tab2Btn" onclick="eaSwitchTab(2)">🖼️ 사진 인스타 맞추기</button>
+  <button class="tab-btn active" id="tab1Btn" onclick="switchTab(1)">🔀 Before & After</button>
+  <button class="tab-btn" id="tab2Btn" onclick="switchTab(2)">✨ 사진 리사이즈</button>
 </div>
 
-<!-- TAB 1 -->
+<!-- TAB 1: Before & After -->
 <div class="tab-panel active" id="tab1Panel">
 <div class="workspace-wrap">
 <div class="workspace">
   <div class="sim-panel" id="simPanel">
-    <div class="sim-header">
-      <h2>미리보기</h2>
-      <span class="sim-live">실시간</span>
-    </div>
+    <div class="sim-header"><h2>미리보기</h2><span class="sim-live">실시간</span></div>
     <div class="sim-frame" id="simFrame">
       <div class="sim-placeholder" id="simPh">
         <span>🖼️</span>
         <p style="font-weight:600;color:#48433e;font-size:.82rem;">미리보기</p>
         <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
-          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
-            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">1</span>
-            오른쪽에서 Before · After 사진 업로드
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
-            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">2</span>
-            옵션 설정 (선택사항)
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;">
-            <span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">3</span>
-            저장 버튼 클릭 → 인스타에 바로 업로드!
-          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;"><span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">1</span>오른쪽에서 Before · After 사진 업로드</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;"><span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">2</span>옵션 설정</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;"><span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">3</span>저장 버튼 클릭 → 인스타에 바로 업로드!</div>
         </div>
       </div>
       <canvas id="simCanvas" style="display:none;"></canvas>
     </div>
     <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
   </div>
-
   <div class="resizer" id="resizer"></div>
-
   <div class="ctrl-panel">
     <div class="upload-grid">
-      <div class="upload-zone" id="zone-before"
-           ondragover="eaOnDrag(event,'before')" ondragleave="eaOffDrag('before')" ondrop="eaOnDrop(event,'before')">
-        <input type="file" accept="image/*" onchange="eaLoadFile(event,'before')">
+      <div class="upload-zone" id="zone-before" ondragover="onDrag(event,'before')" ondragleave="offDrag('before')" ondrop="onDrop(event,'before')">
+        <input type="file" accept="image/*" onchange="loadFile(event,'before')">
         <div class="up-icon">📷</div>
         <span class="up-label before">Before</span>
         <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
       </div>
-      <div class="upload-zone" id="zone-after"
-           ondragover="eaOnDrag(event,'after')" ondragleave="eaOffDrag('after')" ondrop="eaOnDrop(event,'after')">
-        <input type="file" accept="image/*" onchange="eaLoadFile(event,'after')">
+      <div class="upload-zone" id="zone-after" ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
+        <input type="file" accept="image/*" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
         <span class="up-label after">After</span>
         <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
@@ -3412,99 +3162,79 @@
     <div class="opts-panel">
       <h2>옵션 설정</h2>
       <div class="opts-grid">
-        <div class="opt-group">
-          <label>배치 방향</label>
-          <div class="tog-row">
-            <button class="ea-tog-btn on" onclick="eaSetOpt('layout','vertical',this)">세로 ↕</button>
-            <button class="ea-tog-btn" onclick="eaSetOpt('layout','horizontal',this)">가로 ↔</button>
+        <div class="opt-group"><label>배치 방향</label><div class="tog-row"><button class="tog-btn on" onclick="setOpt('layout','vertical',this)">세로 ↕</button><button class="tog-btn" onclick="setOpt('layout','horizontal',this)">가로 ↔</button></div></div>
+        <div class="opt-group"><label>구분선 굵기</label><div class="rng-row"><input type="range" min="0" max="20" value="6" id="dividerSize" oninput="this.nextElementSibling.textContent=this.value+'px';refreshSim();"><span class="rng-val">6px</span></div></div>
+        <div class="opt-group"><label>Before 라벨</label><input class="lbl-input" type="text" id="labelBefore" value="BEFORE" maxlength="20" oninput="refreshSim()"></div>
+        <div class="opt-group"><label>After 라벨</label><input class="lbl-input" type="text" id="labelAfter" value="AFTER" maxlength="20" oninput="refreshSim()"></div>
+        <div class="opt-group"><label>라벨 표시</label><div class="tog-row"><button class="tog-btn on" onclick="setOpt('showLabel',true,this)">표시</button><button class="tog-btn" onclick="setOpt('showLabel',false,this)">숨김</button></div></div>
+        <div class="opt-group"><label>글자 색상</label><div class="color-row"><button class="col-btn cw on" onclick="setColor('#ffffff',this)"></button><button class="col-btn cg" onclick="setColor('#aaaaaa',this)"></button><button class="col-btn cb" onclick="setColor('#111111',this)"></button></div></div>
+        <div class="opt-group"><label>글자 크기</label><div class="fsz-row"><button class="fsz-btn" onclick="setOpt('fontSize','small',this)">작게</button><button class="fsz-btn on" onclick="setOpt('fontSize','medium',this)">보통</button><button class="fsz-btn" onclick="setOpt('fontSize','large',this)">크게</button></div></div>
+        <div class="opt-group" style="grid-column: 1 / -1;"><label>Before / After 비율 &nbsp;<span id="splitDisplay" style="color:#b85c38">50 : 50</span></label><div class="ratio-row"><span class="ratio-lbl">Before</span><input type="range" min="20" max="80" value="50" id="splitRatio" oninput="updateSplit(this);refreshSim();" style="flex:1;"><span class="ratio-lbl r">After</span><button class="ratio-reset" onclick="resetSplit()">↺</button></div></div>
+      </div>
+    </div>
+
+    <div class="opts-panel text-overlay-panel" id="baTextPanel">
+      <h2>텍스트 / 로고 삽입</h2>
+      <div class="text-input-row"><input type="text" id="baOverlayText" placeholder="예: @my_studio / 브랜드명" maxlength="40" oninput="refreshSim()"></div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:5px;text-transform:uppercase;">위치</div>
+          <div class="pos-grid" id="baPosGrid"></div>
+          <div class="xy-wrap">
+            <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="baOffsetX" oninput="document.getElementById('baOffsetXVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetXVal">0</span></div>
+            <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="baOffsetY" oninput="document.getElementById('baOffsetYVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetYVal">0</span></div>
           </div>
         </div>
-        <div class="opt-group">
-          <label>구분선 굵기</label>
-          <div class="rng-row">
-            <input type="range" min="0" max="20" value="6" id="dividerSize"
-                   oninput="this.nextElementSibling.textContent=this.value+'px';eaRefreshSim();">
-            <span class="rng-val">6px</span>
-          </div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
+          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">글씨체</div><select class="font-sel" id="baOverlayFont" onchange="refreshSim()"><option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option><option value="Nanum Gothic, sans-serif">나눔고딕</option><option value="Nanum Myeongjo, serif">나눔명조</option><option value="Nanum Pen Script, cursive">나눔손글씨 펜</option><option value="Gaegu, cursive">가에구</option><option value="Playfair Display, serif">Playfair Display</option><option value="Montserrat, sans-serif">Montserrat</option><option value="Dancing Script, cursive">Dancing Script</option><option value="Oswald, sans-serif">Oswald</option><option value="Arial, sans-serif">Arial</option></select></div>
+          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">크기</div><div class="size-px-row"><input type="number" class="size-px-input" id="baOverlaySize" min="8" max="300" value="36" oninput="refreshSim()"><span class="size-px-unit">px</span></div></div>
+          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">색상</div><div class="text-color-row" id="baTxtColorRow"></div></div>
+          <div class="opacity-row"><label>불투명도</label><input type="range" min="10" max="100" value="100" id="baOverlayOpacity" oninput="document.getElementById('baOpacityVal').textContent=this.value+'%';refreshSim();" style="flex:1;"><span class="opacity-val" id="baOpacityVal">100%</span></div>
         </div>
-        <div class="opt-group">
-          <label>Before 라벨</label>
-          <input class="lbl-input" type="text" id="labelBefore" value="BEFORE" maxlength="20" oninput="eaRefreshSim()">
-        </div>
-        <div class="opt-group">
-          <label>After 라벨</label>
-          <input class="lbl-input" type="text" id="labelAfter" value="AFTER" maxlength="20" oninput="eaRefreshSim()">
-        </div>
-        <div class="opt-group">
-          <label>라벨 표시</label>
-          <div class="tog-row">
-            <button class="ea-tog-btn on" onclick="eaSetOpt('showLabel',true,this)">표시</button>
-            <button class="ea-tog-btn" onclick="eaSetOpt('showLabel',false,this)">숨김</button>
-          </div>
-        </div>
-        <div class="opt-group">
-          <label>글자 색상</label>
-          <div class="color-row">
-            <button class="col-btn cw on" onclick="eaSetColor('#ffffff',this)"></button>
-            <button class="col-btn cg" onclick="eaSetColor('#aaaaaa',this)"></button>
-            <button class="col-btn cb" onclick="eaSetColor('#111111',this)"></button>
-          </div>
-        </div>
-        <div class="opt-group">
-          <label>글자 크기</label>
-          <div class="fsz-row">
-            <button class="fsz-btn" onclick="eaSetOpt('fontSize','small',this)">작게</button>
-            <button class="fsz-btn on" onclick="eaSetOpt('fontSize','medium',this)">보통</button>
-            <button class="fsz-btn" onclick="eaSetOpt('fontSize','large',this)">크게</button>
-          </div>
-        </div>
-        <div class="opt-group" style="grid-column: 1 / -1;">
-          <label>Before / After 비율 &nbsp;<span id="splitDisplay" style="color:#b85c38">50 : 50</span></label>
-          <div class="ratio-row">
-            <span class="ratio-lbl">Before</span>
-            <input type="range" min="20" max="80" value="50" id="splitRatio"
-                   oninput="eaUpdateSplit(this);eaRefreshSim();" style="flex:1;">
-            <span class="ratio-lbl r">After</span>
-            <button class="ratio-reset" onclick="eaResetSplit()">↺</button>
-          </div>
-        </div>
+      </div>
+      <div class="effect-toggle-row">
+        <button class="effect-toggle" id="baStrokeToggle" onclick="toggleEffect('ba','stroke')">외곽선<div class="tog-switch"></div></button>
+        <button class="effect-toggle" id="baShadowToggle" onclick="toggleEffect('ba','shadow')">그림자<div class="tog-switch"></div></button>
+      </div>
+      <div class="effect-panel" id="baStrokePanel">
+        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="baStrokeColorBtn" style="background:#000000;"><input type="color" value="#000000" id="baStrokeColor" oninput="document.getElementById('baStrokeColorBtn').style.background=this.value; refreshSim()"></button><span style="font-size:.7rem;color:var(--ea-muted);" id="baStrokeColorHex">#000000</span></div>
+        <div class="effect-row"><span class="effect-label">두께</span><input type="range" min="1" max="20" value="2" id="baStrokeWidth" oninput="document.getElementById('baStrokeWidthVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baStrokeWidthVal">2</span></div>
+      </div>
+      <div class="effect-panel" id="baShadowPanel">
+        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="baShadowColorBtn" style="background:#000000;"><input type="color" value="#000000" id="baShadowColor" oninput="document.getElementById('baShadowColorBtn').style.background=this.value; refreshSim()"></button><span style="font-size:.7rem;color:var(--ea-muted);" id="baShadowColorHex">#000000</span></div>
+        <div class="effect-row"><span class="effect-label">방향</span><input type="range" min="0" max="360" value="315" id="baShadowAngle" oninput="document.getElementById('baShadowAngleVal').textContent=this.value+'°'; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowAngleVal">315°</span></div>
+        <div class="effect-row"><span class="effect-label">불투명도</span><input type="range" min="0" max="100" value="40" id="baShadowOpacity" oninput="document.getElementById('baShadowOpacityVal').textContent=this.value+'%'; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowOpacityVal">40%</span></div>
+        <div class="effect-row"><span class="effect-label">거리</span><input type="range" min="0" max="30" value="4" id="baShadowDist" oninput="document.getElementById('baShadowDistVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowDistVal">4</span></div>
+        <div class="effect-row"><span class="effect-label">흐림</span><input type="range" min="0" max="20" value="0" id="baShadowBlur" oninput="document.getElementById('baShadowBlurVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowBlurVal">0</span></div>
       </div>
     </div>
 
     <div class="count-bar" id="countBar">
-      <div>
-        <div class="count-dots" id="countDots"></div>
-        <span class="count-text" id="countText">오늘 저장 횟수</span>
-      </div>
+      <div><div class="count-dots" id="countDots"></div><span class="count-text" id="countText">오늘 저장 횟수</span></div>
       <span class="count-warn" id="countWarn"></span>
     </div>
 
     <div class="action-area">
-      <div class="plan-banner">
-        <div class="plan-info">
-          <span class="plan-badge free" id="planBadge">무료 플랜</span>
-          <span class="plan-desc" id="planDesc">저장 시 워터마크가 삽입됩니다</span>
-        </div>
-        <button class="plan-btn upgrade" id="planBtn" onclick="eaOpenModal()">✦ PRO 업그레이드</button>
+      <div class="plan-banner" id="planBanner">
+        <div class="plan-info"><span class="plan-badge free" id="planBadge">무료 플랜</span><span class="plan-desc" id="planDesc">저장 시 워터마크가 삽입됩니다</span></div>
+        <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO <span class="free-trial-badge">14일 무료</span></button>
       </div>
-      <button class="ea-gen-btn" id="genBtn" onclick="eaGenerate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
+      <button class="gen-btn" id="genBtn" onclick="generate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
       <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
-      <button class="dl-btn" id="dlBtn" onclick="eaDownload()">⬇ JPG 다운로드</button>
+      <button class="dl-btn" id="dlBtn" onclick="download()">⬇ JPG 다운로드</button>
+      <button class="insta-open-btn" id="instaBtn1" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
   </div>
 </div>
 </div>
 </div>
 
-<!-- TAB 2 -->
+<!-- TAB 2: 사진 리사이즈 -->
 <div class="tab-panel" id="tab2Panel">
 <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:0 100px 24px 100px;background:#fff;overflow:hidden;">
 <div class="resize-workspace" style="flex:1;min-height:0;">
   <div class="resize-sim-panel" id="rSimPanel">
-    <div class="rsim-header">
-      <h2>미리보기</h2>
-      <span class="sim-live">실시간</span>
-    </div>
+    <div class="rsim-header"><h2>미리보기</h2><span class="sim-live">실시간</span></div>
     <div class="rsim-main-frame" id="rMainFrame">
       <div class="sim-placeholder" id="rSimPh">
         <span>🖼️</span>
@@ -3520,15 +3250,10 @@
     <div class="rsim-thumbs" id="rSimThumbs"></div>
     <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
   </div>
-
   <div class="resizer" id="resizer2"></div>
-
   <div class="resize-ctrl">
     <div class="r-upload-section">
-      <div class="r-upload-header">
-        <h2>📁 업로드된 사진</h2>
-        <span class="r-upload-count" id="rUploadCount">0 / 10장</span>
-      </div>
+      <div class="r-upload-header"><h2 style="font-size:.85rem;font-weight:700;margin:0;">📁 업로드된 사진</h2><span class="r-upload-count" id="rUploadCount">0 / 10장</span></div>
       <div class="r-dropzone" id="rZone">
         <input type="file" accept="image/*" multiple onchange="rLoadFiles(event)">
         <div class="up-icon">🖼️</div>
@@ -3562,60 +3287,52 @@
 
     <div class="opts-panel text-overlay-panel">
       <h2>텍스트 / 로고 삽입</h2>
-      <div class="text-input-row">
-        <input type="text" id="overlayText" placeholder="예: @my_studio  /  브랜드명" maxlength="40" oninput="rRefreshSim()">
-      </div>
+      <div class="text-input-row"><input type="text" id="overlayText" placeholder="예: @my_studio / 브랜드명" maxlength="40" oninput="rRefreshSim()"></div>
       <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
         <div>
           <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:5px;text-transform:uppercase;">위치</div>
           <div class="pos-grid" id="posGrid"></div>
+          <div class="xy-wrap">
+            <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="rOffsetX" oninput="document.getElementById('rOffsetXVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetXVal">0</span></div>
+            <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="rOffsetY" oninput="document.getElementById('rOffsetYVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetYVal">0</span></div>
+          </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
-          <div>
-            <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">글씨체</div>
-            <select class="font-sel" id="rOverlayFont" onchange="rRefreshSim()">
-              <option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option>
-              <option value="Nanum Gothic, sans-serif">나눔고딕</option>
-              <option value="Nanum Myeongjo, serif">나눔명조</option>
-              <option value="Playfair Display, serif">Playfair Display</option>
-              <option value="Montserrat, sans-serif">Montserrat</option>
-              <option value="Dancing Script, cursive">Dancing Script</option>
-              <option value="Oswald, sans-serif">Oswald</option>
-              <option value="Arial, sans-serif">Arial</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">크기</div>
-            <select class="font-size-sel" id="overlaySize" onchange="rRefreshSim()">
-              <option value="24">작게</option>
-              <option value="36" selected>보통</option>
-              <option value="52">크게</option>
-              <option value="72">매우 크게</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">색상</div>
-            <div class="text-color-row" id="txtColorRow"></div>
-          </div>
-          <div class="opacity-row">
-            <label>불투명도</label>
-            <input type="range" min="10" max="100" value="100" id="overlayOpacity"
-                   oninput="document.getElementById('opacityVal').textContent=this.value+'%';rRefreshSim();">
-            <span class="opacity-val" id="opacityVal">100%</span>
-          </div>
+          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">글씨체</div><select class="font-sel" id="rOverlayFont" onchange="rRefreshSim()"><option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option><option value="Nanum Gothic, sans-serif">나눔고딕</option><option value="Nanum Myeongjo, serif">나눔명조</option><option value="Nanum Pen Script, cursive">나눔손글씨 펜</option><option value="Gaegu, cursive">가에구</option><option value="Playfair Display, serif">Playfair Display</option><option value="Montserrat, sans-serif">Montserrat</option><option value="Dancing Script, cursive">Dancing Script</option><option value="Oswald, sans-serif">Oswald</option><option value="Arial, sans-serif">Arial</option></select></div>
+          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">크기</div><div class="size-px-row"><input type="number" class="size-px-input" id="overlaySize" min="8" max="300" value="36" oninput="rRefreshSim()"><span class="size-px-unit">px</span></div></div>
+          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">색상</div><div class="text-color-row" id="txtColorRow"></div></div>
+          <div class="opacity-row"><label>불투명도</label><input type="range" min="10" max="100" value="100" id="overlayOpacity" oninput="document.getElementById('opacityVal').textContent=this.value+'%';rRefreshSim();" style="flex:1;"><span class="opacity-val" id="opacityVal">100%</span></div>
         </div>
+      </div>
+      <div class="effect-toggle-row">
+        <button class="effect-toggle" id="rStrokeToggle" onclick="toggleEffect('r','stroke')">외곽선<div class="tog-switch"></div></button>
+        <button class="effect-toggle" id="rShadowToggle" onclick="toggleEffect('r','shadow')">그림자<div class="tog-switch"></div></button>
+      </div>
+      <div class="effect-panel" id="rStrokePanel">
+        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="rStrokeColorBtn" style="background:#000000;"><input type="color" value="#000000" id="rStrokeColor" oninput="document.getElementById('rStrokeColorBtn').style.background=this.value; rRefreshSim()"></button></div>
+        <div class="effect-row"><span class="effect-label">두께</span><input type="range" min="1" max="20" value="2" id="rStrokeWidth" oninput="document.getElementById('rStrokeWidthVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rStrokeWidthVal">2</span></div>
+      </div>
+      <div class="effect-panel" id="rShadowPanel">
+        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="rShadowColorBtn" style="background:#000000;"><input type="color" value="#000000" id="rShadowColor" oninput="document.getElementById('rShadowColorBtn').style.background=this.value; rRefreshSim()"></button></div>
+        <div class="effect-row"><span class="effect-label">방향</span><input type="range" min="0" max="360" value="315" id="rShadowAngle" oninput="document.getElementById('rShadowAngleVal').textContent=this.value+'°'; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowAngleVal">315°</span></div>
+        <div class="effect-row"><span class="effect-label">불투명도</span><input type="range" min="0" max="100" value="40" id="rShadowOpacity" oninput="document.getElementById('rShadowOpacityVal').textContent=this.value+'%'; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowOpacityVal">40%</span></div>
+        <div class="effect-row"><span class="effect-label">거리</span><input type="range" min="0" max="30" value="4" id="rShadowDist" oninput="document.getElementById('rShadowDistVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowDistVal">4</span></div>
+        <div class="effect-row"><span class="effect-label">흐림</span><input type="range" min="0" max="20" value="0" id="rShadowBlur" oninput="document.getElementById('rShadowBlurVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowBlurVal">0</span></div>
       </div>
     </div>
 
     <div class="action-area">
       <div class="count-bar" id="rCountBar">
-        <div>
-          <div class="count-dots" id="rCountDots"></div>
-          <span class="count-text" id="rCountText">오늘 저장 횟수</span>
-        </div>
+        <div><div class="count-dots" id="rCountDots"></div><span class="count-text" id="rCountText">오늘 저장 횟수</span></div>
         <span class="count-warn" id="rCountWarn"></span>
       </div>
-      <button class="ea-gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 저장 — 인스타 최적화 1080×1350</button>
+      <div class="plan-banner" id="rPlanBanner">
+        <div class="plan-info"><span class="plan-badge free" id="rPlanBadge">무료 플랜</span><span class="plan-desc" id="rPlanDesc">저장 시 워터마크가 삽입됩니다</span></div>
+        <button class="plan-btn upgrade" id="rPlanBtn" onclick="openModal()">✦ PRO <span class="free-trial-badge">14일 무료</span></button>
+      </div>
+      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 저장 — 인스타 최적화 1080×1350</button>
+      <div class="wm-notice" id="rWmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
+      <button class="insta-open-btn" id="instaBtn2" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
   </div>
 </div>
@@ -3625,40 +3342,41 @@
 
 <div class="toast" id="toast"></div>
 
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-icon">✦</div>
     <h2>PRO 플랜으로 업그레이드</h2>
     <p style="font-size:.85rem;color:var(--ea-muted);">워터마크 없이 깔끔하게, 고화질로</p>
-    <div class="modal-price">₩3,900 <span>/ 월</span></div>
+    <p style="font-size:.8rem;color:var(--ea-accent);font-weight:600;margin-top:-4px;">☕ 하루 297원으로 인스타 콘텐츠 무제한!</p>
+    <div class="modal-price">₩8,900 <span>/ 월</span></div>
     <ul class="modal-features">
       <li>워터마크 완전 제거</li>
       <li>1080 × 1350 px 최고화질 저장</li>
       <li>무제한 이미지 생성</li>
       <li>모든 옵션 제한 없이 사용</li>
     </ul>
-    <button class="modal-cta" onclick="activatePro()">월 3,900원으로 시작하기</button>
-    <button class="modal-close" onclick="eaCloseModal()">나중에 할게요</button>
+    <button class="modal-cta" onclick="activatePro()">월 8,900원으로 시작하기</button>
+    <button class="modal-close" onclick="closeModal()">나중에 할게요</button>
     <button class="modal-demo" onclick="activateProDemo()">🔓 데모: PRO 무료 체험 (테스트용)</button>
   </div>
 </div>
 
 <canvas id="resultCanvas" class="hidden-canvas"></canvas>
 
-<div class="auth-modal-overlay" id="authModalOverlay">
+<div class="auth-modal-overlay" id="authModalOverlay" onclick="if(event.target===this)closeAuthModal()">
   <div class="auth-modal">
-    <h2>🔑 로그인 / 회원가입</h2>
-    <p>이메일과 비밀번호를 입력해주세요</p>
-    <input class="auth-input" type="email" id="authEmail" placeholder="이메일">
-    <input class="auth-input" type="password" id="authPw" placeholder="비밀번호 (6자 이상)"
-           onkeydown="if(event.key==='Enter')signIn()">
-    <div class="auth-btn-row">
-      <button class="auth-btn primary" onclick="signIn()">로그인</button>
-      <button class="auth-btn secondary" onclick="signUp()">회원가입</button>
-    </div>
-    <div id="authMsg"></div>
-    <button class="auth-reset" onclick="resetPassword()">비밀번호를 잊으셨나요?</button>
-    <button class="auth-close" onclick="closeAuthModal()">닫기</button>
+    <h2>피치포스트 시작하기 🍑</h2>
+    <p style="font-size:.82rem;color:var(--ea-muted);margin-bottom:20px;">간편하게 로그인하고 바로 사용하세요</p>
+    <button class="social-btn kakao" onclick="signInKakao()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.61 5.08 4.04 6.54-.16.56-.99 3.44-1.03 3.67 0 0-.02.17.09.23.11.06.24.01.24.01.31-.04 3.62-2.38 4.19-2.77.47.06.95.09 1.47.09 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+      카카오로 시작하기
+    </button>
+    <button class="social-btn" onclick="signInGoogle()">
+      <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      구글로 시작하기
+    </button>
+    <div id="authMsg" style="font-size:.78rem;text-align:center;margin-top:4px;"></div>
+    <button class="auth-close" onclick="closeAuthModal()" style="margin-top:12px;">닫기</button>
   </div>
 </div>
 
@@ -3668,15 +3386,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-/* ═══════════════════════════════════════
-   🎨 EDITOR APP SCRIPTS
-   (기존 피치포스트 편집 앱 전체)
-═══════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   🎨 피치포스트 편집 앱 스크립트
+══════════════════════════════════════════ */
 
-// Supabase
 const EA_SUPABASE_URL = 'https://garzmqgpyghbiorehlta.supabase.co';
 const EA_SUPABASE_KEY = 'sb_publishable_13OUnm9P_LQ42g1bn9NxnA_6yxsw1OL';
 const sb = supabase.createClient(EA_SUPABASE_URL, EA_SUPABASE_KEY);
+
 let currentUser = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
@@ -3700,45 +3417,33 @@ async function loadProStatus() {
   }
   updatePlanUI();
   updateAuthUI(true);
-  if (imgs?.before && imgs?.after) eaRefreshSim();
+  if (imgs?.before && imgs?.after) refreshSim();
 }
 
-async function signUp() {
-  const email = document.getElementById('authEmail').value.trim();
-  const pw = document.getElementById('authPw').value.trim();
-  if (!email || !pw) return showAuthMsg('이메일과 비밀번호를 입력해주세요.');
-  if (pw.length < 6) return showAuthMsg('비밀번호는 6자 이상이어야 해요.');
-  const { error } = await sb.auth.signUp({ email, password: pw });
-  if (error) return showAuthMsg('오류: ' + error.message);
-  showAuthMsg('✅ 가입 완료! 이메일 인증 후 로그인해주세요.', true);
+async function signInGoogle() {
+  const msg = document.getElementById('authMsg');
+  if (msg) msg.textContent = '구글 로그인 중...';
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href, scopes: 'profile_nickname profile_image' }
+  });
+  if (error && msg) msg.textContent = '오류: ' + error.message;
 }
 
-async function signIn() {
-  const email = document.getElementById('authEmail').value.trim();
-  const pw = document.getElementById('authPw').value.trim();
-  if (!email || !pw) return showAuthMsg('이메일과 비밀번호를 입력해주세요.');
-  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
-  if (error) return showAuthMsg('로그인 실패: 이메일/비밀번호를 확인해주세요.');
-  closeAuthModal();
+async function signInKakao() {
+  const msg = document.getElementById('authMsg');
+  if (msg) msg.textContent = '카카오 로그인 중...';
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'kakao',
+    options: { redirectTo: window.location.href, scopes: 'profile_nickname profile_image' }
+  });
+  if (error && msg) msg.textContent = '오류: ' + error.message;
 }
 
 async function logout() {
   await sb.auth.signOut();
   currentUser = null; isPro = false;
   updatePlanUI(); updateAuthUI(false);
-}
-
-async function resetPassword() {
-  const email = document.getElementById('authEmail').value.trim();
-  if (!email) return showAuthMsg('이메일을 먼저 입력해주세요.');
-  await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
-  showAuthMsg('📧 비밀번호 재설정 이메일을 보냈어요!', true);
-}
-
-function showAuthMsg(msg, ok=false) {
-  const el = document.getElementById('authMsg');
-  el.textContent = msg;
-  el.style.color = ok ? '#2d9e6b' : '#e85c38';
 }
 
 function openAuthModal() { document.getElementById('authModalOverlay').classList.add('open'); }
@@ -3761,7 +3466,6 @@ function updateAuthUI(loggedIn) {
   }
 }
 
-// Editor state
 const imgs = { before: null, after: null };
 const opts = { layout: 'vertical', showLabel: true, labelColor: '#ffffff', fontSize: 'medium' };
 const IW = 1080, IH = 1350;
@@ -3793,16 +3497,16 @@ function updateCountBar() {
   warn.textContent = left === 0 ? '오늘 횟수 초과 · PRO 업그레이드' : left === 1 ? '오늘 1회 남음' : '';
 }
 
-function eaOpenModal() { document.getElementById('modalOverlay').classList.add('open'); }
-function eaCloseModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
 async function activatePro() {
-  if (!currentUser) { eaCloseModal(); openAuthModal(); return; }
+  if (!currentUser) { closeModal(); openAuthModal(); return; }
   await sb.from('users').upsert({ id: currentUser.id, is_pro: true });
-  isPro = true; updatePlanUI(); eaCloseModal();
-  if (imgs.before && imgs.after) eaRefreshSim();
+  isPro = true; updatePlanUI(); closeModal();
+  if (imgs.before && imgs.after) refreshSim();
 }
-function activateProDemo() { isPro = true; updatePlanUI(); eaCloseModal(); if (imgs.before && imgs.after) eaRefreshSim(); }
+function activateProDemo() { isPro = true; updatePlanUI(); closeModal(); if (imgs.before && imgs.after) refreshSim(); }
 
 function updatePlanUI() {
   const badge = document.getElementById('planBadge');
@@ -3814,63 +3518,79 @@ function updatePlanUI() {
     badge.textContent = '✦ PRO 플랜';
     badge.className = 'plan-badge pro';
     desc.textContent = '워터마크 없음 · 최고화질 저장';
-    btn.textContent = '✓ PRO 이용중';
+    btn.innerHTML = '✓ PRO 이용중';
     btn.className = 'plan-btn active-pro';
     btn.onclick = null;
     wm.classList.add('hidden');
   } else {
     wm.classList.remove('hidden');
   }
+  const rBadge = document.getElementById('rPlanBadge');
+  const rDesc = document.getElementById('rPlanDesc');
+  const rBtn = document.getElementById('rPlanBtn');
+  const rWm = document.getElementById('rWmNotice');
+  if (rBadge && rDesc && rBtn) {
+    if (isPro) {
+      rBadge.textContent = '✦ PRO 플랜';
+      rBadge.className = 'plan-badge pro';
+      rDesc.textContent = '워터마크 없음 · 최고화질 저장';
+      rBtn.innerHTML = '✓ PRO 이용중';
+      rBtn.className = 'plan-btn active-pro';
+      rBtn.onclick = null;
+      if (rWm) rWm.classList.add('hidden');
+    } else {
+      if (rWm) rWm.classList.remove('hidden');
+    }
+  }
   updateCountBar();
 }
 
 function drawWatermark(ctx, cw, ch) {
-  const text = 'BeforeAfter.kr';
   const fs = Math.max(18, cw * 0.026);
   const pad = Math.round(fs * 0.7);
   ctx.save();
-  ctx.font = `600 ${fs}px "Noto Sans KR",sans-serif`;
+  ctx.font = `700 ${fs}px 'Noto Sans KR',sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = 6;
   ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-  ctx.shadowColor = 'rgba(0,0,0,0.5)';
-  ctx.shadowBlur = 6; ctx.shadowOffsetY = 1;
-  ctx.fillStyle = 'rgba(255,255,255,0.82)';
-  ctx.fillText(text, cw - pad, ch - pad);
+  ctx.fillText('🍑 peachpost', cw - pad, ch - pad);
   ctx.restore();
 }
 
-function eaSetOpt(key, val, btn) {
+function setOpt(key, val, btn) {
   opts[key] = val;
   btn.closest('.tog-row,.fsz-row').querySelectorAll('button').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  eaRefreshSim();
+  refreshSim();
 }
-function eaSetColor(val, btn) {
+function setColor(val, btn) {
   opts.labelColor = val;
   document.querySelectorAll('#editor-app-root .col-btn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
-  eaRefreshSim();
+  refreshSim();
 }
-function eaUpdateSplit(el) {
+function updateSplit(el) {
   const v = +el.value;
   document.getElementById('splitDisplay').textContent = v + ' : ' + (100 - v);
 }
-function eaResetSplit() {
+function resetSplit() {
   const el = document.getElementById('splitRatio');
-  el.value = 50; eaUpdateSplit(el); eaRefreshSim();
+  el.value = 50; updateSplit(el); refreshSim();
 }
 function getSplit() { return +document.getElementById('splitRatio').value / 100; }
 
-function eaLoadFile(e, side) { const f = e.target.files[0]; if (f) eaReadImg(f, side); }
-function eaReadImg(file, side) {
+function loadFile(e, side) { const f = e.target.files[0]; if (f) readImg(f, side); }
+function readImg(file, side) {
   const r = new FileReader();
   r.onload = ev => {
     const i = new Image();
-    i.onload = () => { imgs[side] = i; eaShowPreview(side, ev.target.result); eaCheckReady(); eaRefreshSim(); };
+    i.onload = () => { imgs[side] = i; showPreview(side, ev.target.result); checkReady(); refreshSim(); };
     i.src = ev.target.result;
   };
   r.readAsDataURL(file);
 }
-function eaShowPreview(side, src) {
+function showPreview(side, src) {
   const z = document.getElementById('zone-' + side);
   z.classList.add('has-image');
   z.querySelector('input').style.display = 'none';
@@ -3879,31 +3599,31 @@ function eaShowPreview(side, src) {
   const ob = z.querySelector('.remove-btn'); if(ob) ob.remove();
   const img = document.createElement('img'); img.src = src; img.className = 'preview-img'; z.appendChild(img);
   const btn = document.createElement('button'); btn.className = 'remove-btn'; btn.innerHTML = '×';
-  btn.onclick = ev => { ev.stopPropagation(); eaRemoveImg(side); };
+  btn.onclick = ev => { ev.stopPropagation(); removeImg(side); };
   z.appendChild(btn);
 }
-function eaRemoveImg(side) {
+function removeImg(side) {
   imgs[side] = null;
   const z = document.getElementById('zone-' + side);
   z.classList.remove('has-image'); z.innerHTML = '';
   const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*';
-  inp.onchange = e => eaLoadFile(e, side); z.appendChild(inp);
+  inp.onchange = e => loadFile(e, side); z.appendChild(inp);
   const ic = document.createElement('div'); ic.className='up-icon'; ic.textContent=side==='before'?'📷':'✨'; z.appendChild(ic);
   const lb = document.createElement('span'); lb.className='up-label '+side; lb.textContent=side==='before'?'Before':'After'; z.appendChild(lb);
   const ht = document.createElement('span'); ht.className='up-hint'; ht.textContent='클릭하거나 드래그'; z.appendChild(ht);
-  eaCheckReady(); eaRefreshSim();
+  checkReady(); refreshSim();
 }
-function eaOnDrag(e,s){ e.preventDefault(); document.getElementById('zone-'+s).classList.add('drag-over'); }
-function eaOffDrag(s){ document.getElementById('zone-'+s).classList.remove('drag-over'); }
-function eaOnDrop(e,s){
-  e.preventDefault(); eaOffDrag(s);
-  const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) eaReadImg(f,s);
+function onDrag(e,s){ e.preventDefault(); document.getElementById('zone-'+s).classList.add('drag-over'); }
+function offDrag(s){ document.getElementById('zone-'+s).classList.remove('drag-over'); }
+function onDrop(e,s){
+  e.preventDefault(); offDrag(s);
+  const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) readImg(f,s);
 }
-function eaCheckReady(){
+function checkReady(){
   document.getElementById('genBtn').classList.toggle('ready', !!(imgs.before&&imgs.after));
 }
 
-function eaFontSize(cw) {
+function fontSize(cw) {
   const b = cw * 0.038;
   if(opts.fontSize==='small') return Math.max(14, b*0.68);
   if(opts.fontSize==='large') return Math.max(24, b*1.45);
@@ -3917,7 +3637,7 @@ function coverFit(ctx, img, dx, dy, dw, dh) {
   ctx.drawImage(img,sx,sy,sw,sh,dx,dy,dw,dh);
 }
 function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
-  const fs=eaFontSize(cw);
+  const fs=fontSize(cw);
   ctx.save();
   ctx.font=`600 ${fs}px "Noto Sans KR",sans-serif`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
@@ -3927,6 +3647,78 @@ function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
   ctx.fillText(text, sx+sw/2, sy+sh-Math.round(fs*0.8));
   ctx.restore();
 }
+
+function getTextEffects(prefix) {
+  const strokeOn = document.getElementById(prefix + 'StrokeToggle')?.classList.contains('on');
+  const shadowOn = document.getElementById(prefix + 'ShadowToggle')?.classList.contains('on');
+  return {
+    stroke: strokeOn ? {
+      color: document.getElementById(prefix + 'StrokeColor')?.value || '#000000',
+      width: parseInt(document.getElementById(prefix + 'StrokeWidth')?.value || 2),
+    } : null,
+    shadow: shadowOn ? {
+      color: document.getElementById(prefix + 'ShadowColor')?.value || '#000000',
+      angle: parseInt(document.getElementById(prefix + 'ShadowAngle')?.value || 315),
+      opacity: parseInt(document.getElementById(prefix + 'ShadowOpacity')?.value || 40),
+      dist: parseInt(document.getElementById(prefix + 'ShadowDist')?.value || 4),
+      blur: parseInt(document.getElementById(prefix + 'ShadowBlur')?.value || 0),
+    } : null,
+  };
+}
+
+function applyTextEffects(ctx, txt, x, y, scale, effects) {
+  const s = effects.shadow;
+  const k = effects.stroke;
+  if (s) {
+    const rad = (s.angle - 90) * Math.PI / 180;
+    const dist = s.dist * scale;
+    const hex = s.color;
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    ctx.shadowColor = `rgba(${r},${g},${b},${s.opacity/100})`;
+    ctx.shadowBlur = s.blur * scale;
+    ctx.shadowOffsetX = Math.cos(rad) * dist;
+    ctx.shadowOffsetY = Math.sin(rad) * dist;
+  } else {
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+  }
+  if (k) {
+    ctx.save();
+    ctx.strokeStyle = k.color;
+    ctx.lineWidth = k.width * scale * 2;
+    ctx.lineJoin = 'round';
+    ctx.strokeText(txt, x, y);
+    ctx.restore();
+    if (s) {
+      const rad = (s.angle - 90) * Math.PI / 180;
+      const dist = s.dist * scale;
+      const hex = s.color;
+      const r = parseInt(hex.slice(1,3),16);
+      const g = parseInt(hex.slice(3,5),16);
+      const b = parseInt(hex.slice(5,7),16);
+      ctx.shadowColor = `rgba(${r},${g},${b},${s.opacity/100})`;
+      ctx.shadowBlur = s.blur * scale;
+      ctx.shadowOffsetX = Math.cos(rad) * dist;
+      ctx.shadowOffsetY = Math.sin(rad) * dist;
+    }
+  }
+  ctx.fillText(txt, x, y);
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+}
+
+function toggleEffect(prefix, type) {
+  const btn = document.getElementById(prefix + (type==='stroke' ? 'StrokeToggle' : 'ShadowToggle'));
+  const panel = document.getElementById(prefix + (type==='stroke' ? 'StrokePanel' : 'ShadowPanel'));
+  if (!btn || !panel) return;
+  const on = btn.classList.toggle('on');
+  panel.classList.toggle('open', on);
+  if (prefix === 'ba') refreshSim();
+  else rRefreshSim();
+}
+
 function drawAll(canvas, scale) {
   const ctx=canvas.getContext('2d');
   const dp=Math.round(+document.getElementById('dividerSize').value * scale);
@@ -3950,41 +3742,71 @@ function drawAll(canvas, scale) {
     if(opts.showLabel){ drawLabel(ctx,lblB,0,0,w1,CH,CW); drawLabel(ctx,lblA,w1+dp,0,w2,CH,CW); }
   }
 
+  const baTxt = (document.getElementById('baOverlayText')?.value || '').trim();
+  if (baTxt) {
+    const fs = Math.round(parseInt(document.getElementById('baOverlaySize')?.value||36) * scale);
+    const op = (document.getElementById('baOverlayOpacity')?.value||100) / 100;
+    const colBtn = document.querySelector('#baTxtColorRow .txt-col-btn.on');
+    const col = colBtn ? colBtn.style.background : '#ffffff';
+    const pos = window.baTextPos ?? 8;
+    const pad = Math.round(40 * scale);
+    ctx.save();
+    ctx.globalAlpha = op;
+    ctx.fillStyle = col;
+    const baFont = document.getElementById('baOverlayFont')?.value || '"Noto Sans KR",sans-serif';
+    ctx.font = `600 ${fs}px ${baFont}`;
+    ctx.textBaseline = 'middle';
+    const tw = ctx.measureText(baTxt).width;
+    const col_ = pos % 3, row_ = Math.floor(pos / 3);
+    let x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
+    let y = row_===0 ? pad+fs/2 : row_===1 ? CH/2 : CH-pad-fs/2;
+    const baOx = parseInt(document.getElementById('baOffsetX')?.value || 0);
+    const baOy = parseInt(document.getElementById('baOffsetY')?.value || 0);
+    x += Math.round(baOx * scale * 4);
+    y += Math.round(baOy * scale * 4);
+    ctx.textAlign = 'left';
+    const baEffects = getTextEffects('ba');
+    applyTextEffects(ctx, baTxt, x, y, scale, baEffects);
+    ctx.restore();
+  }
+
   if(!isPro) drawWatermark(ctx, CW, CH);
 }
 
-function eaRefreshSim() {
+function refreshSim() {
   if(!imgs.before||!imgs.after) return;
   document.getElementById('simPh').style.display='none';
   const c=document.getElementById('simCanvas'); c.style.display='block';
   const fw=document.getElementById('simFrame').clientWidth||320;
   drawAll(c, fw/IW);
 }
-function eaGenerate() {
+function generate() {
   if(!imgs.before||!imgs.after) return;
-  if (!canSave()) { eaOpenModal(); return; }
+  if (!canSave()) { openModal(); return; }
   drawAll(document.getElementById('resultCanvas'), 1.0);
   document.getElementById('dlBtn').classList.add('show');
   if (!isPro) { incrementSaveCount(); updateCountBar(); }
-  eaRefreshSim();
+  refreshSim();
 }
-function eaDownload() {
+function download() {
   const a=document.createElement('a');
   a.download='before-after-instagram.jpg';
   a.href=document.getElementById('resultCanvas').toDataURL('image/jpeg',1.0);
   a.click();
-  eaShowToast('🎉 저장 완료! 인스타그램에 바로 올려보세요 🍑');
+  showToast('🎉 저장 완료! 아래 버튼으로 인스타에 올려보세요 🍑');
+  document.getElementById('instaBtn1').classList.add('show');
 }
 
-function eaShowToast(msg) {
+function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
+function openInstagram() { window.open('https://www.instagram.com', '_blank'); }
 
-function eaSwitchTab(n) {
+function switchTab(n) {
   document.getElementById('tab1Btn').classList.toggle('active', n===1);
   document.getElementById('tab2Btn').classList.toggle('active', n===2);
   document.getElementById('tab1Panel').classList.toggle('active', n===1);
@@ -4013,8 +3835,7 @@ function rBuildPalette() {
       const btn = document.createElement('button');
       btn.className = 'r-pal-btn' + (c.hex === rBgColor ? ' on' : '');
       btn.style.background = c.hex;
-      if (['#ffffff','#faf8f4','#f5f0e8'].includes(c.hex))
-        btn.style.boxShadow = 'inset 0 0 0 1px #ddd';
+      if (['#ffffff','#faf8f4','#f5f0e8'].includes(c.hex)) btn.style.boxShadow = 'inset 0 0 0 1px #ddd';
       btn.onclick = () => rSetBgColor(c.hex);
       wrap.appendChild(btn);
     });
@@ -4044,7 +3865,7 @@ function rBuildTxtColors() {
     btn.style.background = c;
     if (c==='#ffffff') btn.style.boxShadow='inset 0 0 0 1px #ccc';
     btn.onclick = () => {
-      document.querySelectorAll('#editor-app-root .txt-col-btn').forEach(b=>b.classList.remove('on'));
+      document.querySelectorAll('#txtColorRow .txt-col-btn').forEach(b=>b.classList.remove('on'));
       btn.classList.add('on');
       rRefreshSim();
     };
@@ -4061,10 +3882,9 @@ function rBuildPosGrid() {
   POS_LABELS.forEach((lbl,i) => {
     const cell = document.createElement('button');
     cell.className = 'pos-cell' + (i===rTextPos?' on':'');
-    cell.title = lbl;
     cell.onclick = () => {
       rTextPos = i;
-      document.querySelectorAll('#editor-app-root .pos-cell').forEach(c=>c.classList.remove('on'));
+      document.querySelectorAll('#posGrid .pos-cell').forEach(c=>c.classList.remove('on'));
       cell.classList.add('on');
       rRefreshSim();
     };
@@ -4195,7 +4015,7 @@ function rCheckReady() {
 }
 
 function getOverlayText() { return (document.getElementById('overlayText')?.value || '').trim(); }
-function getOverlayColor() { const b=document.querySelector('#editor-app-root .txt-col-btn.on'); return b?b.style.background:'#ffffff'; }
+function getOverlayColor() { const b=document.querySelector('#txtColorRow .txt-col-btn.on'); return b?b.style.background:'#ffffff'; }
 function getOverlayOpacity() { return (document.getElementById('overlayOpacity')?.value || 100) / 100; }
 function getOverlaySize() { return parseInt(document.getElementById('overlaySize')?.value || 36); }
 
@@ -4203,7 +4023,6 @@ function rDraw(canvas, scale) {
   const ctx = canvas.getContext('2d');
   const CW = Math.round(1080*scale), CH = Math.round(1350*scale);
   canvas.width=CW; canvas.height=CH;
-
   ctx.fillStyle = rBgColor;
   ctx.fillRect(0,0,CW,CH);
 
@@ -4231,6 +4050,7 @@ function rDraw(canvas, scale) {
     const pad = Math.round(40 * scale);
     ctx.save();
     ctx.globalAlpha = op;
+    ctx.fillStyle = col;
     const rFont = document.getElementById('rOverlayFont')?.value || '"Noto Sans KR",sans-serif';
     ctx.font = `600 ${fs}px ${rFont}`;
     ctx.textBaseline = 'middle';
@@ -4238,10 +4058,13 @@ function rDraw(canvas, scale) {
     const col_ = pos % 3, row_ = Math.floor(pos / 3);
     let x = col_===0 ? pad : col_===1 ? (CW-tw)/2 : CW-tw-pad;
     let y = row_===0 ? pad+fs/2 : row_===1 ? CH/2 : CH-pad-fs/2;
+    const rOx = parseInt(document.getElementById('rOffsetX')?.value || 0);
+    const rOy = parseInt(document.getElementById('rOffsetY')?.value || 0);
+    x += Math.round(rOx * scale * 4);
+    y += Math.round(rOy * scale * 4);
     ctx.textAlign = 'left';
-    ctx.shadowColor='rgba(0,0,0,0.45)'; ctx.shadowBlur=Math.round(fs*0.4); ctx.shadowOffsetY=1;
-    ctx.fillStyle = col;
-    ctx.fillText(txt, x, y);
+    const rEffects = getTextEffects('r');
+    applyTextEffects(ctx, txt, x, y, scale, rEffects);
     ctx.restore();
   }
 
@@ -4265,7 +4088,7 @@ function rRefreshSim() {
 
 async function rGenerate() {
   if (rImgs.length===0) return;
-  if (!canSave()) { eaOpenModal(); return; }
+  if (!canSave()) { openModal(); return; }
   const total = isPro ? rImgs.length : Math.min(rImgs.length, FREE_LIMIT-getSaveCount());
   if (!isPro && rImgs.length > total) {
     alert(`오늘 ${total}장만 더 저장 가능해요.\nPRO 업그레이드 시 무제한!`);
@@ -4285,7 +4108,8 @@ async function rGenerate() {
   rSelIdx=origIdx;
   if (!isPro) { rUpdateCountBar(); updateCountBar(); }
   btn.textContent='✦ 전체 저장'; btn.style.opacity='';
-  eaShowToast('🎉 ' + total + '장 저장 완료! 인스타그램에 바로 올려보세요 🍑');
+  showToast('🎉 ' + total + '장 저장 완료! 아래 버튼으로 인스타에 올려보세요 🍑');
+  document.getElementById('instaBtn2').classList.add('show');
   rRefreshSim();
 }
 
@@ -4308,6 +4132,46 @@ function rUpdateCountBar() {
   warn.textContent=left===0?'오늘 횟수 초과 · PRO 업그레이드':left===1?'오늘 1회 남음':'';
 }
 
+window.baTextPos = 8;
+function baBuildPosGrid() {
+  const grid = document.getElementById('baPosGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ['↖','↑','↗','←','·','→','↙','↓','↘'].forEach((lbl,i) => {
+    const cell = document.createElement('button');
+    cell.className = 'pos-cell' + (i === window.baTextPos ? ' on' : '');
+    cell.onclick = () => {
+      window.baTextPos = i;
+      document.querySelectorAll('#baPosGrid .pos-cell').forEach(c => c.classList.remove('on'));
+      cell.classList.add('on');
+      const bx = document.getElementById('baOffsetX');
+      const by = document.getElementById('baOffsetY');
+      if(bx){ bx.value=0; document.getElementById('baOffsetXVal').textContent='0'; }
+      if(by){ by.value=0; document.getElementById('baOffsetYVal').textContent='0'; }
+      refreshSim();
+    };
+    grid.appendChild(cell);
+  });
+}
+
+function baBuildTxtColors() {
+  const row = document.getElementById('baTxtColorRow');
+  if (!row) return;
+  row.innerHTML = '';
+  ['#ffffff','#111111','#888888','#b85c38','#3a6ea5'].forEach((c,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'txt-col-btn' + (i===0?' on':'');
+    btn.style.background = c;
+    if (c==='#ffffff') btn.style.boxShadow='inset 0 0 0 1px #ccc';
+    btn.onclick = () => {
+      document.querySelectorAll('#baTxtColorRow .txt-col-btn').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on');
+      refreshSim();
+    };
+    row.appendChild(btn);
+  });
+}
+
 // Resizer
 const eaResizerEl = document.getElementById('resizer');
 const eaSimPanelEl = document.getElementById('simPanel');
@@ -4322,7 +4186,7 @@ if (eaResizerEl) {
     if(!eaResizing) return;
     const nw=Math.min(Math.max(eaRw+(e.clientX-eaRx), 240), window.innerWidth*0.72);
     eaSimPanelEl.style.width=nw+'px';
-    if(imgs.before&&imgs.after) eaRefreshSim();
+    if(imgs.before&&imgs.after) refreshSim();
   });
   document.addEventListener('mouseup', ()=>{
     if(!eaResizing) return;
@@ -4331,42 +4195,15 @@ if (eaResizerEl) {
   });
 }
 
-// r-dropzone drag
-const rZone = document.getElementById('rZone');
-if (rZone) {
-  rZone.addEventListener('dragover', e => { e.preventDefault(); rZone.classList.add('drag-over'); });
-  rZone.addEventListener('dragleave', () => rZone.classList.remove('drag-over'));
-  rZone.addEventListener('drop', e => {
-    e.preventDefault(); rZone.classList.remove('drag-over');
-    const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).slice(0,R_MAX-rImgs.length);
-    files.forEach(rReadImgFile);
-  });
-}
+const rMainFrame = document.getElementById('rMainFrame');
+if (rMainFrame) rMainFrame.addEventListener('click', rPickColor);
 
-const rMainFrame=document.getElementById('rMainFrame');
-if(rMainFrame) rMainFrame.addEventListener('click', rPickColor);
-
-window.addEventListener('DOMContentLoaded',()=>{
-  updateCountBar();
-  rUpdateCountBar();
-  rBuildPalette();
-  rBuildTxtColors();
-  rBuildPosGrid();
-});
-
-window.addEventListener('resize', ()=>{
-  if(imgs.before&&imgs.after) eaRefreshSim();
+window.addEventListener('resize', () => {
+  if (imgs.before && imgs.after) refreshSim();
   if (rImgs?.length) rRefreshSim();
 });
-
-// 외부 modal click 닫기
-document.getElementById('modalOverlay')?.addEventListener('click', e => {
-  if (e.target.id === 'modalOverlay') eaCloseModal();
-});
-document.getElementById('authModalOverlay')?.addEventListener('click', e => {
-  if (e.target.id === 'authModalOverlay') closeAuthModal();
-});
 </script>
+
 
 </body>
 </html>
