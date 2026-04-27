@@ -5142,7 +5142,8 @@ function refreshSim() {
   document.getElementById('simPh').style.display='none';
   const c=document.getElementById('simCanvas'); c.style.display='block';
   const fw=document.getElementById('simFrame').clientWidth||320;
-  drawAll(c, fw/IW);
+  // 🎨 미리보기 화질 1.5배 (더 또렷하게)
+  drawAll(c, (fw/IW) * 1.5);
   
   // 인터랙션 바 표시
   const bar = document.getElementById('simInteractionBar');
@@ -5930,7 +5931,8 @@ function rRefreshSim() {
   if (ph) ph.style.display='none';
   canvas.style.display='block';
   const fw = document.getElementById('rMainFrame').clientWidth || 320;
-  rDraw(canvas, fw/1080);
+  // 🎨 미리보기 화질 1.5배 (더 또렷하게)
+  rDraw(canvas, (fw/1080) * 1.5);
 }
 
 async function rGenerate() {
