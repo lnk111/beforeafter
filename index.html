@@ -3710,7 +3710,7 @@
         <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;">
           <div>
             <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:5px;font-weight:600;">위치</div>
-            <div class="pos-grid" id="baPosGrid"></div>
+            <div class="pos-grid" id="baPosGrid" style="display:grid !important;grid-template-columns:repeat(3,1fr);gap:5px;width:120px;"></div>
             <div class="xy-wrap">
               <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="baOffsetX" oninput="document.getElementById('baOffsetXVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetXVal">0</span></div>
               <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="baOffsetY" oninput="document.getElementById('baOffsetYVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetYVal">0</span></div>
@@ -3882,7 +3882,7 @@
         <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;">
           <div>
             <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:5px;font-weight:600;">위치</div>
-            <div class="pos-grid" id="posGrid"></div>
+            <div class="pos-grid" id="posGrid" style="display:grid !important;grid-template-columns:repeat(3,1fr);gap:5px;width:120px;"></div>
             <div class="xy-wrap">
               <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="rOffsetX" oninput="document.getElementById('rOffsetXVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetXVal">0</span></div>
               <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="rOffsetY" oninput="document.getElementById('rOffsetYVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetYVal">0</span></div>
@@ -4601,6 +4601,28 @@ window.toggleCollapsible = function(id) {
     console.log('  body display:', window.getComputedStyle(body).display);
     console.log('  body height:', body.offsetHeight, 'px');
     
+    // 🎯 텍스트 패널이 열릴 때 자동으로 그리드/색상 재빌드
+    if (id === 'textPanel1' && typeof baBuildPosGrid === 'function') {
+      setTimeout(() => {
+        baBuildPosGrid();
+        if (typeof baBuildTxtColors === 'function') baBuildTxtColors();
+        console.log('  🎨 baPosGrid + baTxtColors 빌드');
+      }, 50);
+    }
+    if (id === 'textPanel2' && typeof rBuildPosGrid === 'function') {
+      setTimeout(() => {
+        rBuildPosGrid();
+        if (typeof rBuildTxtColors === 'function') rBuildTxtColors();
+        console.log('  🎨 posGrid + txtColors 빌드');
+      }, 50);
+    }
+    if (id === 'advancedPanel2' && typeof rBuildPalette === 'function') {
+      setTimeout(() => {
+        rBuildPalette();
+        console.log('  🎨 palette 빌드');
+      }, 50);
+    }
+    
     // 부드럽게 스크롤
     setTimeout(() => {
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -4841,10 +4863,18 @@ function rBuildPosGrid() {
   POS_LABELS.forEach((lbl,i) => {
     const cell = document.createElement('button');
     cell.className = 'pos-cell' + (i===rTextPos?' on':'');
+    cell.style.cssText = 'width:34px;height:34px;border-radius:6px;border:1.5px solid #e0dbd4;background:' + (i===rTextPos?'#b85c38':'#fff') + ';cursor:pointer;display:flex !important;align-items:center;justify-content:center;font-size:14px;color:' + (i===rTextPos?'#fff':'#1c1a17') + ';';
+    cell.textContent = lbl;
     cell.onclick = () => {
       rTextPos = i;
-      document.querySelectorAll('#posGrid .pos-cell').forEach(c=>c.classList.remove('on'));
+      document.querySelectorAll('#posGrid .pos-cell').forEach(c => {
+        c.classList.remove('on');
+        c.style.background = '#fff';
+        c.style.color = '#1c1a17';
+      });
       cell.classList.add('on');
+      cell.style.background = '#b85c38';
+      cell.style.color = '#fff';
       rRefreshSim();
     };
     grid.appendChild(cell);
@@ -5099,10 +5129,19 @@ function baBuildPosGrid() {
   ['↖','↑','↗','←','·','→','↙','↓','↘'].forEach((lbl,i) => {
     const cell = document.createElement('button');
     cell.className = 'pos-cell' + (i === window.baTextPos ? ' on' : '');
+    cell.style.cssText = 'width:34px;height:34px;border-radius:6px;border:1.5px solid #e0dbd4;background:' + (i===window.baTextPos?'#b85c38':'#fff') + ';cursor:pointer;display:flex !important;align-items:center;justify-content:center;font-size:14px;color:' + (i===window.baTextPos?'#fff':'#1c1a17') + ';';
+    cell.textContent = lbl;
+    cell.title = lbl;
     cell.onclick = () => {
       window.baTextPos = i;
-      document.querySelectorAll('#baPosGrid .pos-cell').forEach(c => c.classList.remove('on'));
+      document.querySelectorAll('#baPosGrid .pos-cell').forEach(c => {
+        c.classList.remove('on');
+        c.style.background = '#fff';
+        c.style.color = '#1c1a17';
+      });
       cell.classList.add('on');
+      cell.style.background = '#b85c38';
+      cell.style.color = '#fff';
       const bx = document.getElementById('baOffsetX');
       const by = document.getElementById('baOffsetY');
       if(bx){ bx.value=0; document.getElementById('baOffsetXVal').textContent='0'; }
