@@ -3178,63 +3178,77 @@
 }
 
 /* ✨ 접기/펼치기 패널 (고급 모드) */
-.collapsible-panel {
+#editor-app-root .collapsible-panel {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e0dbd4;
+  border: 1.5px solid #e8a47a;
   overflow: hidden;
   transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(232, 164, 122, 0.1);
 }
 
-.collapsible-header {
-  display: flex;
+#editor-app-root .collapsible-panel:hover {
+  border-color: #d97757;
+  box-shadow: 0 4px 12px rgba(232, 164, 122, 0.18);
+}
+
+#editor-app-root .collapsible-header {
+  display: flex !important;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 16px 18px !important;
   cursor: pointer;
   user-select: none;
-  background: white;
+  background: linear-gradient(135deg, #fff8f3 0%, #fff 100%) !important;
   transition: background 0.15s;
+  border: none !important;
+  width: 100%;
 }
 
-.collapsible-header:hover {
-  background: #faf8f5;
+#editor-app-root .collapsible-header:hover {
+  background: linear-gradient(135deg, #fef0e8 0%, #fff8f3 100%) !important;
 }
 
-.collapsible-header h3 {
-  font-size: .9rem;
-  font-weight: 700;
-  color: #2d2417;
-  margin: 0;
-  display: flex;
+#editor-app-root .collapsible-header h3 {
+  font-size: .92rem !important;
+  font-weight: 700 !important;
+  color: #2d2417 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  display: flex !important;
   align-items: center;
   gap: 8px;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
 }
 
-.collapsible-icon {
+#editor-app-root .collapsible-icon {
   font-size: 1.15rem;
 }
 
-.collapsible-arrow {
-  font-size: 1rem;
-  color: #928c84;
+#editor-app-root .collapsible-arrow {
+  font-size: 0.9rem;
+  color: #b85c38;
   transition: transform 0.25s ease;
+  font-weight: 700;
 }
 
-.collapsible-panel.open .collapsible-arrow {
+#editor-app-root .collapsible-panel.open .collapsible-arrow {
   transform: rotate(180deg);
 }
 
-.collapsible-body {
+#editor-app-root .collapsible-body {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease;
   padding: 0 18px;
+  background: white;
 }
 
-.collapsible-panel.open .collapsible-body {
-  max-height: 800px;
-  padding: 4px 18px 16px;
+#editor-app-root .collapsible-panel.open .collapsible-body {
+  max-height: 1200px;
+  padding: 16px 18px 18px;
   border-top: 1px dashed #ede4d8;
 }
 
@@ -4493,7 +4507,12 @@ function openInstagram() { window.open('https://www.instagram.com', '_blank'); }
 // 접기/펼치기 패널
 window.toggleCollapsible = function(id) {
   const panel = document.getElementById(id);
-  if (panel) panel.classList.toggle('open');
+  if (panel) {
+    panel.classList.toggle('open');
+    console.log('🔧 Toggle:', id, '→', panel.classList.contains('open') ? '열림' : '닫힘');
+  } else {
+    console.error('❌ Panel not found:', id);
+  }
 };
 
 // 진행상태 업데이트 (Welcome Steps의 체크 표시)
