@@ -2689,13 +2689,12 @@
   // ═══════════════════════════════════════
   // APP NAVIGATION — 피치포스트 앱 연결
   // ═══════════════════════════════════════
-  const APP_URL = 'https://beforeafter-woad.vercel.app';
   
-  // 바로 시작하기 / 회원가입 / CTA 버튼 → 내장 편집 앱 열기
-  function startApp() {
+  // 🚀 바로 시작하기 / CTA 버튼 → 편집 화면으로 (로그인 없이 체험 가능!)
+  window.startApp = function() {
     document.body.classList.add('app-mode');
     window.scrollTo(0, 0);
-    // 앱 초기화
+    // 앱 초기화 (편집 화면 준비)
     setTimeout(() => {
       if (typeof updateCountBar === 'function') updateCountBar();
       if (typeof rUpdateCountBar === 'function') rUpdateCountBar();
@@ -2706,11 +2705,11 @@
       if (typeof baBuildTxtColors === 'function') baBuildTxtColors();
     }, 100);
     try { history.pushState({view:'app'}, '', '#app'); } catch(e){}
-  }
+  };
   
-  // 로그인 버튼 - 홈에서 모달만 띄우기 (편집 화면으로 전환 X)
-  function loginApp() {
-    // 편집 앱 미리 초기화 (로그인 후 부드럽게 이동하기 위해)
+  // 🔑 로그인 버튼 → 로그인 모달만 띄우기 (홈 화면 유지)
+  window.loginApp = function() {
+    // 편집 앱 모달 컴포넌트 초기화 (모달이 잘 보이도록)
     setTimeout(() => {
       if (typeof rBuildPalette === 'function') rBuildPalette();
       if (typeof rBuildTxtColors === 'function') rBuildTxtColors();
@@ -2719,23 +2718,26 @@
       if (typeof baBuildTxtColors === 'function') baBuildTxtColors();
     }, 50);
     
-    // 로그인 모달만 띄우기 (홈 화면 유지)
-    if (typeof openAuthModal === 'function') {
+    // 로그인 모달 직접 열기 (DOM 직접 조작)
+    const modal = document.getElementById('authModalOverlay');
+    if (modal) {
+      modal.classList.add('open');
+    } else if (typeof openAuthModal === 'function') {
       openAuthModal();
     }
-  }
+  };
   
-  // 회원가입 버튼 - 동일하게 처리 (홈에서 모달만)
-  function signupApp() {
-    loginApp();
-  }
+  // 📝 회원가입 버튼 → 동일하게 모달만
+  window.signupApp = function() {
+    window.loginApp();
+  };
   
-  // 홈으로 가기
-  function backToLanding() {
+  // 🏠 홈으로 가기 (편집 화면 → 랜딩페이지)
+  window.backToLanding = function() {
     document.body.classList.remove('app-mode');
     window.scrollTo(0, 0);
     try { history.pushState({view:'landing'}, '', window.location.pathname); } catch(e){}
-  }
+  };
   
   // 브라우저 뒤로가기
   window.addEventListener('popstate', () => {
@@ -3432,13 +3434,14 @@ sb.auth.onAuthStateChange(async (event, session) => {
     
     // 🎯 SIGNED_IN 이벤트일 때 (로그인 성공 직후)
     if (event === 'SIGNED_IN') {
-      // 로그인 모달 닫기
-      if (typeof closeAuthModal === 'function') closeAuthModal();
+      // 로그인 모달 닫기 (DOM 직접 조작)
+      const modal = document.getElementById('authModalOverlay');
+      if (modal) modal.classList.remove('open');
       
       // 홈 화면이라면 (app-mode가 아니라면) 편집 페이지로 자동 이동
       if (!document.body.classList.contains('app-mode')) {
-        if (typeof startApp === 'function') {
-          setTimeout(() => startApp(), 300);
+        if (typeof window.startApp === 'function') {
+          setTimeout(() => window.startApp(), 300);
         }
       }
     }
