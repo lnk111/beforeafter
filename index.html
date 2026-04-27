@@ -3121,6 +3121,370 @@
 #editor-app-root .insta-open-btn.show { display: block; }
 #editor-app-root .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1a1816; color: #fff; padding: 12px 24px; border-radius: 100px; font-size: .85rem; font-weight: 500; z-index: 99999; opacity: 0; transition: all .3s; white-space: nowrap; pointer-events: none; }
 #editor-app-root .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ════════════════════════════════════════
+   🆕 UX 개선 CSS (미리캔버스 스타일)
+══════════════════════════════════════════ */
+
+/* 큰 드롭존 (메인 안내) */
+#editor-app-root .upload-zone {
+  min-height: 200px;
+  border: 2.5px dashed #d4cabe;
+  background: linear-gradient(180deg, #fff 0%, #faf8f5 100%);
+  transition: all 0.25s ease;
+}
+#editor-app-root .upload-zone:hover {
+  border-color: var(--ea-accent);
+  background: linear-gradient(180deg, #fff8f5 0%, #fef0e8 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(184, 92, 56, 0.12);
+}
+#editor-app-root .upload-zone .up-icon {
+  font-size: 28px;
+  width: 56px;
+  height: 56px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+#editor-app-root .upload-zone .up-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+#editor-app-root .upload-zone .up-hint {
+  font-size: 0.76rem;
+  color: #b3a99a;
+}
+
+/* 옵션 그룹 - 친근한 라벨 */
+#editor-app-root .opts-grid label {
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  color: #6a5d4f !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+/* 패널 제목 친근하게 */
+#editor-app-root .opts-panel h2 {
+  font-size: .9rem !important;
+  font-weight: 700 !important;
+  color: #2d2417 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  margin-bottom: 14px !important;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #ede4d8;
+}
+
+/* ✨ 접기/펼치기 패널 (고급 모드) */
+.collapsible-panel {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e0dbd4;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+  transition: background 0.15s;
+}
+
+.collapsible-header:hover {
+  background: #faf8f5;
+}
+
+.collapsible-header h3 {
+  font-size: .9rem;
+  font-weight: 700;
+  color: #2d2417;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.collapsible-icon {
+  font-size: 1.15rem;
+}
+
+.collapsible-arrow {
+  font-size: 1rem;
+  color: #928c84;
+  transition: transform 0.25s ease;
+}
+
+.collapsible-panel.open .collapsible-arrow {
+  transform: rotate(180deg);
+}
+
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding: 0 18px;
+}
+
+.collapsible-panel.open .collapsible-body {
+  max-height: 800px;
+  padding: 4px 18px 16px;
+  border-top: 1px dashed #ede4d8;
+}
+
+/* 친근한 안내 박스 */
+.help-box {
+  background: linear-gradient(135deg, #fff8f3 0%, #fef0e8 100%);
+  border: 1px solid #ffd9c0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: .78rem;
+  color: #6a4530;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-box .help-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* 더 큰 메인 저장 버튼 */
+#editor-app-root .gen-btn {
+  padding: 18px 24px !important;
+  font-size: 1rem !important;
+  letter-spacing: 0 !important;
+  box-shadow: 0 4px 16px rgba(184, 92, 56, 0.25);
+}
+
+#editor-app-root .gen-btn.ready {
+  animation: pulse-cta 2s ease-in-out infinite;
+}
+
+@keyframes pulse-cta {
+  0%, 100% { box-shadow: 0 4px 16px rgba(184, 92, 56, 0.25); }
+  50% { box-shadow: 0 4px 24px rgba(184, 92, 56, 0.45); }
+}
+
+/* 향상된 미리보기 placeholder */
+#editor-app-root .sim-placeholder {
+  padding: 40px 24px;
+}
+
+.welcome-greeting {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #2d2417;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.welcome-subtitle {
+  font-size: .9rem;
+  color: #6a5d4f;
+  margin-bottom: 32px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.welcome-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.welcome-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #ede4d8;
+  border-radius: 12px;
+  font-size: .85rem;
+  color: #2d2417;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.welcome-step.completed {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+  color: #166534;
+}
+
+.welcome-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffd9c0;
+  color: #b85c38;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.welcome-step.completed .welcome-step-num {
+  background: #22c55e;
+  color: white;
+}
+
+.welcome-step.completed .welcome-step-num::before {
+  content: '✓';
+}
+
+.welcome-step.completed .welcome-step-num span {
+  display: none;
+}
+
+/* 🎯 온보딩 툴팁 */
+.onboarding-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 99998;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.onboarding-overlay.show {
+  display: flex;
+  animation: onboardFade 0.3s ease;
+}
+
+@keyframes onboardFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.onboarding-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 36px 32px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+  text-align: center;
+  animation: onboardSlide 0.3s ease;
+}
+
+@keyframes onboardSlide {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.onboarding-step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.step-dot {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: #e0dbd4;
+  transition: background 0.2s;
+}
+
+.step-dot.active {
+  background: #b85c38;
+  width: 40px;
+}
+
+.onboarding-modal h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #2d2417;
+}
+
+.onboarding-modal p {
+  font-size: 0.95rem;
+  color: #6a5d4f;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.onboarding-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  display: inline-block;
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.onboarding-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.onboarding-btn {
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+}
+
+.onboarding-btn.primary {
+  background: #b85c38;
+  color: white;
+  flex: 1;
+}
+
+.onboarding-btn.primary:hover {
+  background: #a04d2c;
+}
+
+.onboarding-btn.secondary {
+  background: transparent;
+  color: #928c84;
+  border: 1.5px solid #e0dbd4;
+}
+
+.onboarding-btn.secondary:hover {
+  border-color: #928c84;
+  color: #2d2417;
+}
+
+.onboarding-skip {
+  margin-top: 16px;
+  font-size: .78rem;
+  color: #928c84;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.onboarding-skip:hover {
+  color: #2d2417;
+}
 #editor-app-root .hidden-canvas { display: none; }
 </style>
 
@@ -3157,12 +3521,21 @@
     <div class="sim-header"><h2>미리보기</h2><span class="sim-live">실시간</span></div>
     <div class="sim-frame" id="simFrame">
       <div class="sim-placeholder" id="simPh">
-        <span>🖼️</span>
-        <p style="font-weight:600;color:#48433e;font-size:.82rem;">미리보기</p>
-        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
-          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;"><span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">1</span>오른쪽에서 Before · After 사진 업로드</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;"><span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">2</span>옵션 설정</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:.72rem;color:#928c84;"><span style="width:20px;height:20px;border-radius:50%;background:#b85c38;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;">3</span>저장 버튼 클릭 → 인스타에 바로 업로드!</div>
+        <div class="welcome-greeting">👋 안녕하세요, 사장님!</div>
+        <div class="welcome-subtitle">사진 2장만 올리면<br>5초 만에 인스타 사진이 완성돼요</div>
+        <div class="welcome-steps">
+          <div class="welcome-step" id="ws1">
+            <div class="welcome-step-num"><span>1</span></div>
+            <span>오른쪽에 Before 사진 올리기</span>
+          </div>
+          <div class="welcome-step" id="ws2">
+            <div class="welcome-step-num"><span>2</span></div>
+            <span>오른쪽에 After 사진 올리기</span>
+          </div>
+          <div class="welcome-step" id="ws3">
+            <div class="welcome-step-num"><span>3</span></div>
+            <span>저장 버튼 클릭 → 인스타 업로드!</span>
+          </div>
         </div>
       </div>
       <canvas id="simCanvas" style="display:none;"></canvas>
@@ -3175,64 +3548,158 @@
       <div class="upload-zone" id="zone-before" ondragover="onDrag(event,'before')" ondragleave="offDrag('before')" ondrop="onDrop(event,'before')">
         <input type="file" accept="image/*" onchange="loadFile(event,'before')">
         <div class="up-icon">📷</div>
-        <span class="up-label before">Before</span>
-        <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
+        <span class="up-label before">시술 전 사진</span>
+        <span class="up-hint">클릭 또는 드래그</span>
       </div>
       <div class="upload-zone" id="zone-after" ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
         <input type="file" accept="image/*" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
-        <span class="up-label after">After</span>
-        <span class="up-hint">👆 클릭하거나 사진을 끌어다 놓으세요</span>
+        <span class="up-label after">시술 후 사진</span>
+        <span class="up-hint">클릭 또는 드래그</span>
       </div>
     </div>
 
+    <!-- 🟢 기본 옵션 (항상 보임) -->
     <div class="opts-panel">
-      <h2>옵션 설정</h2>
-      <div class="opts-grid">
-        <div class="opt-group"><label>배치 방향</label><div class="tog-row"><button class="tog-btn on" onclick="setOpt('layout','vertical',this)">세로 ↕</button><button class="tog-btn" onclick="setOpt('layout','horizontal',this)">가로 ↔</button></div></div>
-        <div class="opt-group"><label>구분선 굵기</label><div class="rng-row"><input type="range" min="0" max="20" value="6" id="dividerSize" oninput="this.nextElementSibling.textContent=this.value+'px';refreshSim();"><span class="rng-val">6px</span></div></div>
-        <div class="opt-group"><label>Before 라벨</label><input class="lbl-input" type="text" id="labelBefore" value="BEFORE" maxlength="20" oninput="refreshSim()"></div>
-        <div class="opt-group"><label>After 라벨</label><input class="lbl-input" type="text" id="labelAfter" value="AFTER" maxlength="20" oninput="refreshSim()"></div>
-        <div class="opt-group"><label>라벨 표시</label><div class="tog-row"><button class="tog-btn on" onclick="setOpt('showLabel',true,this)">표시</button><button class="tog-btn" onclick="setOpt('showLabel',false,this)">숨김</button></div></div>
-        <div class="opt-group"><label>글자 색상</label><div class="color-row"><button class="col-btn cw on" onclick="setColor('#ffffff',this)"></button><button class="col-btn cg" onclick="setColor('#aaaaaa',this)"></button><button class="col-btn cb" onclick="setColor('#111111',this)"></button></div></div>
-        <div class="opt-group"><label>글자 크기</label><div class="fsz-row"><button class="fsz-btn" onclick="setOpt('fontSize','small',this)">작게</button><button class="fsz-btn on" onclick="setOpt('fontSize','medium',this)">보통</button><button class="fsz-btn" onclick="setOpt('fontSize','large',this)">크게</button></div></div>
-        <div class="opt-group" style="grid-column: 1 / -1;"><label>Before / After 비율 &nbsp;<span id="splitDisplay" style="color:#b85c38">50 : 50</span></label><div class="ratio-row"><span class="ratio-lbl">Before</span><input type="range" min="20" max="80" value="50" id="splitRatio" oninput="updateSplit(this);refreshSim();" style="flex:1;"><span class="ratio-lbl r">After</span><button class="ratio-reset" onclick="resetSplit()">↺</button></div></div>
+      <h2>✨ 꾸미기</h2>
+      <div class="help-box">
+        <span class="help-icon">💡</span>
+        <span>처음이신가요? <strong>저장하기</strong> 버튼만 누르면 끝!</span>
       </div>
-    </div>
-
-    <div class="opts-panel text-overlay-panel" id="baTextPanel">
-      <h2>텍스트 / 로고 삽입</h2>
-      <div class="text-input-row"><input type="text" id="baOverlayText" placeholder="예: @my_studio / 브랜드명" maxlength="40" oninput="refreshSim()"></div>
-      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
-        <div>
-          <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:5px;text-transform:uppercase;">위치</div>
-          <div class="pos-grid" id="baPosGrid"></div>
-          <div class="xy-wrap">
-            <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="baOffsetX" oninput="document.getElementById('baOffsetXVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetXVal">0</span></div>
-            <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="baOffsetY" oninput="document.getElementById('baOffsetYVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetYVal">0</span></div>
+      <div class="opts-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="opt-group">
+          <label>📐 사진 배치</label>
+          <div class="tog-row">
+            <button class="tog-btn on" onclick="setOpt('layout','vertical',this)">위↕아래</button>
+            <button class="tog-btn" onclick="setOpt('layout','horizontal',this)">왼↔오른</button>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
-          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">글씨체</div><select class="font-sel" id="baOverlayFont" onchange="refreshSim()"><option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option><option value="Nanum Gothic, sans-serif">나눔고딕</option><option value="Nanum Myeongjo, serif">나눔명조</option><option value="Nanum Pen Script, cursive">나눔손글씨 펜</option><option value="Gaegu, cursive">가에구</option><option value="Playfair Display, serif">Playfair Display</option><option value="Montserrat, sans-serif">Montserrat</option><option value="Dancing Script, cursive">Dancing Script</option><option value="Oswald, sans-serif">Oswald</option><option value="Arial, sans-serif">Arial</option></select></div>
-          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">크기</div><div class="size-px-row"><input type="number" class="size-px-input" id="baOverlaySize" min="8" max="300" value="36" oninput="refreshSim()"><span class="size-px-unit">px</span></div></div>
-          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">색상</div><div class="text-color-row" id="baTxtColorRow"></div></div>
-          <div class="opacity-row"><label>불투명도</label><input type="range" min="10" max="100" value="100" id="baOverlayOpacity" oninput="document.getElementById('baOpacityVal').textContent=this.value+'%';refreshSim();" style="flex:1;"><span class="opacity-val" id="baOpacityVal">100%</span></div>
+        <div class="opt-group">
+          <label>🏷️ 글자 표시</label>
+          <div class="tog-row">
+            <button class="tog-btn on" onclick="setOpt('showLabel',true,this)">표시</button>
+            <button class="tog-btn" onclick="setOpt('showLabel',false,this)">숨김</button>
+          </div>
         </div>
       </div>
-      <div class="effect-toggle-row">
-        <button class="effect-toggle" id="baStrokeToggle" onclick="toggleEffect('ba','stroke')">외곽선<div class="tog-switch"></div></button>
-        <button class="effect-toggle" id="baShadowToggle" onclick="toggleEffect('ba','shadow')">그림자<div class="tog-switch"></div></button>
+    </div>
+
+    <!-- 🔧 고급 옵션 (접혀있음) -->
+    <div class="collapsible-panel" id="advancedPanel1">
+      <div class="collapsible-header" onclick="toggleCollapsible('advancedPanel1')">
+        <h3><span class="collapsible-icon">⚙️</span> 더 자세히 꾸미기</h3>
+        <span class="collapsible-arrow">▼</span>
       </div>
-      <div class="effect-panel" id="baStrokePanel">
-        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="baStrokeColorBtn" style="background:#000000;"><input type="color" value="#000000" id="baStrokeColor" oninput="document.getElementById('baStrokeColorBtn').style.background=this.value; refreshSim()"></button><span style="font-size:.7rem;color:var(--ea-muted);" id="baStrokeColorHex">#000000</span></div>
-        <div class="effect-row"><span class="effect-label">두께</span><input type="range" min="1" max="20" value="2" id="baStrokeWidth" oninput="document.getElementById('baStrokeWidthVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baStrokeWidthVal">2</span></div>
+      <div class="collapsible-body">
+        <div class="opts-grid" style="margin-top: 14px;">
+          <div class="opt-group">
+            <label>왼쪽/위 글자</label>
+            <input class="lbl-input" type="text" id="labelBefore" value="BEFORE" maxlength="20" oninput="refreshSim()">
+          </div>
+          <div class="opt-group">
+            <label>오른쪽/아래 글자</label>
+            <input class="lbl-input" type="text" id="labelAfter" value="AFTER" maxlength="20" oninput="refreshSim()">
+          </div>
+          <div class="opt-group">
+            <label>글자 색</label>
+            <div class="color-row">
+              <button class="col-btn cw on" onclick="setColor('#ffffff',this)" title="흰색"></button>
+              <button class="col-btn cg" onclick="setColor('#aaaaaa',this)" title="회색"></button>
+              <button class="col-btn cb" onclick="setColor('#111111',this)" title="검정"></button>
+            </div>
+          </div>
+          <div class="opt-group">
+            <label>글자 크기</label>
+            <div class="fsz-row">
+              <button class="fsz-btn" onclick="setOpt('fontSize','small',this)">작게</button>
+              <button class="fsz-btn on" onclick="setOpt('fontSize','medium',this)">보통</button>
+              <button class="fsz-btn" onclick="setOpt('fontSize','large',this)">크게</button>
+            </div>
+          </div>
+          <div class="opt-group" style="grid-column: 1 / -1;">
+            <label>사진 사이 간격 <span class="rng-val" style="margin-left:4px;">6px</span></label>
+            <div class="rng-row">
+              <input type="range" min="0" max="20" value="6" id="dividerSize" oninput="this.parentElement.parentElement.querySelector('.rng-val').textContent=this.value+'px';refreshSim();">
+            </div>
+          </div>
+          <div class="opt-group" style="grid-column: 1 / -1;">
+            <label>사진 크기 비교 <span id="splitDisplay" style="color:#b85c38;margin-left:4px;">50 : 50</span></label>
+            <div class="ratio-row">
+              <span class="ratio-lbl">시술 전</span>
+              <input type="range" min="20" max="80" value="50" id="splitRatio" oninput="updateSplit(this);refreshSim();" style="flex:1;">
+              <span class="ratio-lbl r">시술 후</span>
+              <button class="ratio-reset" onclick="resetSplit()" title="50:50 초기화">↺</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="effect-panel" id="baShadowPanel">
-        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="baShadowColorBtn" style="background:#000000;"><input type="color" value="#000000" id="baShadowColor" oninput="document.getElementById('baShadowColorBtn').style.background=this.value; refreshSim()"></button><span style="font-size:.7rem;color:var(--ea-muted);" id="baShadowColorHex">#000000</span></div>
-        <div class="effect-row"><span class="effect-label">방향</span><input type="range" min="0" max="360" value="315" id="baShadowAngle" oninput="document.getElementById('baShadowAngleVal').textContent=this.value+'°'; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowAngleVal">315°</span></div>
-        <div class="effect-row"><span class="effect-label">불투명도</span><input type="range" min="0" max="100" value="40" id="baShadowOpacity" oninput="document.getElementById('baShadowOpacityVal').textContent=this.value+'%'; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowOpacityVal">40%</span></div>
-        <div class="effect-row"><span class="effect-label">거리</span><input type="range" min="0" max="30" value="4" id="baShadowDist" oninput="document.getElementById('baShadowDistVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowDistVal">4</span></div>
-        <div class="effect-row"><span class="effect-label">흐림</span><input type="range" min="0" max="20" value="0" id="baShadowBlur" oninput="document.getElementById('baShadowBlurVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowBlurVal">0</span></div>
+    </div>
+
+    <!-- ✏️ 텍스트/로고 (접혀있음) -->
+    <div class="collapsible-panel" id="textPanel1">
+      <div class="collapsible-header" onclick="toggleCollapsible('textPanel1')">
+        <h3><span class="collapsible-icon">✏️</span> 내 가게 이름 / 로고 넣기</h3>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="text-input-row" style="margin-top: 14px;">
+          <input type="text" id="baOverlayText" placeholder="예: @my_studio / 가게 이름" maxlength="40" oninput="refreshSim()">
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;">
+          <div>
+            <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:5px;font-weight:600;">위치</div>
+            <div class="pos-grid" id="baPosGrid"></div>
+            <div class="xy-wrap">
+              <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="baOffsetX" oninput="document.getElementById('baOffsetXVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetXVal">0</span></div>
+              <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="baOffsetY" oninput="document.getElementById('baOffsetYVal').textContent=this.value; refreshSim();" style="flex:1;"><span class="xy-val" id="baOffsetYVal">0</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
+            <div>
+              <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">글씨체</div>
+              <select class="font-sel" id="baOverlayFont" onchange="refreshSim()">
+                <option value="Noto Sans KR, sans-serif" selected>기본</option>
+                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+                <option value="Nanum Myeongjo, serif">나눔명조</option>
+                <option value="Nanum Pen Script, cursive">손글씨 펜</option>
+                <option value="Gaegu, cursive">가에구 (손글씨)</option>
+                <option value="Playfair Display, serif">Playfair (영문)</option>
+                <option value="Montserrat, sans-serif">Montserrat (영문)</option>
+                <option value="Dancing Script, cursive">Dancing (영문)</option>
+                <option value="Oswald, sans-serif">Oswald (영문)</option>
+                <option value="Arial, sans-serif">Arial (영문)</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">크기</div>
+              <div class="size-px-row"><input type="number" class="size-px-input" id="baOverlaySize" min="8" max="300" value="36" oninput="refreshSim()"><span class="size-px-unit">px</span></div>
+            </div>
+            <div>
+              <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">색상</div>
+              <div class="text-color-row" id="baTxtColorRow"></div>
+            </div>
+            <div class="opacity-row">
+              <label>글자 진하기</label>
+              <input type="range" min="10" max="100" value="100" id="baOverlayOpacity" oninput="document.getElementById('baOpacityVal').textContent=this.value+'%';refreshSim();" style="flex:1;">
+              <span class="opacity-val" id="baOpacityVal">100%</span>
+            </div>
+          </div>
+        </div>
+        <div class="effect-toggle-row" style="margin-top:12px;">
+          <button class="effect-toggle" id="baStrokeToggle" onclick="toggleEffect('ba','stroke')">글자 테두리<div class="tog-switch"></div></button>
+          <button class="effect-toggle" id="baShadowToggle" onclick="toggleEffect('ba','shadow')">글자 그림자<div class="tog-switch"></div></button>
+        </div>
+        <div class="effect-panel" id="baStrokePanel">
+          <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="baStrokeColorBtn" style="background:#000000;"><input type="color" value="#000000" id="baStrokeColor" oninput="document.getElementById('baStrokeColorBtn').style.background=this.value; refreshSim()"></button><span style="font-size:.7rem;color:var(--ea-muted);" id="baStrokeColorHex">#000000</span></div>
+          <div class="effect-row"><span class="effect-label">두께</span><input type="range" min="1" max="20" value="2" id="baStrokeWidth" oninput="document.getElementById('baStrokeWidthVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baStrokeWidthVal">2</span></div>
+        </div>
+        <div class="effect-panel" id="baShadowPanel">
+          <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="baShadowColorBtn" style="background:#000000;"><input type="color" value="#000000" id="baShadowColor" oninput="document.getElementById('baShadowColorBtn').style.background=this.value; refreshSim()"></button><span style="font-size:.7rem;color:var(--ea-muted);" id="baShadowColorHex">#000000</span></div>
+          <div class="effect-row"><span class="effect-label">방향</span><input type="range" min="0" max="360" value="315" id="baShadowAngle" oninput="document.getElementById('baShadowAngleVal').textContent=this.value+'°'; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowAngleVal">315°</span></div>
+          <div class="effect-row"><span class="effect-label">진하기</span><input type="range" min="0" max="100" value="40" id="baShadowOpacity" oninput="document.getElementById('baShadowOpacityVal').textContent=this.value+'%'; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowOpacityVal">40%</span></div>
+          <div class="effect-row"><span class="effect-label">거리</span><input type="range" min="0" max="30" value="4" id="baShadowDist" oninput="document.getElementById('baShadowDistVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowDistVal">4</span></div>
+          <div class="effect-row"><span class="effect-label">흐림</span><input type="range" min="0" max="20" value="0" id="baShadowBlur" oninput="document.getElementById('baShadowBlurVal').textContent=this.value; refreshSim()" style="flex:1;"><span class="effect-val" id="baShadowBlurVal">0</span></div>
+        </div>
       </div>
     </div>
 
@@ -3246,7 +3713,7 @@
         <div class="plan-info"><span class="plan-badge free" id="planBadge">무료 플랜</span><span class="plan-desc" id="planDesc">저장 시 워터마크가 삽입됩니다</span></div>
         <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO <span class="free-trial-badge">14일 무료</span></button>
       </div>
-      <button class="gen-btn" id="genBtn" onclick="generate()">✦ 저장하기 — 인스타 최적화 1080×1350</button>
+      <button class="gen-btn" id="genBtn" onclick="generate()">💾 저장하기</button>
       <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
       <button class="dl-btn" id="dlBtn" onclick="download()">⬇ JPG 다운로드</button>
       <button class="insta-open-btn" id="instaBtn1" onclick="openInstagram()">📸 인스타그램에 올리기</button>
@@ -3264,12 +3731,21 @@
     <div class="rsim-header"><h2>미리보기</h2><span class="sim-live">실시간</span></div>
     <div class="rsim-main-frame" id="rMainFrame">
       <div class="sim-placeholder" id="rSimPh">
-        <span>🖼️</span>
-        <p style="font-weight:600;color:#48433e;font-size:.82rem;">미리보기</p>
-        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;font-size:.72rem;color:#928c84;">
-          <div>1. 오른쪽에서 사진 업로드 (최대 10장)</div>
-          <div>2. 여백 색상 · 배치 설정</div>
-          <div>3. 전체 저장 → 인스타에 바로 업로드!</div>
+        <div class="welcome-greeting">📸 사진 사이즈 자동 변환</div>
+        <div class="welcome-subtitle">사진 여러 장을<br>인스타 사이즈에 맞게 한 번에 변환</div>
+        <div class="welcome-steps">
+          <div class="welcome-step">
+            <div class="welcome-step-num"><span>1</span></div>
+            <span>오른쪽에 사진 업로드 (최대 10장)</span>
+          </div>
+          <div class="welcome-step">
+            <div class="welcome-step-num"><span>2</span></div>
+            <span>여백 색 선택</span>
+          </div>
+          <div class="welcome-step">
+            <div class="welcome-step-num"><span>3</span></div>
+            <span>전체 저장 → 인스타 업로드!</span>
+          </div>
         </div>
       </div>
       <canvas id="rMainCanvas" style="display:none;"></canvas>
@@ -3290,61 +3766,112 @@
       <div class="r-thumb-grid" id="rThumbGrid" style="display:none;"></div>
     </div>
 
+    <!-- 🟢 기본 옵션 -->
     <div class="opts-panel">
-      <h2>여백 색상</h2>
-      <div class="r-pal-row-label" style="margin-bottom:6px;">밝은 계열</div>
-      <div class="r-palette-grid" id="rPalLight"></div>
-      <div class="r-pal-row-label" style="margin:8px 0 6px;">어두운 계열</div>
-      <div class="r-palette-grid" id="rPalDark"></div>
-      <div class="r-color-tools" style="margin-top:10px;">
-        <button class="eyedrop-btn" id="eyedropBtn" onclick="toggleEyedrop()">💧 스포이드</button>
-        <div class="r-cur-color" id="rCurColor" style="background:#ffffff;"></div>
-        <span class="r-cur-hex" id="rCurHex">#ffffff</span>
-        <input type="color" id="rCustomColor" value="#ffffff" oninput="rSetBgColor(this.value)" style="width:32px;height:32px;border-radius:6px;border:1.5px solid var(--ea-border);cursor:pointer;padding:2px;">
+      <h2>✨ 꾸미기</h2>
+      <div class="help-box">
+        <span class="help-icon">💡</span>
+        <span>사진 올리고 <strong>전체 저장</strong>만 누르면 끝!</span>
       </div>
-    </div>
-
-    <div class="opts-panel">
-      <h2>이미지 배치</h2>
-      <div class="fit-mode-row">
-        <button class="fit-btn on" onclick="setFitMode('contain',this)">여백 유지</button>
-        <button class="fit-btn" onclick="setFitMode('cover',this)">꽉 채우기</button>
-      </div>
-    </div>
-
-    <div class="opts-panel text-overlay-panel">
-      <h2>텍스트 / 로고 삽입</h2>
-      <div class="text-input-row"><input type="text" id="overlayText" placeholder="예: @my_studio / 브랜드명" maxlength="40" oninput="rRefreshSim()"></div>
-      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
-        <div>
-          <div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:5px;text-transform:uppercase;">위치</div>
-          <div class="pos-grid" id="posGrid"></div>
-          <div class="xy-wrap">
-            <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="rOffsetX" oninput="document.getElementById('rOffsetXVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetXVal">0</span></div>
-            <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="rOffsetY" oninput="document.getElementById('rOffsetYVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetYVal">0</span></div>
+      <div class="opts-grid" style="grid-template-columns: 1fr;">
+        <div class="opt-group">
+          <label>🎨 여백 색</label>
+          <div class="r-pal-row-label" style="margin-bottom:6px;">밝은 계열</div>
+          <div class="r-palette-grid" id="rPalLight"></div>
+          <div class="r-pal-row-label" style="margin:8px 0 6px;">어두운 계열</div>
+          <div class="r-palette-grid" id="rPalDark"></div>
+        </div>
+        <div class="opt-group">
+          <label>📐 사진 채우기</label>
+          <div class="fit-mode-row">
+            <button class="fit-btn on" onclick="setFitMode('contain',this)">여백 유지</button>
+            <button class="fit-btn" onclick="setFitMode('cover',this)">꽉 채우기</button>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
-          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">글씨체</div><select class="font-sel" id="rOverlayFont" onchange="rRefreshSim()"><option value="Noto Sans KR, sans-serif" selected>Noto Sans KR</option><option value="Nanum Gothic, sans-serif">나눔고딕</option><option value="Nanum Myeongjo, serif">나눔명조</option><option value="Nanum Pen Script, cursive">나눔손글씨 펜</option><option value="Gaegu, cursive">가에구</option><option value="Playfair Display, serif">Playfair Display</option><option value="Montserrat, sans-serif">Montserrat</option><option value="Dancing Script, cursive">Dancing Script</option><option value="Oswald, sans-serif">Oswald</option><option value="Arial, sans-serif">Arial</option></select></div>
-          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">크기</div><div class="size-px-row"><input type="number" class="size-px-input" id="overlaySize" min="8" max="300" value="36" oninput="rRefreshSim()"><span class="size-px-unit">px</span></div></div>
-          <div><div style="font-size:.65rem;color:var(--ea-muted);margin-bottom:4px;text-transform:uppercase;">색상</div><div class="text-color-row" id="txtColorRow"></div></div>
-          <div class="opacity-row"><label>불투명도</label><input type="range" min="10" max="100" value="100" id="overlayOpacity" oninput="document.getElementById('opacityVal').textContent=this.value+'%';rRefreshSim();" style="flex:1;"><span class="opacity-val" id="opacityVal">100%</span></div>
+      </div>
+    </div>
+
+    <!-- 🔧 고급 옵션 -->
+    <div class="collapsible-panel" id="advancedPanel2">
+      <div class="collapsible-header" onclick="toggleCollapsible('advancedPanel2')">
+        <h3><span class="collapsible-icon">⚙️</span> 더 자세히 (스포이드 / 색 직접 선택)</h3>
+        <span class="collapsible-arrow">▼</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="r-color-tools" style="margin-top:14px;">
+          <button class="eyedrop-btn" id="eyedropBtn" onclick="toggleEyedrop()">💧 사진에서 색 뽑기</button>
+          <div class="r-cur-color" id="rCurColor" style="background:#ffffff;"></div>
+          <span class="r-cur-hex" id="rCurHex">#ffffff</span>
+          <input type="color" id="rCustomColor" value="#ffffff" oninput="rSetBgColor(this.value)" style="width:32px;height:32px;border-radius:6px;border:1.5px solid var(--ea-border);cursor:pointer;padding:2px;">
         </div>
       </div>
-      <div class="effect-toggle-row">
-        <button class="effect-toggle" id="rStrokeToggle" onclick="toggleEffect('r','stroke')">외곽선<div class="tog-switch"></div></button>
-        <button class="effect-toggle" id="rShadowToggle" onclick="toggleEffect('r','shadow')">그림자<div class="tog-switch"></div></button>
+    </div>
+
+    <!-- ✏️ 텍스트/로고 (접혀있음) -->
+    <div class="collapsible-panel" id="textPanel2">
+      <div class="collapsible-header" onclick="toggleCollapsible('textPanel2')">
+        <h3><span class="collapsible-icon">✏️</span> 내 가게 이름 / 로고 넣기</h3>
+        <span class="collapsible-arrow">▼</span>
       </div>
-      <div class="effect-panel" id="rStrokePanel">
-        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="rStrokeColorBtn" style="background:#000000;"><input type="color" value="#000000" id="rStrokeColor" oninput="document.getElementById('rStrokeColorBtn').style.background=this.value; rRefreshSim()"></button></div>
-        <div class="effect-row"><span class="effect-label">두께</span><input type="range" min="1" max="20" value="2" id="rStrokeWidth" oninput="document.getElementById('rStrokeWidthVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rStrokeWidthVal">2</span></div>
-      </div>
-      <div class="effect-panel" id="rShadowPanel">
-        <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="rShadowColorBtn" style="background:#000000;"><input type="color" value="#000000" id="rShadowColor" oninput="document.getElementById('rShadowColorBtn').style.background=this.value; rRefreshSim()"></button></div>
-        <div class="effect-row"><span class="effect-label">방향</span><input type="range" min="0" max="360" value="315" id="rShadowAngle" oninput="document.getElementById('rShadowAngleVal').textContent=this.value+'°'; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowAngleVal">315°</span></div>
-        <div class="effect-row"><span class="effect-label">불투명도</span><input type="range" min="0" max="100" value="40" id="rShadowOpacity" oninput="document.getElementById('rShadowOpacityVal').textContent=this.value+'%'; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowOpacityVal">40%</span></div>
-        <div class="effect-row"><span class="effect-label">거리</span><input type="range" min="0" max="30" value="4" id="rShadowDist" oninput="document.getElementById('rShadowDistVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowDistVal">4</span></div>
-        <div class="effect-row"><span class="effect-label">흐림</span><input type="range" min="0" max="20" value="0" id="rShadowBlur" oninput="document.getElementById('rShadowBlurVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowBlurVal">0</span></div>
+      <div class="collapsible-body">
+        <div class="text-input-row" style="margin-top:14px;">
+          <input type="text" id="overlayText" placeholder="예: @my_studio / 가게 이름" maxlength="40" oninput="rRefreshSim()">
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:12px;">
+          <div>
+            <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:5px;font-weight:600;">위치</div>
+            <div class="pos-grid" id="posGrid"></div>
+            <div class="xy-wrap">
+              <div class="xy-row"><span class="xy-axis">X</span><input type="range" min="-100" max="100" value="0" id="rOffsetX" oninput="document.getElementById('rOffsetXVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetXVal">0</span></div>
+              <div class="xy-row"><span class="xy-axis">Y</span><input type="range" min="-100" max="100" value="0" id="rOffsetY" oninput="document.getElementById('rOffsetYVal').textContent=this.value; rRefreshSim();" style="flex:1;"><span class="xy-val" id="rOffsetYVal">0</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px;">
+            <div>
+              <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">글씨체</div>
+              <select class="font-sel" id="rOverlayFont" onchange="rRefreshSim()">
+                <option value="Noto Sans KR, sans-serif" selected>기본</option>
+                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+                <option value="Nanum Myeongjo, serif">나눔명조</option>
+                <option value="Nanum Pen Script, cursive">손글씨 펜</option>
+                <option value="Gaegu, cursive">가에구 (손글씨)</option>
+                <option value="Playfair Display, serif">Playfair (영문)</option>
+                <option value="Montserrat, sans-serif">Montserrat (영문)</option>
+                <option value="Dancing Script, cursive">Dancing (영문)</option>
+                <option value="Oswald, sans-serif">Oswald (영문)</option>
+                <option value="Arial, sans-serif">Arial (영문)</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">크기</div>
+              <div class="size-px-row"><input type="number" class="size-px-input" id="overlaySize" min="8" max="300" value="36" oninput="rRefreshSim()"><span class="size-px-unit">px</span></div>
+            </div>
+            <div>
+              <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">색상</div>
+              <div class="text-color-row" id="txtColorRow"></div>
+            </div>
+            <div class="opacity-row">
+              <label>글자 진하기</label>
+              <input type="range" min="10" max="100" value="100" id="overlayOpacity" oninput="document.getElementById('opacityVal').textContent=this.value+'%';rRefreshSim();" style="flex:1;">
+              <span class="opacity-val" id="opacityVal">100%</span>
+            </div>
+          </div>
+        </div>
+        <div class="effect-toggle-row" style="margin-top:12px;">
+          <button class="effect-toggle" id="rStrokeToggle" onclick="toggleEffect('r','stroke')">글자 테두리<div class="tog-switch"></div></button>
+          <button class="effect-toggle" id="rShadowToggle" onclick="toggleEffect('r','shadow')">글자 그림자<div class="tog-switch"></div></button>
+        </div>
+        <div class="effect-panel" id="rStrokePanel">
+          <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="rStrokeColorBtn" style="background:#000000;"><input type="color" value="#000000" id="rStrokeColor" oninput="document.getElementById('rStrokeColorBtn').style.background=this.value; rRefreshSim()"></button></div>
+          <div class="effect-row"><span class="effect-label">두께</span><input type="range" min="1" max="20" value="2" id="rStrokeWidth" oninput="document.getElementById('rStrokeWidthVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rStrokeWidthVal">2</span></div>
+        </div>
+        <div class="effect-panel" id="rShadowPanel">
+          <div class="effect-row"><span class="effect-label">색상</span><button class="effect-color-btn" id="rShadowColorBtn" style="background:#000000;"><input type="color" value="#000000" id="rShadowColor" oninput="document.getElementById('rShadowColorBtn').style.background=this.value; rRefreshSim()"></button></div>
+          <div class="effect-row"><span class="effect-label">방향</span><input type="range" min="0" max="360" value="315" id="rShadowAngle" oninput="document.getElementById('rShadowAngleVal').textContent=this.value+'°'; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowAngleVal">315°</span></div>
+          <div class="effect-row"><span class="effect-label">진하기</span><input type="range" min="0" max="100" value="40" id="rShadowOpacity" oninput="document.getElementById('rShadowOpacityVal').textContent=this.value+'%'; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowOpacityVal">40%</span></div>
+          <div class="effect-row"><span class="effect-label">거리</span><input type="range" min="0" max="30" value="4" id="rShadowDist" oninput="document.getElementById('rShadowDistVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowDistVal">4</span></div>
+          <div class="effect-row"><span class="effect-label">흐림</span><input type="range" min="0" max="20" value="0" id="rShadowBlur" oninput="document.getElementById('rShadowBlurVal').textContent=this.value; rRefreshSim()" style="flex:1;"><span class="effect-val" id="rShadowBlurVal">0</span></div>
+        </div>
       </div>
     </div>
 
@@ -3357,7 +3884,7 @@
         <div class="plan-info"><span class="plan-badge free" id="rPlanBadge">무료 플랜</span><span class="plan-desc" id="rPlanDesc">저장 시 워터마크가 삽입됩니다</span></div>
         <button class="plan-btn upgrade" id="rPlanBtn" onclick="openModal()">✦ PRO <span class="free-trial-badge">14일 무료</span></button>
       </div>
-      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">✦ 전체 저장 — 인스타 최적화 1080×1350</button>
+      <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">💾 전체 저장</button>
       <div class="wm-notice" id="rWmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
       <button class="insta-open-btn" id="instaBtn2" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
@@ -3773,6 +4300,7 @@ function onDrop(e,s){
 }
 function checkReady(){
   document.getElementById('genBtn').classList.toggle('ready', !!(imgs.before&&imgs.after));
+  if (typeof window.updateWelcomeSteps === 'function') window.updateWelcomeSteps();
 }
 
 function fontSize(cw) {
@@ -3957,6 +4485,150 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 function openInstagram() { window.open('https://www.instagram.com', '_blank'); }
+
+/* ════════════════════════════════════════
+   🎯 UX 개선 — 접기/펼치기 + 온보딩 + 진행상태
+══════════════════════════════════════════ */
+
+// 접기/펼치기 패널
+window.toggleCollapsible = function(id) {
+  const panel = document.getElementById(id);
+  if (panel) panel.classList.toggle('open');
+};
+
+// 진행상태 업데이트 (Welcome Steps의 체크 표시)
+window.updateWelcomeSteps = function() {
+  const ws1 = document.getElementById('ws1');
+  const ws2 = document.getElementById('ws2');
+  const ws3 = document.getElementById('ws3');
+  if (!ws1) return;
+  
+  if (imgs && imgs.before) ws1.classList.add('completed');
+  else ws1.classList.remove('completed');
+  
+  if (imgs && imgs.after) ws2.classList.add('completed');
+  else ws2.classList.remove('completed');
+  
+  if (imgs && imgs.before && imgs.after) ws3.classList.add('completed');
+  else ws3.classList.remove('completed');
+};
+
+// ════════════════════════════════════════
+// 🎓 온보딩 (첫 방문자 환영 가이드)
+// ════════════════════════════════════════
+const ONBOARDING_KEY = 'peachpost_onboarded_v1';
+let currentOnboardStep = 0;
+
+const onboardingSteps = [
+  {
+    emoji: '👋',
+    title: '안녕하세요, 사장님!',
+    desc: '인스타그램에 올릴 사진을 5초 만에 만드는 도구예요.<br>3단계만 따라하시면 됩니다!',
+    btnPrimary: '시작할게요!',
+    btnSecondary: null
+  },
+  {
+    emoji: '📸',
+    title: 'STEP 1. 사진 올리기',
+    desc: '오른쪽 영역에 시술 전/후 사진을 올려주세요.<br>클릭해서 선택하거나 드래그해서 놓으세요!',
+    btnPrimary: '다음',
+    btnSecondary: '뒤로'
+  },
+  {
+    emoji: '✨',
+    title: 'STEP 2. 꾸미기 (선택)',
+    desc: '기본 설정만으로도 충분히 예뻐요!<br>더 꾸미고 싶으면 <strong>"⚙️ 더 자세히 꾸미기"</strong>를 눌러보세요.',
+    btnPrimary: '다음',
+    btnSecondary: '뒤로'
+  },
+  {
+    emoji: '💾',
+    title: 'STEP 3. 저장하기',
+    desc: '아래쪽 <strong>"💾 저장하기"</strong> 버튼을 누르면<br>인스타그램에 바로 올릴 수 있는 사진이 완성!',
+    btnPrimary: '시작하기!',
+    btnSecondary: '뒤로'
+  }
+];
+
+function showOnboarding() {
+  if (localStorage.getItem(ONBOARDING_KEY)) return; // 이미 본 사람은 스킵
+  currentOnboardStep = 0;
+  const overlay = document.getElementById('onboardingOverlay');
+  if (overlay) {
+    renderOnboardingStep();
+    overlay.classList.add('show');
+  }
+}
+
+function renderOnboardingStep() {
+  const step = onboardingSteps[currentOnboardStep];
+  if (!step) return;
+  
+  const emoji = document.getElementById('onboardEmoji');
+  const title = document.getElementById('onboardTitle');
+  const desc = document.getElementById('onboardDesc');
+  const btnPrimary = document.getElementById('onboardBtnPrimary');
+  const btnSecondary = document.getElementById('onboardBtnSecondary');
+  const dots = document.getElementById('onboardDots');
+  
+  if (emoji) emoji.textContent = step.emoji;
+  if (title) title.textContent = step.title;
+  if (desc) desc.innerHTML = step.desc;
+  if (btnPrimary) btnPrimary.textContent = step.btnPrimary;
+  if (btnSecondary) {
+    if (step.btnSecondary) {
+      btnSecondary.textContent = step.btnSecondary;
+      btnSecondary.style.display = 'inline-block';
+    } else {
+      btnSecondary.style.display = 'none';
+    }
+  }
+  
+  // 진행 표시 업데이트
+  if (dots) {
+    dots.innerHTML = '';
+    onboardingSteps.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'step-dot' + (i === currentOnboardStep ? ' active' : '');
+      dots.appendChild(d);
+    });
+  }
+}
+
+window.onboardNext = function() {
+  if (currentOnboardStep < onboardingSteps.length - 1) {
+    currentOnboardStep++;
+    renderOnboardingStep();
+  } else {
+    closeOnboarding();
+  }
+};
+
+window.onboardBack = function() {
+  if (currentOnboardStep > 0) {
+    currentOnboardStep--;
+    renderOnboardingStep();
+  }
+};
+
+window.closeOnboarding = function() {
+  const overlay = document.getElementById('onboardingOverlay');
+  if (overlay) overlay.classList.remove('show');
+  localStorage.setItem(ONBOARDING_KEY, 'true');
+};
+
+window.skipOnboarding = function() {
+  closeOnboarding();
+};
+
+// 편집 화면 진입 시 온보딩 호출 (startApp 함수 안에서 호출되도록)
+const originalStartApp = window.startApp;
+if (originalStartApp) {
+  window.startApp = function() {
+    originalStartApp();
+    setTimeout(showOnboarding, 600);
+  };
+}
 
 function switchTab(n) {
   document.getElementById('tab1Btn').classList.toggle('active', n===1);
@@ -4356,6 +5028,21 @@ window.addEventListener('resize', () => {
 });
 </script>
 
+
+<!-- 🎓 온보딩 모달 (첫 방문자 환영 가이드) -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-modal">
+    <div class="onboarding-step-indicator" id="onboardDots"></div>
+    <div class="onboarding-emoji" id="onboardEmoji">👋</div>
+    <h2 id="onboardTitle">안녕하세요!</h2>
+    <p id="onboardDesc">설명</p>
+    <div class="onboarding-buttons">
+      <button class="onboarding-btn secondary" id="onboardBtnSecondary" onclick="onboardBack()" style="display:none;">뒤로</button>
+      <button class="onboarding-btn primary" id="onboardBtnPrimary" onclick="onboardNext()">다음</button>
+    </div>
+    <button class="onboarding-skip" onclick="skipOnboarding()">건너뛰기</button>
+  </div>
+</div>
 
 </body>
 </html>
