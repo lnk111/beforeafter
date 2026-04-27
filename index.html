@@ -3177,79 +3177,108 @@
   border-bottom: 1px dashed #ede4d8;
 }
 
-/* ✨ 접기/펼치기 패널 (고급 모드) */
+/* ════════════════════════════════════════
+   ✨ 접기/펼치기 패널 — 완전히 새로 (보장 작동)
+══════════════════════════════════════════ */
+
+/* 패널 전체 - 따뜻한 배경으로 확실히 눈에 띔 */
 #editor-app-root .collapsible-panel {
-  background: white;
+  background: #fff;
+  border: 2px solid #ff8a6b;
   border-radius: 12px;
-  border: 1.5px solid #e8a47a;
+  margin: 0;
   overflow: hidden;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(232, 164, 122, 0.1);
+  box-shadow: 0 2px 12px rgba(255, 138, 107, 0.15);
 }
 
 #editor-app-root .collapsible-panel:hover {
-  border-color: #d97757;
-  box-shadow: 0 4px 12px rgba(232, 164, 122, 0.18);
+  border-color: #ff6b5a;
+  box-shadow: 0 4px 16px rgba(255, 138, 107, 0.25);
 }
 
+/* 헤더 (클릭 영역) */
 #editor-app-root .collapsible-header {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 18px !important;
-  cursor: pointer;
+  padding: 16px 20px !important;
+  cursor: pointer !important;
   user-select: none;
-  background: linear-gradient(135deg, #fff8f3 0%, #fff 100%) !important;
-  transition: background 0.15s;
+  background: linear-gradient(135deg, #fff8f3 0%, #fffaf6 100%) !important;
   border: none !important;
   width: 100%;
+  margin: 0 !important;
+  position: relative;
+  z-index: 1;
 }
 
 #editor-app-root .collapsible-header:hover {
-  background: linear-gradient(135deg, #fef0e8 0%, #fff8f3 100%) !important;
+  background: linear-gradient(135deg, #fff0e5 0%, #fff6ee 100%) !important;
 }
 
+/* 헤더 안의 제목 */
 #editor-app-root .collapsible-header h3 {
-  font-size: .92rem !important;
+  font-size: 0.95rem !important;
   font-weight: 700 !important;
-  color: #2d2417 !important;
+  color: #1c1a17 !important;
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
   display: flex !important;
-  align-items: center;
-  gap: 8px;
+  align-items: center !important;
+  gap: 8px !important;
   text-transform: none !important;
   letter-spacing: 0 !important;
+  line-height: 1.3 !important;
 }
 
 #editor-app-root .collapsible-icon {
-  font-size: 1.15rem;
+  font-size: 1.2rem !important;
 }
 
+/* 화살표 */
 #editor-app-root .collapsible-arrow {
-  font-size: 0.9rem;
-  color: #b85c38;
-  transition: transform 0.25s ease;
-  font-weight: 700;
+  font-size: 0.75rem !important;
+  color: #b85c38 !important;
+  transition: transform 0.3s ease !important;
+  font-weight: 700 !important;
+  background: white !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1.5px solid #ffd9c0 !important;
 }
 
 #editor-app-root .collapsible-panel.open .collapsible-arrow {
-  transform: rotate(180deg);
+  transform: rotate(180deg) !important;
 }
 
+/* 본문 (펼쳐지는 영역) */
 #editor-app-root .collapsible-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-  padding: 0 18px;
-  background: white;
+  display: none;
+  background: #fff;
+  padding: 0 20px;
 }
 
 #editor-app-root .collapsible-panel.open .collapsible-body {
-  max-height: 1200px;
-  padding: 16px 18px 18px;
-  border-top: 1px dashed #ede4d8;
+  display: block !important;
+  padding: 18px 20px 20px !important;
+  border-top: 1px dashed #ffd9c0 !important;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* 친근한 안내 박스 */
@@ -4504,16 +4533,64 @@ function openInstagram() { window.open('https://www.instagram.com', '_blank'); }
    🎯 UX 개선 — 접기/펼치기 + 온보딩 + 진행상태
 ══════════════════════════════════════════ */
 
-// 접기/펼치기 패널
+// ════════════════════════════════════════
+// 🔧 접기/펼치기 — 무조건 작동
+// ════════════════════════════════════════
 window.toggleCollapsible = function(id) {
   const panel = document.getElementById(id);
-  if (panel) {
-    panel.classList.toggle('open');
-    console.log('🔧 Toggle:', id, '→', panel.classList.contains('open') ? '열림' : '닫힘');
-  } else {
+  if (!panel) {
     console.error('❌ Panel not found:', id);
+    return;
+  }
+  
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open');
+  
+  console.log('🔧 Toggle:', id, '→', !isOpen ? '✅ 열림' : '❌ 닫힘');
+  
+  // 펼쳐졌을 때 부드럽게 스크롤해서 보이게
+  if (!isOpen) {
+    setTimeout(() => {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   }
 };
+
+// 페이지 로드 시 모든 collapsible 패널에 직접 클릭 이벤트 부착 (안전망)
+function attachCollapsibleListeners() {
+  const headers = document.querySelectorAll('#editor-app-root .collapsible-header');
+  console.log('🎯 collapsible 헤더 발견:', headers.length, '개');
+  
+  headers.forEach((header) => {
+    if (header.dataset.listenerAttached) return; // 중복 방지
+    header.dataset.listenerAttached = 'true';
+    
+    header.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const panel = this.closest('.collapsible-panel');
+      if (panel && panel.id) {
+        window.toggleCollapsible(panel.id);
+      }
+    });
+  });
+}
+
+// DOM 준비되면 이벤트 부착
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachCollapsibleListeners);
+} else {
+  setTimeout(attachCollapsibleListeners, 100);
+}
+
+// startApp() 호출될 때마다 다시 부착 (앱 진입 시)
+const _origAttach = window.startApp;
+if (_origAttach && typeof _origAttach === 'function') {
+  window.startApp = function() {
+    _origAttach.apply(this, arguments);
+    setTimeout(attachCollapsibleListeners, 200);
+  };
+}
 
 // 진행상태 업데이트 (Welcome Steps의 체크 표시)
 window.updateWelcomeSteps = function() {
