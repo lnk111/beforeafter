@@ -3610,6 +3610,15 @@
     </div>
     <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
   </div>
+  <div class="resizer" id="resizer"></div>
+  <div class="ctrl-panel">
+    <div class="upload-grid">
+      <div class="upload-zone" id="zone-before" ondragover="onDrag(event,'before')" ondragleave="offDrag('before')" ondrop="onDrop(event,'before')">
+        <input type="file" accept="image/*" onchange="loadFile(event,'before')">
+        <div class="up-icon">📷</div>
+        <span class="up-label before">시술 전 사진</span>
+        <span class="up-hint">클릭 또는 드래그</span>
+      </div>
       <div class="upload-zone" id="zone-after" ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
         <input type="file" accept="image/*" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
