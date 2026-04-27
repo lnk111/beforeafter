@@ -3222,9 +3222,23 @@
     flex-direction: column !important;
     overflow: visible !important;
     gap: 12px;
+    flex: 1 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex !important;
   }
-  #editor-app-root .resizer {
+  #editor-app-root .resizer,
+  #editor-app-root #resizer,
+  #editor-app-root #resizer2 {
     display: none !important;
+  }
+  
+  /* Tab 2 외부 wrapper도 모바일 처리 */
+  #editor-app-root #tab2Panel > div[style*="padding"],
+  #editor-app-root #tab2Panel > div {
+    padding: 12px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
   
   /* 미리보기 패널 - 풀와이드 (위에 배치) */
@@ -4104,8 +4118,8 @@
 
 <!-- TAB 2: 사진 리사이즈 -->
 <div class="tab-panel" id="tab2Panel">
-<div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:0 100px 24px 100px;background:#fff;overflow:hidden;">
-<div class="resize-workspace" style="flex:1;min-height:0;">
+<div class="workspace-wrap">
+<div class="resize-workspace">
   <div class="resize-sim-panel" id="rSimPanel">
     <div class="rsim-header"><h2>미리보기</h2><span class="sim-live">실시간</span></div>
     <div class="rsim-main-frame" id="rMainFrame">
