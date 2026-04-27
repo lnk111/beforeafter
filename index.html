@@ -21,17 +21,6 @@
   #editor-app-root { display: none; }
   body.app-mode { overflow: hidden !important; }
   
-  /* 🔑 로그인 모달은 홈 화면에서도 보이도록 (편집 앱이 숨겨져 있어도) */
-  #editor-app-root .auth-modal-overlay.open {
-    display: flex !important;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 99999;
-    align-items: center;
-    justify-content: center;
-  }
-  
   :root {
     --cream: #faf4ec;
     --cream-deep: #f3ead9;
@@ -2709,21 +2698,13 @@
   
   // 🔑 로그인 버튼 → 로그인 모달만 띄우기 (홈 화면 유지)
   window.loginApp = function() {
-    // 편집 앱 모달 컴포넌트 초기화 (모달이 잘 보이도록)
-    setTimeout(() => {
-      if (typeof rBuildPalette === 'function') rBuildPalette();
-      if (typeof rBuildTxtColors === 'function') rBuildTxtColors();
-      if (typeof rBuildPosGrid === 'function') rBuildPosGrid();
-      if (typeof baBuildPosGrid === 'function') baBuildPosGrid();
-      if (typeof baBuildTxtColors === 'function') baBuildTxtColors();
-    }, 50);
-    
-    // 로그인 모달 직접 열기 (DOM 직접 조작)
+    // 로그인 모달 직접 열기 (DOM 조작)
     const modal = document.getElementById('authModalOverlay');
     if (modal) {
       modal.classList.add('open');
-    } else if (typeof openAuthModal === 'function') {
-      openAuthModal();
+      console.log('✅ 로그인 모달 열림');
+    } else {
+      console.error('❌ authModalOverlay를 찾을 수 없습니다');
     }
   };
   
@@ -3394,10 +3375,13 @@
 
 <canvas id="resultCanvas" class="hidden-canvas"></canvas>
 
+</div><!-- /editor-app-root -->
+
+<!-- 🔑 로그인 모달 - editor-app-root 밖에 있어야 홈 화면에서도 보임 -->
 <div class="auth-modal-overlay" id="authModalOverlay" onclick="if(event.target===this)closeAuthModal()">
   <div class="auth-modal">
     <h2>피치포스트 시작하기 🍑</h2>
-    <p style="font-size:.82rem;color:var(--ea-muted);margin-bottom:20px;">간편하게 로그인하고 바로 사용하세요</p>
+    <p style="font-size:.82rem;color:#928c84;margin-bottom:20px;">간편하게 로그인하고 바로 사용하세요</p>
     <button class="social-btn kakao" onclick="signInKakao()">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.61 5.08 4.04 6.54-.16.56-.99 3.44-1.03 3.67 0 0-.02.17.09.23.11.06.24.01.24.01.31-.04 3.62-2.38 4.19-2.77.47.06.95.09 1.47.09 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
       카카오로 시작하기
@@ -3411,7 +3395,89 @@
   </div>
 </div>
 
-</div><!-- /editor-app-root -->
+<!-- 모달 전용 스타일 (전역) -->
+<style>
+.auth-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+}
+.auth-modal-overlay.open {
+  display: flex !important;
+}
+.auth-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 36px 32px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 24px 64px rgba(0,0,0,.25);
+  animation: authModalUp .25s ease;
+}
+@keyframes authModalUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.auth-modal h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1c1a17;
+}
+.auth-modal .social-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: 1.5px solid #e0dbd4;
+  background: #fff;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all .15s;
+  margin-bottom: 10px;
+  color: #1c1a17;
+}
+.auth-modal .social-btn:hover {
+  background: #faf8f5;
+  border-color: #c8bfb5;
+}
+.auth-modal .social-btn.kakao {
+  background: #FEE500;
+  border-color: #FEE500;
+  color: #3C1E1E;
+}
+.auth-modal .social-btn.kakao:hover {
+  background: #f0d800;
+  border-color: #f0d800;
+}
+.auth-modal .social-btn svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.auth-modal .auth-close {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  font-size: .75rem;
+  color: #928c84;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'Noto Sans KR', sans-serif;
+  width: 100%;
+}
+.auth-modal .auth-close:hover { color: #1c1a17; }
+</style>
 
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
