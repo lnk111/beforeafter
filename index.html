@@ -7,7 +7,8 @@
 <title>피치포스트 — 조용히 돈을 쓸어담는 사장님들의 비밀</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Pen+Script&family=Gaegu:wght@300;400;700&family=Black+Han+Sans&family=Jua&family=Single+Day&family=Sunflower:wght@300;500;700&family=Stylish&family=Do+Hyeon&family=Hi+Melody&family=East+Sea+Dokdo&family=Cute+Font&family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@400;500;700;900&family=Dancing+Script:wght@400;700&family=Oswald:wght@400;500;700&family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700;900&family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&family=Bebas+Neue&family=Pacifico&family=Lobster&family=Quicksand:wght@400;500;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -3770,16 +3771,49 @@
             <div>
               <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">글씨체</div>
               <select class="font-sel" id="baOverlayFont" onchange="refreshSim()">
-                <option value="Noto Sans KR, sans-serif" selected>기본</option>
-                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
-                <option value="Nanum Myeongjo, serif">나눔명조</option>
-                <option value="Nanum Pen Script, cursive">손글씨 펜</option>
-                <option value="Gaegu, cursive">가에구 (손글씨)</option>
-                <option value="Playfair Display, serif">Playfair (영문)</option>
-                <option value="Montserrat, sans-serif">Montserrat (영문)</option>
-                <option value="Dancing Script, cursive">Dancing (영문)</option>
-                <option value="Oswald, sans-serif">Oswald (영문)</option>
-                <option value="Arial, sans-serif">Arial (영문)</option>
+                <optgroup label="━ 한글 기본 ━">
+                  <option value="Noto Sans KR, sans-serif" selected>기본 (Noto Sans KR)</option>
+                  <option value="Pretendard, sans-serif">프리텐다드 ⭐</option>
+                  <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+                  <option value="Nanum Myeongjo, serif">나눔명조</option>
+                  <option value="Sunflower, sans-serif">선플라워</option>
+                </optgroup>
+                <optgroup label="━ 한글 굵은 헤드라인 ━">
+                  <option value="Black Han Sans, sans-serif">검은고딕 ⭐</option>
+                  <option value="Do Hyeon, sans-serif">도현체</option>
+                  <option value="Jua, sans-serif">주아체 (귀여움)</option>
+                  <option value="Stylish, sans-serif">스타일리쉬</option>
+                </optgroup>
+                <optgroup label="━ 한글 손글씨 ━">
+                  <option value="Nanum Pen Script, cursive">나눔손글씨 펜</option>
+                  <option value="Gaegu, cursive">가에구</option>
+                  <option value="Single Day, cursive">싱글데이 ⭐</option>
+                  <option value="Hi Melody, cursive">하이멜로디</option>
+                  <option value="East Sea Dokdo, cursive">동해독도체</option>
+                  <option value="Cute Font, cursive">귀여운 폰트</option>
+                </optgroup>
+                <optgroup label="━ 영문 모던 ━">
+                  <option value="Inter, sans-serif">Inter ⭐</option>
+                  <option value="Roboto, sans-serif">Roboto</option>
+                  <option value="Poppins, sans-serif">Poppins ⭐</option>
+                  <option value="DM Sans, sans-serif">DM Sans ⭐</option>
+                  <option value="Manrope, sans-serif">Manrope</option>
+                  <option value="Lato, sans-serif">Lato</option>
+                  <option value="Open Sans, sans-serif">Open Sans</option>
+                  <option value="Montserrat, sans-serif">Montserrat</option>
+                </optgroup>
+                <optgroup label="━ 영문 헤드라인 ━">
+                  <option value="Bebas Neue, sans-serif">Bebas Neue ⭐</option>
+                  <option value="Oswald, sans-serif">Oswald</option>
+                  <option value="Playfair Display, serif">Playfair (세리프)</option>
+                </optgroup>
+                <optgroup label="━ 영문 손글씨 ━">
+                  <option value="Pacifico, cursive">Pacifico ⭐</option>
+                  <option value="Lobster, cursive">Lobster</option>
+                  <option value="Dancing Script, cursive">Dancing Script</option>
+                  <option value="Caveat, cursive">Caveat (메모)</option>
+                  <option value="Quicksand, sans-serif">Quicksand (둥글)</option>
+                </optgroup>
               </select>
             </div>
             <div>
@@ -3942,16 +3976,49 @@
             <div>
               <div style="font-size:.72rem;color:#6a5d4f;margin-bottom:4px;font-weight:600;">글씨체</div>
               <select class="font-sel" id="rOverlayFont" onchange="rRefreshSim()">
-                <option value="Noto Sans KR, sans-serif" selected>기본</option>
-                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
-                <option value="Nanum Myeongjo, serif">나눔명조</option>
-                <option value="Nanum Pen Script, cursive">손글씨 펜</option>
-                <option value="Gaegu, cursive">가에구 (손글씨)</option>
-                <option value="Playfair Display, serif">Playfair (영문)</option>
-                <option value="Montserrat, sans-serif">Montserrat (영문)</option>
-                <option value="Dancing Script, cursive">Dancing (영문)</option>
-                <option value="Oswald, sans-serif">Oswald (영문)</option>
-                <option value="Arial, sans-serif">Arial (영문)</option>
+                <optgroup label="━ 한글 기본 ━">
+                  <option value="Noto Sans KR, sans-serif" selected>기본 (Noto Sans KR)</option>
+                  <option value="Pretendard, sans-serif">프리텐다드 ⭐</option>
+                  <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+                  <option value="Nanum Myeongjo, serif">나눔명조</option>
+                  <option value="Sunflower, sans-serif">선플라워</option>
+                </optgroup>
+                <optgroup label="━ 한글 굵은 헤드라인 ━">
+                  <option value="Black Han Sans, sans-serif">검은고딕 ⭐</option>
+                  <option value="Do Hyeon, sans-serif">도현체</option>
+                  <option value="Jua, sans-serif">주아체 (귀여움)</option>
+                  <option value="Stylish, sans-serif">스타일리쉬</option>
+                </optgroup>
+                <optgroup label="━ 한글 손글씨 ━">
+                  <option value="Nanum Pen Script, cursive">나눔손글씨 펜</option>
+                  <option value="Gaegu, cursive">가에구</option>
+                  <option value="Single Day, cursive">싱글데이 ⭐</option>
+                  <option value="Hi Melody, cursive">하이멜로디</option>
+                  <option value="East Sea Dokdo, cursive">동해독도체</option>
+                  <option value="Cute Font, cursive">귀여운 폰트</option>
+                </optgroup>
+                <optgroup label="━ 영문 모던 ━">
+                  <option value="Inter, sans-serif">Inter ⭐</option>
+                  <option value="Roboto, sans-serif">Roboto</option>
+                  <option value="Poppins, sans-serif">Poppins ⭐</option>
+                  <option value="DM Sans, sans-serif">DM Sans ⭐</option>
+                  <option value="Manrope, sans-serif">Manrope</option>
+                  <option value="Lato, sans-serif">Lato</option>
+                  <option value="Open Sans, sans-serif">Open Sans</option>
+                  <option value="Montserrat, sans-serif">Montserrat</option>
+                </optgroup>
+                <optgroup label="━ 영문 헤드라인 ━">
+                  <option value="Bebas Neue, sans-serif">Bebas Neue ⭐</option>
+                  <option value="Oswald, sans-serif">Oswald</option>
+                  <option value="Playfair Display, serif">Playfair (세리프)</option>
+                </optgroup>
+                <optgroup label="━ 영문 손글씨 ━">
+                  <option value="Pacifico, cursive">Pacifico ⭐</option>
+                  <option value="Lobster, cursive">Lobster</option>
+                  <option value="Dancing Script, cursive">Dancing Script</option>
+                  <option value="Caveat, cursive">Caveat (메모)</option>
+                  <option value="Quicksand, sans-serif">Quicksand (둥글)</option>
+                </optgroup>
               </select>
             </div>
             <div>
