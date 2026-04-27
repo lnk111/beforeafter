@@ -3602,17 +3602,14 @@
       </div>
       <canvas id="simCanvas" style="display:none;"></canvas>
     </div>
+    <div id="simInteractionBar" style="display:none;align-items:center;justify-content:center;gap:10px;padding:6px 12px;background:#fff8f3;border:1px solid #ffd9c0;border-radius:100px;font-size:.72rem;color:#6a4530;margin-top:4px;">
+      <span>🖱️ <strong>사진을 드래그</strong>해서 위치 조정</span>
+      <span style="color:#ddc;">·</span>
+      <span>🔄 <strong>휠로 확대</strong></span>
+      <button onclick="resetImagePosition()" style="background:#fff;border:1px solid #ffd9c0;border-radius:100px;padding:2px 10px;font-size:.7rem;color:#b85c38;cursor:pointer;font-weight:600;font-family:inherit;">↺ 원래대로</button>
+    </div>
     <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
   </div>
-  <div class="resizer" id="resizer"></div>
-  <div class="ctrl-panel">
-    <div class="upload-grid">
-      <div class="upload-zone" id="zone-before" ondragover="onDrag(event,'before')" ondragleave="offDrag('before')" ondrop="onDrop(event,'before')">
-        <input type="file" accept="image/*" onchange="loadFile(event,'before')">
-        <div class="up-icon">📷</div>
-        <span class="up-label before">시술 전 사진</span>
-        <span class="up-hint">클릭 또는 드래그</span>
-      </div>
       <div class="upload-zone" id="zone-after" ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
         <input type="file" accept="image/*" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
@@ -4184,6 +4181,11 @@ function updateAuthUI(loggedIn) {
 }
 
 const imgs = { before: null, after: null };
+// 🎯 이미지별 변형 상태 (드래그/줌)
+const imgTransforms = {
+  before: { offsetX: 0, offsetY: 0, zoom: 1 },
+  after:  { offsetX: 0, offsetY: 0, zoom: 1 }
+};
 const opts = { layout: 'vertical', showLabel: true, labelColor: '#ffffff', fontSize: 'medium' };
 const IW = 1080, IH = 1350;
 let isPro = false;
@@ -4326,7 +4328,13 @@ function readImg(file, side) {
   const r = new FileReader();
   r.onload = ev => {
     const i = new Image();
-    i.onload = () => { imgs[side] = i; showPreview(side, ev.target.result); checkReady(); refreshSim(); };
+    i.onload = () => {
+      imgs[side] = i;
+      imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 }; // 🔄 새 이미지 = transform 리셋
+      showPreview(side, ev.target.result);
+      checkReady();
+      refreshSim();
+    };
     i.src = ev.target.result;
   };
   r.readAsDataURL(file);
@@ -4345,6 +4353,7 @@ function showPreview(side, src) {
 }
 function removeImg(side) {
   imgs[side] = null;
+  imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 }; // 🔄 transform 리셋
   const z = document.getElementById('zone-' + side);
   z.classList.remove('has-image'); z.innerHTML = '';
   const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*';
@@ -4352,6 +4361,11 @@ function removeImg(side) {
   const ic = document.createElement('div'); ic.className='up-icon'; ic.textContent=side==='before'?'📷':'✨'; z.appendChild(ic);
   const lb = document.createElement('span'); lb.className='up-label '+side; lb.textContent=side==='before'?'Before':'After'; z.appendChild(lb);
   const ht = document.createElement('span'); ht.className='up-hint'; ht.textContent='클릭하거나 드래그'; z.appendChild(ht);
+  
+  // 인터랙션 바 숨김
+  const bar = document.getElementById('simInteractionBar');
+  if (bar && (!imgs.before || !imgs.after)) bar.style.display = 'none';
+  
   checkReady(); refreshSim();
 }
 function onDrag(e,s){ e.preventDefault(); document.getElementById('zone-'+s).classList.add('drag-over'); }
@@ -4371,12 +4385,50 @@ function fontSize(cw) {
   if(opts.fontSize==='large') return Math.max(24, b*1.45);
   return Math.max(18, b);
 }
-function coverFit(ctx, img, dx, dy, dw, dh) {
-  const ia=img.naturalWidth/img.naturalHeight, da=dw/dh;
-  let sx,sy,sw,sh;
-  if(ia>da){ sh=img.naturalHeight; sw=sh*da; sx=(img.naturalWidth-sw)/2; sy=0; }
-  else { sw=img.naturalWidth; sh=sw/da; sx=0; sy=(img.naturalHeight-sh)/2; }
-  ctx.drawImage(img,sx,sy,sw,sh,dx,dy,dw,dh);
+function coverFit(ctx, img, dx, dy, dw, dh, transform) {
+  const ia = img.naturalWidth/img.naturalHeight, da = dw/dh;
+  let sx, sy, sw, sh;
+  
+  // 기본 cover fit 계산
+  if(ia > da){
+    sh = img.naturalHeight;
+    sw = sh * da;
+    sx = (img.naturalWidth - sw) / 2;
+    sy = 0;
+  } else {
+    sw = img.naturalWidth;
+    sh = sw / da;
+    sx = 0;
+    sy = (img.naturalHeight - sh) / 2;
+  }
+  
+  // 🎯 사용자 transform 적용 (offsetX, offsetY는 -1~1 범위, zoom은 1~3)
+  if (transform) {
+    // 줌 적용 (sw, sh를 줄이면 확대 효과)
+    const zoom = transform.zoom || 1;
+    const zoomedSw = sw / zoom;
+    const zoomedSh = sh / zoom;
+    // 줌으로 인한 추가 여백
+    const extraSx = (sw - zoomedSw) / 2;
+    const extraSy = (sh - zoomedSh) / 2;
+    
+    // offset 적용 (이미지 크기에 비례하여 이동)
+    const offsetXPx = (transform.offsetX || 0) * sw / 2;
+    const offsetYPx = (transform.offsetY || 0) * sh / 2;
+    
+    sx = sx + extraSx - offsetXPx;
+    sy = sy + extraSy - offsetYPx;
+    sw = zoomedSw;
+    sh = zoomedSh;
+    
+    // 경계 체크 (이미지 밖으로 나가지 않게)
+    if (sx < 0) sx = 0;
+    if (sy < 0) sy = 0;
+    if (sx + sw > img.naturalWidth) sx = img.naturalWidth - sw;
+    if (sy + sh > img.naturalHeight) sy = img.naturalHeight - sh;
+  }
+  
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
 }
 function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
   const fs=fontSize(cw);
@@ -4472,15 +4524,15 @@ function drawAll(canvas, scale) {
 
   if(opts.layout==='vertical'){
     const h1=Math.round((CH-dp)*ratio), h2=CH-dp-h1;
-    coverFit(ctx,imgs.before,0,0,CW,h1);
+    coverFit(ctx,imgs.before,0,0,CW,h1,imgTransforms.before);
     if(dp>0){ctx.fillStyle='#fff';ctx.fillRect(0,h1,CW,dp);}
-    coverFit(ctx,imgs.after,0,h1+dp,CW,h2);
+    coverFit(ctx,imgs.after,0,h1+dp,CW,h2,imgTransforms.after);
     if(opts.showLabel){ drawLabel(ctx,lblB,0,0,CW,h1,CW); drawLabel(ctx,lblA,0,h1+dp,CW,h2,CW); }
   } else {
     const w1=Math.round((CW-dp)*ratio), w2=CW-dp-w1;
-    coverFit(ctx,imgs.before,0,0,w1,CH);
+    coverFit(ctx,imgs.before,0,0,w1,CH,imgTransforms.before);
     if(dp>0){ctx.fillStyle='#fff';ctx.fillRect(w1,0,dp,CH);}
-    coverFit(ctx,imgs.after,w1+dp,0,w2,CH);
+    coverFit(ctx,imgs.after,w1+dp,0,w2,CH,imgTransforms.after);
     if(opts.showLabel){ drawLabel(ctx,lblB,0,0,w1,CH,CW); drawLabel(ctx,lblA,w1+dp,0,w2,CH,CW); }
   }
 
@@ -4521,7 +4573,147 @@ function refreshSim() {
   const c=document.getElementById('simCanvas'); c.style.display='block';
   const fw=document.getElementById('simFrame').clientWidth||320;
   drawAll(c, fw/IW);
+  
+  // 인터랙션 바 표시
+  const bar = document.getElementById('simInteractionBar');
+  if (bar) bar.style.display = 'flex';
 }
+
+// ════════════════════════════════════════════
+// 🖱️ 사진 드래그 & 줌 (인스타/캔바 스타일)
+// ════════════════════════════════════════════
+(function setupImageInteraction() {
+  let dragState = {
+    active: false,
+    side: null,        // 'before' or 'after'
+    startX: 0,
+    startY: 0,
+    startOffsetX: 0,
+    startOffsetY: 0,
+  };
+  
+  // 마우스 위치가 어느 사진 영역인지 판단
+  function getSideAtPoint(canvas, clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) return null;
+    
+    const dpx = +document.getElementById('dividerSize').value;
+    const dpScale = dpx * (rect.width / IW);
+    const ratio = +document.getElementById('splitRatio').value / 100;
+    
+    if (opts.layout === 'vertical') {
+      const h1 = (rect.height - dpScale) * ratio;
+      // 구분선 영역에 있으면 가까운 쪽 선택
+      if (y < h1) return 'before';
+      if (y > h1 + dpScale) return 'after';
+      // 구분선 위 - 무시
+      return null;
+    } else {
+      const w1 = (rect.width - dpScale) * ratio;
+      if (x < w1) return 'before';
+      if (x > w1 + dpScale) return 'after';
+      return null;
+    }
+  }
+  
+  // 캔버스 setup이 늦으니까 이벤트 위임 사용
+  document.addEventListener('mousemove', function(e) {
+    const canvas = document.getElementById('simCanvas');
+    if (!canvas || canvas.style.display === 'none') return;
+    if (!imgs.before || !imgs.after) return;
+    
+    // 드래그 중이 아닐 때 - 호버 커서만 변경
+    if (!dragState.active) {
+      const side = getSideAtPoint(canvas, e.clientX, e.clientY);
+      canvas.style.cursor = side ? 'grab' : 'default';
+      return;
+    }
+    
+    // 드래그 중 - 사진 이동
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const dx = (e.clientX - dragState.startX) / rect.width;
+    const dy = (e.clientY - dragState.startY) / rect.height;
+    
+    // 이동량을 offset에 적용 (-1 ~ 1 범위 클램프)
+    const t = imgTransforms[dragState.side];
+    t.offsetX = Math.max(-1, Math.min(1, dragState.startOffsetX + dx * 2));
+    t.offsetY = Math.max(-1, Math.min(1, dragState.startOffsetY + dy * 2));
+    
+    refreshSim();
+  });
+  
+  document.addEventListener('mousedown', function(e) {
+    const canvas = document.getElementById('simCanvas');
+    if (!canvas || canvas.style.display === 'none') return;
+    if (!imgs.before || !imgs.after) return;
+    
+    const side = getSideAtPoint(canvas, e.clientX, e.clientY);
+    if (!side) return;
+    
+    e.preventDefault();
+    dragState.active = true;
+    dragState.side = side;
+    dragState.startX = e.clientX;
+    dragState.startY = e.clientY;
+    dragState.startOffsetX = imgTransforms[side].offsetX;
+    dragState.startOffsetY = imgTransforms[side].offsetY;
+    
+    canvas.style.cursor = 'grabbing';
+    canvas.dataset.dragging = 'true';
+  });
+  
+  document.addEventListener('mouseup', function(e) {
+    if (dragState.active) {
+      dragState.active = false;
+      const canvas = document.getElementById('simCanvas');
+      if (canvas) {
+        canvas.style.cursor = 'grab';
+        canvas.dataset.dragging = 'false';
+      }
+    }
+  });
+  
+  // 마우스 휠 - 줌
+  document.addEventListener('wheel', function(e) {
+    const canvas = document.getElementById('simCanvas');
+    if (!canvas || canvas.style.display === 'none') return;
+    if (!imgs.before || !imgs.after) return;
+    
+    const side = getSideAtPoint(canvas, e.clientX, e.clientY);
+    if (!side) return;
+    
+    e.preventDefault();
+    const t = imgTransforms[side];
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    t.zoom = Math.max(1, Math.min(3, t.zoom + delta));
+    
+    refreshSim();
+  }, { passive: false });
+  
+  console.log('🖱️ 사진 드래그/줌 활성화됨');
+})();
+
+// 🔄 사진 위치 리셋 (전역에 노출)
+window.resetImagePosition = function(side) {
+  if (side) {
+    imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 };
+  } else {
+    imgTransforms.before = { offsetX: 0, offsetY: 0, zoom: 1 };
+    imgTransforms.after = { offsetX: 0, offsetY: 0, zoom: 1 };
+  }
+  refreshSim();
+};
+
+// 새 이미지 업로드 시 transform 리셋
+const _origReadImg = window.readImg;
+window.readImg = function(file, side) {
+  imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 };
+  if (typeof _origReadImg === 'function') return _origReadImg(file, side);
+};
 function generate() {
   if(!imgs.before||!imgs.after) return;
   if (!canSave()) { openModal(); return; }
