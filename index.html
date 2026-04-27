@@ -3271,20 +3271,23 @@
 }
 
 
-/* 🔥 클릭 이벤트 100% 보장 - 자식들이 가로채지 못하게 */
+/* 🔥 클릭 이벤트 100% 보장 - 헤더의 직속 자식만 차단 (body는 영향 X) */
 #editor-app-root .collapsible-header {
   position: relative !important;
   z-index: 10 !important;
   pointer-events: auto !important;
 }
-#editor-app-root .collapsible-header * {
+#editor-app-root .collapsible-header > h3,
+#editor-app-root .collapsible-header > h3 *,
+#editor-app-root .collapsible-header > .collapsible-arrow,
+#editor-app-root .collapsible-header > .collapsible-icon {
   pointer-events: none !important;
 }
-#editor-app-root .collapsible-header h3,
-#editor-app-root .collapsible-header span,
-#editor-app-root .collapsible-icon,
-#editor-app-root .collapsible-arrow {
-  pointer-events: none !important;
+
+/* body 안의 자식들은 정상 작동하도록 보장 */
+#editor-app-root .collapsible-body,
+#editor-app-root .collapsible-body * {
+  pointer-events: auto !important;
 }
 
 @keyframes slideDown {
@@ -4569,29 +4572,58 @@ window.toggleCollapsible = function(id) {
     return;
   }
   
-  // 현재 상태 확인 (인라인 스타일 또는 computed style)
-  const isOpen = body.style.display === 'block';
+  // 현재 상태 확인 - getComputedStyle로 더 정확하게
+  const currentDisplay = window.getComputedStyle(body).display;
+  const isOpen = currentDisplay !== 'none';
   
   if (isOpen) {
     // 닫기
-    body.style.display = 'none';
+    body.style.cssText = 'display: none !important;';
     panel.classList.remove('open');
     if (arrow) arrow.style.transform = 'rotate(0deg)';
     console.log('🔧', id, '→ ❌ 닫힘');
   } else {
-    // 열기
-    body.style.display = 'block';
-    body.style.padding = '18px 20px 20px';
-    body.style.borderTop = '1px dashed #ffd9c0';
-    body.style.background = '#fff';
+    // 열기 - cssText로 한 번에 강제 적용
+    body.style.cssText = `
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      max-height: none !important;
+      height: auto !important;
+      padding: 18px 20px 20px !important;
+      border-top: 1px dashed #ffd9c0 !important;
+      background: #fff !important;
+      overflow: visible !important;
+    `;
+    
+    // body 안의 모든 자식들도 보이게 강제
+    const children = body.querySelectorAll('*');
+    children.forEach(child => {
+      // 원래 display가 none이 아니었던 것만
+      const computed = window.getComputedStyle(child).display;
+      if (child.style.display === 'none' && !child.classList.contains('effect-panel')) {
+        child.style.display = '';
+      }
+      // pointer-events 복구
+      if (child.style.pointerEvents === 'none' || computed === 'none') {
+        child.style.pointerEvents = 'auto';
+      }
+    });
+    
     panel.classList.add('open');
     if (arrow) arrow.style.transform = 'rotate(180deg)';
     console.log('🔧', id, '→ ✅ 열림');
+    console.log('  body display:', window.getComputedStyle(body).display);
+    console.log('  body height:', body.offsetHeight, 'px');
+    console.log('  body 자식 수:', body.children.length);
+    
+    // 강제로 reflow 트리거
+    body.offsetHeight;
     
     // 부드럽게 스크롤
     setTimeout(() => {
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 100);
+    }, 200);
   }
 };
 
