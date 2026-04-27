@@ -3649,7 +3649,7 @@
 
     <!-- 🔧 고급 옵션 (접혀있음) -->
     <div class="collapsible-panel" id="advancedPanel1" style="background:#fff;border:2px solid #ff8a6b;border-radius:12px;margin:0;overflow:hidden;box-shadow:0 2px 12px rgba(255,138,107,0.15);min-height:60px;display:block;">
-      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;" onclick="toggleCollapsible('advancedPanel1')">
+      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;">
         <h3><span class="collapsible-icon">⚙️</span> 더 자세히 꾸미기</h3>
         <span class="collapsible-arrow">▼</span>
       </div>
@@ -3700,7 +3700,7 @@
 
     <!-- ✏️ 텍스트/로고 (접혀있음) -->
     <div class="collapsible-panel" id="textPanel1" style="background:#fff;border:2px solid #ff8a6b;border-radius:12px;margin:0;overflow:hidden;box-shadow:0 2px 12px rgba(255,138,107,0.15);min-height:60px;display:block;">
-      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;" onclick="toggleCollapsible('textPanel1')">
+      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;">
         <h3><span class="collapsible-icon">✏️</span> 내 가게 이름 / 로고 넣기</h3>
         <span class="collapsible-arrow">▼</span>
       </div>
@@ -3856,7 +3856,7 @@
 
     <!-- 🔧 고급 옵션 -->
     <div class="collapsible-panel" id="advancedPanel2" style="background:#fff;border:2px solid #ff8a6b;border-radius:12px;margin:0;overflow:hidden;box-shadow:0 2px 12px rgba(255,138,107,0.15);min-height:60px;display:block;">
-      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;" onclick="toggleCollapsible('advancedPanel2')">
+      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;">
         <h3><span class="collapsible-icon">⚙️</span> 더 자세히 (스포이드 / 색 직접 선택)</h3>
         <span class="collapsible-arrow">▼</span>
       </div>
@@ -3872,7 +3872,7 @@
 
     <!-- ✏️ 텍스트/로고 (접혀있음) -->
     <div class="collapsible-panel" id="textPanel2" style="background:#fff;border:2px solid #ff8a6b;border-radius:12px;margin:0;overflow:hidden;box-shadow:0 2px 12px rgba(255,138,107,0.15);min-height:60px;display:block;">
-      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;" onclick="toggleCollapsible('textPanel2')">
+      <div class="collapsible-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;background:linear-gradient(135deg,#fff8f3 0%,#fffaf6 100%);user-select:none;width:100%;min-height:60px;">
         <h3><span class="collapsible-icon">✏️</span> 내 가게 이름 / 로고 넣기</h3>
         <span class="collapsible-arrow">▼</span>
       </div>
@@ -4596,29 +4596,11 @@ window.toggleCollapsible = function(id) {
       overflow: visible !important;
     `;
     
-    // body 안의 모든 자식들도 보이게 강제
-    const children = body.querySelectorAll('*');
-    children.forEach(child => {
-      // 원래 display가 none이 아니었던 것만
-      const computed = window.getComputedStyle(child).display;
-      if (child.style.display === 'none' && !child.classList.contains('effect-panel')) {
-        child.style.display = '';
-      }
-      // pointer-events 복구
-      if (child.style.pointerEvents === 'none' || computed === 'none') {
-        child.style.pointerEvents = 'auto';
-      }
-    });
-    
     panel.classList.add('open');
     if (arrow) arrow.style.transform = 'rotate(180deg)';
     console.log('🔧', id, '→ ✅ 열림');
     console.log('  body display:', window.getComputedStyle(body).display);
     console.log('  body height:', body.offsetHeight, 'px');
-    console.log('  body 자식 수:', body.children.length);
-    
-    // 강제로 reflow 트리거
-    body.offsetHeight;
     
     // 부드럽게 스크롤
     setTimeout(() => {
@@ -4627,54 +4609,9 @@ window.toggleCollapsible = function(id) {
   }
 };
 
-// 페이지 로드 시 모든 collapsible 패널에 직접 클릭 이벤트 부착 (안전망)
-function attachCollapsibleListeners() {
-  const headers = document.querySelectorAll('.collapsible-header');
-  console.log('🎯 collapsible 헤더 발견:', headers.length, '개');
-  
-  headers.forEach((header, idx) => {
-    if (header.dataset.listenerAttached === 'true') return; // 중복 방지
-    header.dataset.listenerAttached = 'true';
-    
-    header.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const panel = this.closest('.collapsible-panel');
-      if (panel && panel.id) {
-        window.toggleCollapsible(panel.id);
-      } else {
-        console.error('❌ panel.id를 찾을 수 없음');
-      }
-    });
-    
-    console.log('  ✅ 헤더', idx + 1, '클릭 이벤트 등록');
-  });
-}
-
-// DOM 준비되면 이벤트 부착
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', attachCollapsibleListeners);
-} else {
-  setTimeout(attachCollapsibleListeners, 100);
-}
-
-// startApp() 호출될 때마다 다시 부착 (앱 진입 시)
-const _origStartApp = window.startApp;
-if (_origStartApp && typeof _origStartApp === 'function') {
-  window.startApp = function() {
-    _origStartApp.apply(this, arguments);
-    setTimeout(attachCollapsibleListeners, 200);
-    setTimeout(attachCollapsibleListeners, 500); // 한 번 더 (확실하게)
-  };
-}
-
-// 전역에서 한 번 더 호출 (탭 전환 시 등)
-setInterval(attachCollapsibleListeners, 2000);
-
-// 🔥 최종 안전망: document 전체에 클릭 위임
-// 어떤 자식이 클릭을 가로채도 작동
+// 🔥 단 하나의 이벤트 시스템: document delegation만 사용
+// (중복 부착으로 인한 더블 클릭 효과 방지)
 document.addEventListener('click', function(e) {
-  // 클릭한 요소부터 위로 올라가면서 collapsible-header 찾기
   let target = e.target;
   let depth = 0;
   
@@ -4685,15 +4622,15 @@ document.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         window.toggleCollapsible(panel.id);
-        return;
       }
+      return;
     }
     target = target.parentElement;
     depth++;
   }
-}, true);  // capture phase로 더 빠르게 잡기
+}, true);
 
-console.log('🛡️ 클릭 위임 활성화됨');
+console.log('🛡️ 클릭 위임 활성화됨 (단일 시스템)');
 
 // 진행상태 업데이트 (Welcome Steps의 체크 표시)
 window.updateWelcomeSteps = function() {
