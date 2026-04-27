@@ -3227,13 +3227,13 @@
     display: none !important;
   }
   
-  /* 미리보기 패널 - 풀와이드 */
+  /* 미리보기 패널 - 풀와이드 (위에 배치) */
   #editor-app-root .sim-panel,
   #editor-app-root .resize-sim-panel {
     width: 100% !important;
     flex: none !important;
     padding: 12px !important;
-    order: 2;
+    order: 1;
   }
   #editor-app-root .sim-frame,
   #editor-app-root .rsim-main-frame {
@@ -3244,7 +3244,7 @@
     margin: 0 auto;
   }
   
-  /* 컨트롤 패널 - 풀와이드 */
+  /* 컨트롤 패널 - 풀와이드 (아래 배치, 저장 버튼 포함) */
   #editor-app-root .ctrl-panel,
   #editor-app-root .resize-ctrl {
     width: 100% !important;
@@ -3252,7 +3252,7 @@
     padding: 12px !important;
     gap: 12px !important;
     overflow: visible !important;
-    order: 1;
+    order: 2;
   }
   
   /* 업로드 영역 - 모바일 최적화 */
