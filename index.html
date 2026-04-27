@@ -3270,6 +3270,23 @@
   animation: slideDown 0.3s ease;
 }
 
+
+/* 🔥 클릭 이벤트 100% 보장 - 자식들이 가로채지 못하게 */
+#editor-app-root .collapsible-header {
+  position: relative !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+}
+#editor-app-root .collapsible-header * {
+  pointer-events: none !important;
+}
+#editor-app-root .collapsible-header h3,
+#editor-app-root .collapsible-header span,
+#editor-app-root .collapsible-icon,
+#editor-app-root .collapsible-arrow {
+  pointer-events: none !important;
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -4621,6 +4638,30 @@ if (_origStartApp && typeof _origStartApp === 'function') {
 
 // 전역에서 한 번 더 호출 (탭 전환 시 등)
 setInterval(attachCollapsibleListeners, 2000);
+
+// 🔥 최종 안전망: document 전체에 클릭 위임
+// 어떤 자식이 클릭을 가로채도 작동
+document.addEventListener('click', function(e) {
+  // 클릭한 요소부터 위로 올라가면서 collapsible-header 찾기
+  let target = e.target;
+  let depth = 0;
+  
+  while (target && depth < 10) {
+    if (target.classList && target.classList.contains('collapsible-header')) {
+      const panel = target.closest('.collapsible-panel');
+      if (panel && panel.id) {
+        e.preventDefault();
+        e.stopPropagation();
+        window.toggleCollapsible(panel.id);
+        return;
+      }
+    }
+    target = target.parentElement;
+    depth++;
+  }
+}, true);  // capture phase로 더 빠르게 잡기
+
+console.log('🛡️ 클릭 위임 활성화됨');
 
 // 진행상태 업데이트 (Welcome Steps의 체크 표시)
 window.updateWelcomeSteps = function() {
