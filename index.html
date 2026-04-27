@@ -21,6 +21,17 @@
   #editor-app-root { display: none; }
   body.app-mode { overflow: hidden !important; }
   
+  /* 🔑 로그인 모달은 홈 화면에서도 보이도록 (편집 앱이 숨겨져 있어도) */
+  #editor-app-root .auth-modal-overlay.open {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+  }
+  
   :root {
     --cream: #faf4ec;
     --cream-deep: #f3ead9;
@@ -2697,20 +2708,26 @@
     try { history.pushState({view:'app'}, '', '#app'); } catch(e){}
   }
   
-  // 로그인 버튼 - 앱 열고 로그인 모달 자동 열기
+  // 로그인 버튼 - 홈에서 모달만 띄우기 (편집 화면으로 전환 X)
   function loginApp() {
-    startApp();
+    // 편집 앱 미리 초기화 (로그인 후 부드럽게 이동하기 위해)
     setTimeout(() => {
-      if (typeof openAuthModal === 'function') openAuthModal();
-    }, 300);
+      if (typeof rBuildPalette === 'function') rBuildPalette();
+      if (typeof rBuildTxtColors === 'function') rBuildTxtColors();
+      if (typeof rBuildPosGrid === 'function') rBuildPosGrid();
+      if (typeof baBuildPosGrid === 'function') baBuildPosGrid();
+      if (typeof baBuildTxtColors === 'function') baBuildTxtColors();
+    }, 50);
+    
+    // 로그인 모달만 띄우기 (홈 화면 유지)
+    if (typeof openAuthModal === 'function') {
+      openAuthModal();
+    }
   }
   
-  // 회원가입 버튼 - 동일하게 처리
+  // 회원가입 버튼 - 동일하게 처리 (홈에서 모달만)
   function signupApp() {
-    startApp();
-    setTimeout(() => {
-      if (typeof openAuthModal === 'function') openAuthModal();
-    }, 300);
+    loginApp();
   }
   
   // 홈으로 가기
@@ -3410,7 +3427,22 @@ let currentUser = null;
 
 sb.auth.onAuthStateChange(async (event, session) => {
   currentUser = session?.user ?? null;
-  if (currentUser) { await loadProStatus(); }
+  if (currentUser) {
+    await loadProStatus();
+    
+    // 🎯 SIGNED_IN 이벤트일 때 (로그인 성공 직후)
+    if (event === 'SIGNED_IN') {
+      // 로그인 모달 닫기
+      if (typeof closeAuthModal === 'function') closeAuthModal();
+      
+      // 홈 화면이라면 (app-mode가 아니라면) 편집 페이지로 자동 이동
+      if (!document.body.classList.contains('app-mode')) {
+        if (typeof startApp === 'function') {
+          setTimeout(() => startApp(), 300);
+        }
+      }
+    }
+  }
   else { isPro = false; updatePlanUI(); updateAuthUI(false); }
 });
 
