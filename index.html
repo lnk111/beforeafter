@@ -2910,16 +2910,18 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   background: #fff;
   border-bottom: 1px solid var(--ea-border);
-  padding: 4px 16px;
+  padding: 8px 16px 2px 16px;
   flex-shrink: 0;
+  width: 30%;
+  min-width: 320px;
 }
 #editor-app-root .tab-btn {
-  padding: 5px 12px;
+  padding: 10px 10px;
   font-family: inherit;
-  font-size: .72rem;
+  font-size: 14px;
   font-weight: 500;
   color: var(--ea-muted);
   background: transparent;
@@ -2928,7 +2930,9 @@
   cursor: pointer;
   transition: all .15s;
   white-space: nowrap;
-  line-height: 1.4;
+  line-height: 18px;
+  flex: 1;
+  text-align: center;
 }
 #editor-app-root .tab-btn:hover {
   color: var(--ea-ink);
