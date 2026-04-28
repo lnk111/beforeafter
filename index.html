@@ -3396,6 +3396,217 @@
 }
 
 /* ════════════════════════════════════════
+   📁 마이페이지 (작업 갤러리)
+══════════════════════════════════════════ */
+#mypageOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #faf7f2;
+  z-index: 99997;
+  overflow-y: auto;
+  flex-direction: column;
+}
+#mypageOverlay.open { display: flex; }
+
+.mypage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: white;
+  border-bottom: 1px solid var(--ea-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.mypage-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mypage-back-btn {
+  padding: 8px 16px;
+  background: white;
+  border: 1.5px solid var(--ea-border);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+.mypage-back-btn:hover { border-color: var(--ea-accent); }
+.mypage-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ea-ink);
+  margin: 0;
+}
+.mypage-subtitle {
+  font-size: 0.78rem;
+  color: var(--ea-muted);
+  margin-top: 2px;
+}
+
+.mypage-content {
+  flex: 1;
+  padding: 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mypage-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.mypage-stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--ea-border);
+}
+.mypage-stat-label {
+  font-size: 0.75rem;
+  color: var(--ea-muted);
+  margin-bottom: 6px;
+}
+.mypage-stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ea-ink);
+}
+.mypage-stat-value.peach { color: var(--ea-accent); }
+
+.mypage-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.mypage-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ea-ink);
+}
+.mypage-new-btn {
+  padding: 8px 16px;
+  background: var(--ea-accent);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mypage-new-btn:hover { background: #a04d2c; }
+
+.mypage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+.mypage-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--ea-border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.mypage-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(184, 92, 56, 0.12);
+  border-color: var(--ea-accent);
+}
+.mypage-card-img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  background: #faf7f2;
+  object-fit: cover;
+  display: block;
+}
+.mypage-card-info {
+  padding: 10px 12px;
+}
+.mypage-card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ea-ink);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mypage-card-date {
+  font-size: 0.7rem;
+  color: var(--ea-muted);
+}
+.mypage-card-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.15s;
+}
+.mypage-card:hover .mypage-card-delete { opacity: 1; }
+.mypage-card-delete:hover { background: #d63031; }
+
+.mypage-empty {
+  background: white;
+  border-radius: 16px;
+  padding: 60px 24px;
+  text-align: center;
+  border: 1px solid var(--ea-border);
+}
+.mypage-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+.mypage-empty-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.mypage-empty-desc {
+  font-size: 0.85rem;
+  color: var(--ea-muted);
+  margin-bottom: 20px;
+}
+
+.mypage-loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--ea-muted);
+}
+
+@media (max-width: 768px) {
+  .mypage-content { padding: 16px; }
+  .mypage-header { padding: 12px 16px; }
+  .mypage-title { font-size: 1rem; }
+  .mypage-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mypage-stat-card { padding: 12px; }
+  .mypage-stat-value { font-size: 1.1rem; }
+  .mypage-stat-label { font-size: 0.65rem; }
+  .mypage-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
+
+/* ════════════════════════════════════════
    🆕 UX 개선 CSS (미리캔버스 스타일)
 ══════════════════════════════════════════ */
 
@@ -3881,6 +4092,8 @@
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
+    <span id="userGreeting" style="display:none;font-size:.78rem;color:var(--ea-ink);font-weight:500;">👋 <span id="userName"></span>님</span>
+    <button id="mypageBtn" onclick="openMypage()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:#fff;color:var(--ea-ink);border:1.5px solid var(--ea-border);border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:500;cursor:pointer;">📁 마이페이지</button>
     <span id="userEmail" style="display:none;font-size:.75rem;color:var(--ea-muted);"></span>
     <button id="loginBtn" onclick="openAuthModal()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ea-ink);color:#fff;border:none;border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;">🔑 로그인</button>
     <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--ea-muted);border:1.5px solid var(--ea-border);border-radius:100px;font-family:inherit;font-size:.78rem;cursor:pointer;">로그아웃</button>
@@ -4781,16 +4994,34 @@ function updateAuthUI(loggedIn) {
   const loginBtn = document.getElementById('loginBtn');
   const logoutBtn = document.getElementById('logoutBtn');
   const userEmail = document.getElementById('userEmail');
+  const userGreeting = document.getElementById('userGreeting');
+  const userName = document.getElementById('userName');
+  const mypageBtn = document.getElementById('mypageBtn');
   if (!loginBtn) return;
+  
   if (loggedIn && currentUser) {
     loginBtn.style.display = 'none';
     logoutBtn.style.display = 'inline-flex';
-    userEmail.textContent = currentUser.email;
-    userEmail.style.display = 'inline';
+    
+    // 사용자 이름 추출 (닉네임 → 이름 → 이메일 순)
+    const meta = currentUser.user_metadata || {};
+    const displayName = meta.full_name || meta.name || meta.nickname || 
+                        meta.user_name || currentUser.email?.split('@')[0] || '사장';
+    
+    if (userName) userName.textContent = displayName;
+    if (userGreeting) userGreeting.style.display = 'inline';
+    if (mypageBtn) mypageBtn.style.display = 'inline-flex';
+    
+    if (userEmail) {
+      userEmail.textContent = currentUser.email || '';
+      userEmail.style.display = 'none'; // 이메일 대신 이름 사용
+    }
   } else {
     loginBtn.style.display = 'inline-flex';
     logoutBtn.style.display = 'none';
-    userEmail.style.display = 'none';
+    if (userEmail) userEmail.style.display = 'none';
+    if (userGreeting) userGreeting.style.display = 'none';
+    if (mypageBtn) mypageBtn.style.display = 'none';
   }
 }
 
@@ -5372,6 +5603,262 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 function openInstagram() { window.open('https://www.instagram.com', '_blank'); }
+
+// ════════════════════════════════════════════
+// 📁 마이페이지 - 작업 갤러리
+// ════════════════════════════════════════════
+
+window.openMypage = async function() {
+  if (!currentUser) {
+    if (typeof showToast === 'function') showToast('로그인이 필요합니다');
+    return;
+  }
+  const overlay = document.getElementById('mypageOverlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  
+  // 사용자 정보 표시
+  const userInfo = document.getElementById('mypageUserInfo');
+  const meta = currentUser.user_metadata || {};
+  const displayName = meta.full_name || meta.name || meta.nickname || 
+                      meta.user_name || currentUser.email?.split('@')[0] || '사장';
+  if (userInfo) userInfo.textContent = `${displayName}님 안녕하세요 👋`;
+  
+  // 플랜 표시
+  const planEl = document.getElementById('mypageStatPlan');
+  if (planEl) {
+    planEl.textContent = isPro ? 'PRO ✦' : '무료';
+    planEl.style.color = isPro ? '#b85c38' : '';
+  }
+  
+  // 작업물 불러오기
+  await loadMypageGallery();
+};
+
+window.closeMypage = function() {
+  const overlay = document.getElementById('mypageOverlay');
+  if (overlay) overlay.classList.remove('open');
+};
+
+async function loadMypageGallery() {
+  const container = document.getElementById('mypageGalleryContainer');
+  if (!container || !currentUser) return;
+  
+  container.innerHTML = '<div class="mypage-loading">불러오는 중...</div>';
+  
+  try {
+    const { data, error } = await sb.from('user_works')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    // 통계 업데이트
+    updateMypageStats(data || []);
+    
+    if (!data || data.length === 0) {
+      container.innerHTML = `
+        <div class="mypage-empty">
+          <div class="mypage-empty-icon">📸</div>
+          <div class="mypage-empty-title">아직 작업물이 없어요</div>
+          <div class="mypage-empty-desc">사진을 만들어 저장하면 여기에 자동으로 보관돼요</div>
+          <button class="mypage-new-btn" onclick="closeMypage()">+ 새로 만들기</button>
+        </div>
+      `;
+      return;
+    }
+    
+    // 갤러리 렌더링
+    container.innerHTML = `<div class="mypage-grid">${
+      data.map(work => renderWorkCard(work)).join('')
+    }</div>`;
+  } catch (e) {
+    console.error('갤러리 로드 실패:', e);
+    container.innerHTML = `
+      <div class="mypage-empty">
+        <div class="mypage-empty-icon">⚠️</div>
+        <div class="mypage-empty-title">불러오기 실패</div>
+        <div class="mypage-empty-desc">잠시 후 다시 시도해주세요</div>
+      </div>
+    `;
+  }
+}
+
+function renderWorkCard(work) {
+  const date = new Date(work.created_at);
+  const now = new Date();
+  const diff = now - date;
+  let dateText = '';
+  if (diff < 60000) dateText = '방금 전';
+  else if (diff < 3600000) dateText = Math.floor(diff/60000) + '분 전';
+  else if (diff < 86400000) dateText = Math.floor(diff/3600000) + '시간 전';
+  else if (diff < 604800000) dateText = Math.floor(diff/86400000) + '일 전';
+  else dateText = `${date.getMonth()+1}/${date.getDate()}`;
+  
+  const typeLabel = work.work_type === 'resize' ? '✨ 리사이즈' : '🔀 비포&애프터';
+  const imgSrc = work.thumbnail_url || work.image_url || '';
+  
+  return `
+    <div class="mypage-card" data-id="${work.id}">
+      <button class="mypage-card-delete" onclick="deleteWork(event, '${work.id}', '${work.image_url || ''}')" title="삭제">×</button>
+      ${imgSrc ? `<img class="mypage-card-img" src="${imgSrc}" alt="${work.title}" onclick="downloadWork('${work.image_url || ''}', '${work.title}')">` : '<div class="mypage-card-img"></div>'}
+      <div class="mypage-card-info">
+        <div class="mypage-card-title">${work.title || typeLabel}</div>
+        <div class="mypage-card-date">${dateText}</div>
+      </div>
+    </div>
+  `;
+}
+
+function updateMypageStats(works) {
+  const total = works.length;
+  const now = new Date();
+  const thisMonth = works.filter(w => {
+    const d = new Date(w.created_at);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+  
+  const totalEl = document.getElementById('mypageStatTotal');
+  const monthEl = document.getElementById('mypageStatMonth');
+  if (totalEl) totalEl.textContent = total;
+  if (monthEl) monthEl.textContent = thisMonth;
+}
+
+window.downloadWork = function(url, title) {
+  if (!url) return;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (title || 'peachpost') + '.jpg';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+window.deleteWork = async function(e, workId, imageUrl) {
+  e.stopPropagation();
+  if (!confirm('이 작업물을 삭제할까요?')) return;
+  
+  try {
+    // DB에서 삭제
+    const { error } = await sb.from('user_works').delete().eq('id', workId);
+    if (error) throw error;
+    
+    // Storage에서 이미지 삭제 (URL에서 path 추출)
+    if (imageUrl && imageUrl.includes('user-works/')) {
+      const path = imageUrl.split('user-works/')[1].split('?')[0];
+      await sb.storage.from('user-works').remove([path]);
+    }
+    
+    // 갤러리 다시 로드
+    if (typeof showToast === 'function') showToast('🗑️ 삭제되었습니다');
+    await loadMypageGallery();
+  } catch (e) {
+    console.error('삭제 실패:', e);
+    if (typeof showToast === 'function') showToast('삭제 실패. 다시 시도해주세요');
+  }
+};
+
+// ════════════════════════════════════════════
+// ☁️ 저장 시 클라우드에 자동 업로드
+// ════════════════════════════════════════════
+
+async function uploadWorkToCloud(canvas, workType, title) {
+  if (!currentUser) return null;
+  
+  try {
+    // Canvas를 Blob으로 변환
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    if (!blob) return null;
+    
+    // 파일명 생성: {user_id}/{timestamp}.jpg
+    const timestamp = Date.now();
+    const fileName = `${currentUser.id}/${timestamp}.jpg`;
+    
+    // Storage 업로드
+    const { error: uploadError } = await sb.storage
+      .from('user-works')
+      .upload(fileName, blob, {
+        contentType: 'image/jpeg',
+        cacheControl: '3600'
+      });
+    
+    if (uploadError) throw uploadError;
+    
+    // Public URL 가져오기
+    const { data: urlData } = sb.storage.from('user-works').getPublicUrl(fileName);
+    const imageUrl = urlData.publicUrl;
+    
+    // 썸네일 생성 (작은 사이즈)
+    const thumbCanvas = document.createElement('canvas');
+    thumbCanvas.width = 300;
+    thumbCanvas.height = Math.round(300 * canvas.height / canvas.width);
+    const thumbCtx = thumbCanvas.getContext('2d');
+    thumbCtx.imageSmoothingEnabled = true;
+    thumbCtx.imageSmoothingQuality = 'high';
+    thumbCtx.drawImage(canvas, 0, 0, thumbCanvas.width, thumbCanvas.height);
+    
+    const thumbBlob = await new Promise(resolve => thumbCanvas.toBlob(resolve, 'image/jpeg', 0.8));
+    const thumbFileName = `${currentUser.id}/thumb_${timestamp}.jpg`;
+    await sb.storage.from('user-works').upload(thumbFileName, thumbBlob, {
+      contentType: 'image/jpeg',
+      cacheControl: '3600'
+    });
+    const { data: thumbUrlData } = sb.storage.from('user-works').getPublicUrl(thumbFileName);
+    
+    // DB에 기록
+    const { error: dbError } = await sb.from('user_works').insert({
+      user_id: currentUser.id,
+      title: title || (workType === 'resize' ? '리사이즈 작업' : 'Before & After'),
+      thumbnail_url: thumbUrlData.publicUrl,
+      image_url: imageUrl,
+      work_type: workType,
+      settings: typeof collectCurrentSettings === 'function' ? collectCurrentSettings() : null
+    });
+    
+    if (dbError) throw dbError;
+    
+    console.log('☁️ 클라우드 저장 완료:', fileName);
+    return imageUrl;
+  } catch (e) {
+    console.error('클라우드 업로드 실패:', e);
+    return null;
+  }
+}
+
+// 기존 generate 함수에 후킹 - 저장 후 자동 클라우드 업로드
+const _origGenerateForCloud = window.generate;
+if (typeof _origGenerateForCloud === 'function') {
+  window.generate = function() {
+    _origGenerateForCloud();
+    // 잠시 후 결과 캔버스를 클라우드에 업로드
+    setTimeout(async () => {
+      if (currentUser) {
+        const resultCanvas = document.getElementById('resultCanvas');
+        if (resultCanvas && resultCanvas.width > 0) {
+          await uploadWorkToCloud(resultCanvas, 'ba');
+        }
+      }
+    }, 600);
+  };
+}
+
+const _origRGenerateForCloud = window.rGenerate;
+if (typeof _origRGenerateForCloud === 'function') {
+  window.rGenerate = async function() {
+    await _origRGenerateForCloud();
+    // 결과 캔버스 업로드
+    setTimeout(async () => {
+      if (currentUser) {
+        const resultCanvas = document.getElementById('resultCanvas') || document.getElementById('rMainCanvas');
+        if (resultCanvas && resultCanvas.width > 0) {
+          await uploadWorkToCloud(resultCanvas, 'resize');
+        }
+      }
+    }, 600);
+  };
+}
 
 // ════════════════════════════════════════════
 // 📐 캔버스 사이즈 변경 (인스타 3가지 비율)
@@ -6137,6 +6624,47 @@ window.addEventListener('resize', () => {
 });
 </script>
 
+
+<!-- 📁 마이페이지 (작업 갤러리) -->
+<div id="mypageOverlay">
+  <div class="mypage-header">
+    <div class="mypage-header-title">
+      <button class="mypage-back-btn" onclick="closeMypage()">← 뒤로</button>
+      <div>
+        <h1 class="mypage-title">📁 내 작업공간</h1>
+        <div class="mypage-subtitle" id="mypageUserInfo">사장님 안녕하세요</div>
+      </div>
+    </div>
+    <button class="mypage-new-btn" onclick="closeMypage()">+ 새로 만들기</button>
+  </div>
+  
+  <div class="mypage-content">
+    <!-- 통계 -->
+    <div class="mypage-stats">
+      <div class="mypage-stat-card">
+        <div class="mypage-stat-label">📸 총 작업물</div>
+        <div class="mypage-stat-value peach" id="mypageStatTotal">0</div>
+      </div>
+      <div class="mypage-stat-card">
+        <div class="mypage-stat-label">📅 이번 달</div>
+        <div class="mypage-stat-value" id="mypageStatMonth">0</div>
+      </div>
+      <div class="mypage-stat-card">
+        <div class="mypage-stat-label">💎 플랜</div>
+        <div class="mypage-stat-value" id="mypageStatPlan">무료</div>
+      </div>
+    </div>
+    
+    <!-- 작업물 갤러리 -->
+    <div class="mypage-section-header">
+      <div class="mypage-section-title">최근 작업물</div>
+    </div>
+    
+    <div id="mypageGalleryContainer">
+      <div class="mypage-loading">불러오는 중...</div>
+    </div>
+  </div>
+</div>
 
 <!-- 🎓 온보딩 모달 (첫 방문자 환영 가이드) -->
 <div class="onboarding-overlay" id="onboardingOverlay">
