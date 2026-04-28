@@ -4909,6 +4909,12 @@
             </div>
           </div>
           <div class="opt-group" style="grid-column: 1 / -1;">
+            <label>글자 그림자 <span class="rng-val" id="labelShadowVal" style="margin-left:4px;">없음</span></label>
+            <div class="rng-row">
+              <input type="range" min="0" max="100" value="0" id="labelShadow" oninput="updateLabelShadowDisplay(this.value);refreshSim();">
+            </div>
+          </div>
+          <div class="opt-group" style="grid-column: 1 / -1;">
             <label>사진 사이 간격 <span class="rng-val" style="margin-left:4px;">6px</span></label>
             <div class="rng-row">
               <input type="range" min="0" max="20" value="6" id="dividerSize" oninput="this.parentElement.parentElement.querySelector('.rng-val').textContent=this.value+'px';refreshSim();">
@@ -5329,6 +5335,206 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════
+     다운로드 진행 모달 (로딩 → 완료 → 액션)
+══════════════════════════════════════════════════════════════ -->
+<div class="dl-modal-overlay" id="dlModalOverlay">
+  <div class="dl-modal" role="dialog" aria-label="다운로드 진행">
+    
+    <!-- 상태 1: 로딩 -->
+    <div class="dl-stage" data-stage="loading">
+      <div class="dl-logo-box">
+        <!-- 피치포스트 로고 (업로드된 이미지 그대로 사용) -->
+        <div class="dl-peach-logo"></div>
+      </div>
+      <div class="dl-stage-title">이미지 저장 중...</div>
+      <div class="dl-stage-desc">사장님의 인스타 이미지를 준비하고 있어요</div>
+      <div class="dl-progress-bar"><div class="dl-progress-fill"></div></div>
+    </div>
+    
+    <!-- 상태 2: 완료 -->
+    <div class="dl-stage" data-stage="done">
+      <div class="dl-logo-box dl-success">
+        <div class="dl-peach-logo"></div>
+      </div>
+      <div class="dl-stage-title">🎉 저장 완료!</div>
+      <div class="dl-stage-desc">사장님의 이미지가 다운로드 폴더에 저장됐어요</div>
+      <div class="dl-actions">
+        <button class="dl-action-btn primary" onclick="dlGoInstagram()">
+          📸 인스타그램에 올리기
+        </button>
+        <button class="dl-action-btn" onclick="dlContinue()">이어서 작업하기</button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<style>
+.dl-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 99998;
+  align-items: center;
+  justify-content: center;
+  animation: dlFadeIn 0.2s ease;
+}
+.dl-modal-overlay.open { display: flex; }
+@keyframes dlFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.dl-modal {
+  background: white;
+  border-radius: 24px;
+  padding: 36px 28px 28px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: dlSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes dlSlideUp {
+  from { transform: translateY(20px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.dl-stage { display: none; }
+.dl-stage.active { display: block; animation: dlStageIn 0.3s ease; }
+@keyframes dlStageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dl-logo-box {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 18px;
+  position: relative;
+}
+.dl-peach-logo {
+  width: 100%;
+  height: 100%;
+  background-image: url(data:image/jpeg;base64,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);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 6px 16px rgba(184, 92, 56, 0.25));
+}
+
+/* 완료 상태 - 로고만 살짝 pop */
+.dl-success .dl-peach-logo {
+  animation: dlSuccessPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes dlSuccessPop {
+  0% { transform: scale(0.6); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.dl-stage-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1c1a17;
+  margin-bottom: 6px;
+}
+.dl-stage-desc {
+  font-size: 0.85rem;
+  color: #928c84;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+/* 진행 바 (로딩 상태) */
+.dl-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #f4f1ed;
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.dl-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffb38a, #b85c38);
+  border-radius: 100px;
+  width: 0%;
+  animation: dlProgressFill 1.6s ease-in-out forwards;
+}
+@keyframes dlProgressFill {
+  0% { width: 0%; }
+  60% { width: 70%; }
+  100% { width: 100%; }
+}
+
+/* 액션 버튼 (완료 상태) */
+.dl-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* 기본 버튼: 검정 배경 + 투명한 글씨 (이어서 작업하기) */
+.dl-action-btn {
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  background: #1c1a17;
+  color: rgba(255, 255, 255, 0.55);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              color 0.2s ease,
+              box-shadow 0.25s ease,
+              filter 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.2px;
+}
+/* hover: 글씨 또렷해지고 위로 떠오름 */
+.dl-action-btn:hover {
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+}
+.dl-action-btn:active {
+  transform: translateY(-1px);
+  transition-duration: 0.1s;
+}
+
+/* primary 버튼: 인스타그램 공식 그라데이션 (오렌지 → 핑크 → 마젠타) */
+.dl-action-btn.primary {
+  background: linear-gradient(90deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%);
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 4px 14px rgba(220, 39, 99, 0.3);
+}
+.dl-action-btn.primary:hover {
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(220, 39, 99, 0.45);
+  filter: brightness(1.06);
+}
+
+@media (max-width: 480px) {
+  .dl-modal { padding: 28px 20px 22px; }
+  .dl-logo-box { width: 90px; height: 90px; }
+  .dl-stage-title { font-size: 1.05rem; }
+}
+</style>
+
 <!-- 모달 전용 스타일 (전역) -->
 <style>
 .auth-modal-overlay {
@@ -5498,6 +5704,7 @@ function collectCurrentSettings() {
     ba_label_after: document.getElementById('labelAfter')?.value || 'AFTER',
     ba_divider_size: parseInt(document.getElementById('dividerSize')?.value || 6),
     ba_split_ratio: parseInt(document.getElementById('splitRatio')?.value || 50),
+    ba_label_shadow: parseInt(document.getElementById('labelShadow')?.value || 0),
     
     // 텍스트/로고 (Tab 1 + Tab 2 공유)
     overlay_text: document.getElementById('baOverlayText')?.value || document.getElementById('overlayText')?.value || '',
@@ -5575,6 +5782,13 @@ function applyUserPreferences(s) {
   setVal('labelAfter', s.ba_label_after);
   setVal('dividerSize', s.ba_divider_size);
   setVal('splitRatio', s.ba_split_ratio);
+  // 🆕 그림자 슬라이더
+  if (s.ba_label_shadow != null) {
+    setVal('labelShadow', s.ba_label_shadow);
+    if (typeof window.updateLabelShadowDisplay === 'function') {
+      window.updateLabelShadowDisplay(s.ba_label_shadow);
+    }
+  }
   setVal('baOverlayText', s.overlay_text);
   setVal('overlayText', s.overlay_text);
   setVal('baOverlayFont', s.overlay_font);
@@ -6173,12 +6387,35 @@ function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
   ctx.save();
   ctx.font=`600 ${fs}px "Noto Sans KR",sans-serif`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
-  ctx.shadowColor='rgba(0,0,0,0.5)';
-  ctx.shadowBlur=Math.round(fs*0.6); ctx.shadowOffsetY=1;
+  
+  // 🆕 슬라이더 값으로 그림자 강도 조정 (0~100, 기본 0 = 그림자 없음)
+  const shadowStrength = parseInt(document.getElementById('labelShadow')?.value || 0);
+  if (shadowStrength > 0) {
+    const opacity = shadowStrength / 100; // 0.0 ~ 1.0
+    ctx.shadowColor = `rgba(0,0,0,${opacity * 0.7})`; // 최대 0.7로 제한 (너무 진해지지 않게)
+    ctx.shadowBlur = Math.round(fs * 0.6 * (shadowStrength / 100));
+    ctx.shadowOffsetY = Math.round(shadowStrength / 100);
+  } else {
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+  }
+  
   ctx.fillStyle=opts.labelColor;
   ctx.fillText(text, sx+sw/2, sy+sh-Math.round(fs*0.8));
   ctx.restore();
 }
+
+// 🆕 그림자 슬라이더 라벨 표시 (없음 / 약함 / 보통 / 진함)
+window.updateLabelShadowDisplay = function(value) {
+  const el = document.getElementById('labelShadowVal');
+  if (!el) return;
+  const v = parseInt(value);
+  if (v === 0) el.textContent = '없음';
+  else if (v < 30) el.textContent = '연하게';
+  else if (v < 70) el.textContent = '보통';
+  else el.textContent = '진하게';
+};
 
 function getTextEffects(prefix) {
   const strokeOn = document.getElementById(prefix + 'StrokeToggle')?.classList.contains('on');
@@ -6479,13 +6716,59 @@ function generate() {
   refreshSim();
 }
 function download() {
-  const a=document.createElement('a');
-  a.download='before-after-instagram.jpg';
-  a.href=document.getElementById('resultCanvas').toDataURL('image/jpeg',1.0);
-  a.click();
-  showToast('🎉 저장 완료! 아래 버튼으로 인스타에 올려보세요!');
-  document.getElementById('instaBtn1').classList.add('show');
+  // 1. 로딩 모달 표시
+  const modal = document.getElementById('dlModalOverlay');
+  if (modal) {
+    modal.classList.add('open');
+    showDlStage('loading');
+  }
+  
+  // 2. 약간의 지연 후 실제 다운로드 (애니메이션 보여주려고)
+  setTimeout(() => {
+    try {
+      const a = document.createElement('a');
+      a.download = 'before-after-instagram.jpg';
+      a.href = document.getElementById('resultCanvas').toDataURL('image/jpeg', 1.0);
+      a.click();
+      
+      // 인스타 버튼 표시 (기존 동작 유지 - 편집 화면 하단)
+      const instaBtn = document.getElementById('instaBtn1');
+      if (instaBtn) instaBtn.classList.add('show');
+    } catch (e) {
+      console.error('다운로드 실패:', e);
+      closeDlModal();
+      if (typeof showToast === 'function') showToast('저장 중 오류가 발생했어요. 다시 시도해주세요.');
+      return;
+    }
+    
+    // 3. 완료 화면으로 전환 (1.6초 = progress bar 채우는 시간과 맞춤)
+    setTimeout(() => showDlStage('done'), 1600);
+  }, 200);
 }
+
+// 다운로드 모달 단계 전환
+function showDlStage(stage) {
+  document.querySelectorAll('#dlModalOverlay .dl-stage').forEach(el => {
+    el.classList.toggle('active', el.dataset.stage === stage);
+  });
+}
+
+// 다운로드 모달 닫기
+function closeDlModal() {
+  const modal = document.getElementById('dlModalOverlay');
+  if (modal) modal.classList.remove('open');
+}
+
+// "인스타그램에 올리기" 버튼
+window.dlGoInstagram = function() {
+  closeDlModal();
+  window.open('https://www.instagram.com', '_blank');
+};
+
+// "이어서 작업하기" 버튼
+window.dlContinue = function() {
+  closeDlModal();
+};
 
 function showToast(msg) {
   const t = document.getElementById('toast');
