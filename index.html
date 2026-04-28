@@ -3754,14 +3754,27 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  position: relative;
+  overflow: hidden;
 }
 .mypage-plan-card.pro {
   background: linear-gradient(135deg, #fff8f0, #ffefe0);
   border-color: var(--ea-accent);
 }
+.mypage-plan-status-badge {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  padding: 4px 10px;
+  background: var(--ea-accent);
+  color: white;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
 .mypage-plan-info { flex: 1; min-width: 0; }
 .mypage-plan-name {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: var(--ea-ink);
   margin-bottom: 6px;
@@ -3772,6 +3785,123 @@
   color: var(--ea-muted);
   line-height: 1.5;
 }
+
+/* 비교 카드 그리드 (무료 vs PRO) */
+.mypage-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.mypage-plan-compare-card {
+  background: white;
+  border: 1.5px solid var(--ea-border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.2s;
+}
+.mypage-plan-compare-card.pro {
+  border-color: var(--ea-accent);
+  border-width: 2px;
+  box-shadow: 0 4px 20px rgba(184, 92, 56, 0.08);
+}
+.mypage-plan-compare-card.current {
+  background: var(--ea-bg);
+}
+.mypage-plan-compare-badge {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  padding: 5px 12px;
+  background: var(--ea-accent);
+  color: white;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+.mypage-plan-compare-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ea-muted);
+  margin-bottom: 12px;
+  text-align: center;
+}
+.mypage-plan-compare-card.pro .mypage-plan-compare-name {
+  color: var(--ea-accent);
+}
+.mypage-plan-compare-price {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--ea-ink);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.mypage-plan-compare-price span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ea-muted);
+  margin-left: 4px;
+}
+.mypage-plan-compare-tip {
+  font-size: 0.78rem;
+  color: var(--ea-accent);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.mypage-plan-compare-features {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 22px;
+  flex: 1;
+}
+.mypage-plan-compare-features li {
+  font-size: 0.86rem;
+  color: var(--ea-ink);
+  padding: 7px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+.mypage-plan-compare-features li::before {
+  content: '✓';
+  color: var(--ea-accent);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.mypage-plan-compare-card:not(.pro) .mypage-plan-compare-features li::before {
+  color: var(--ea-muted);
+}
+.mypage-plan-compare-btn {
+  padding: 13px 20px;
+  border: none;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+}
+.mypage-plan-compare-btn.pro {
+  background: var(--ea-accent);
+  color: white;
+}
+.mypage-plan-compare-btn.pro:hover {
+  background: #a04d2c;
+  transform: translateY(-1px);
+}
+.mypage-plan-compare-btn.current {
+  background: white;
+  color: var(--ea-muted);
+  border: 1.5px solid var(--ea-border);
+  cursor: default;
+}
+
 .mypage-plan-cta {
   flex-shrink: 0;
   padding: 14px 24px;
@@ -3963,6 +4093,190 @@
     gap: 16px;
   }
   .mypage-plan-cta { width: 100%; }
+  .mypage-plan-status-badge { position: static; align-self: flex-start; }
+  
+  /* 비교 카드 모바일 (세로 스택) */
+  .mypage-plans-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .mypage-plan-compare-card { padding: 24px 20px; }
+}
+
+/* ════════════════════════════════════════
+   🆕 자동 로그인 모달 (One Tap 스타일)
+══════════════════════════════════════════ */
+.peach-onetap {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--ea-border);
+  z-index: 99996;
+  overflow: hidden;
+  transform: translateX(calc(100% + 32px));
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+  pointer-events: none;
+  font-family: inherit;
+}
+.peach-onetap.show {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.peach-onetap-header {
+  padding: 12px 16px 12px 14px;
+  background: var(--ea-bg);
+  border-bottom: 1px solid var(--ea-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  padding-right: 36px;
+}
+.peach-onetap-provider-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.peach-onetap-provider-icon.kakao {
+  background: #FEE500;
+  color: #3C1E1E;
+}
+.peach-onetap-provider-icon.google {
+  background: white;
+  border: 1px solid var(--ea-border);
+}
+.peach-onetap-provider-icon svg {
+  width: 14px;
+  height: 14px;
+}
+.peach-onetap-msg {
+  font-size: 0.78rem;
+  color: var(--ea-muted);
+  line-height: 1.35;
+  flex: 1;
+  min-width: 0;
+}
+.peach-onetap-msg strong {
+  color: var(--ea-ink);
+  font-weight: 700;
+}
+.peach-onetap-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--ea-muted);
+  padding: 4px 8px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+.peach-onetap-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ea-ink);
+}
+.peach-onetap-body {
+  padding: 16px;
+}
+.peach-onetap-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.peach-onetap-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--ea-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.peach-onetap-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.peach-onetap-user-info {
+  min-width: 0;
+  flex: 1;
+}
+.peach-onetap-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ea-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.peach-onetap-email {
+  font-size: 0.78rem;
+  color: var(--ea-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.peach-onetap-cta {
+  width: 100%;
+  padding: 11px;
+  background: var(--ea-accent);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.peach-onetap-cta:hover {
+  background: #a04d2c;
+}
+.peach-onetap-other {
+  margin-top: 8px;
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  color: var(--ea-muted);
+  border: none;
+  font-family: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+  text-align: center;
+}
+.peach-onetap-other:hover { color: var(--ea-ink); }
+
+@media (max-width: 768px) {
+  .peach-onetap {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+  .peach-onetap.show { transform: translateY(0); }
+  .peach-onetap {
+    transform: translateY(calc(-100% - 32px));
+  }
 }
 
 /* ════════════════════════════════════════
@@ -4987,6 +5301,34 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════
+     자동 로그인 모달 (One Tap 스타일) - 우측 상단
+══════════════════════════════════════════════════════════════ -->
+<div class="peach-onetap" id="peachOnetap" role="dialog" aria-label="빠른 로그인">
+  <div class="peach-onetap-header">
+    <div class="peach-onetap-provider-icon" id="onetapProviderIcon">
+      <!-- JS가 카카오/구글 아이콘 삽입 -->
+    </div>
+    <div class="peach-onetap-msg">
+      <strong id="onetapProviderName">카카오</strong>로 다시 로그인하세요
+    </div>
+    <button class="peach-onetap-close" onclick="dismissOnetap()" aria-label="닫기">×</button>
+  </div>
+  <div class="peach-onetap-body">
+    <div class="peach-onetap-user">
+      <div class="peach-onetap-avatar" id="onetapAvatar">사</div>
+      <div class="peach-onetap-user-info">
+        <div class="peach-onetap-name" id="onetapName">사장님</div>
+        <div class="peach-onetap-email" id="onetapEmail"></div>
+      </div>
+    </div>
+    <button class="peach-onetap-cta" id="onetapCta" onclick="continueWithOnetap()">
+      <span id="onetapCtaText">사장님 계정으로 계속</span>
+    </button>
+    <button class="peach-onetap-other" onclick="otherAccountOnetap()">다른 계정으로 로그인</button>
+  </div>
+</div>
+
 <!-- 모달 전용 스타일 (전역) -->
 <style>
 .auth-modal-overlay {
@@ -5092,6 +5434,12 @@ sb.auth.onAuthStateChange(async (event, session) => {
     
     // 🎯 SIGNED_IN 이벤트일 때 (로그인 성공 직후)
     if (event === 'SIGNED_IN') {
+      // 🆕 마지막 로그인 정보 저장 (다음 방문 시 자동 로그인 모달용)
+      saveLastLoginInfo(currentUser);
+      
+      // 자동 로그인 모달이 열려 있으면 닫기
+      hideOnetapModal();
+      
       // 로그인 모달 닫기 (DOM 직접 조작)
       const modal = document.getElementById('authModalOverlay');
       if (modal) modal.classList.remove('open');
@@ -5357,6 +5705,145 @@ async function logout() {
   currentUser = null; isPro = false;
   updatePlanUI(); updateAuthUI(false);
 }
+
+/* ══════════════════════════════════════════════════════════
+   🆕 자동 로그인 모달 (One Tap) - 미리캔버스 스타일
+══════════════════════════════════════════════════════════════ */
+const ONETAP_KEY = 'pp_last_login_v1';
+const ONETAP_DISMISS_KEY = 'pp_onetap_dismissed';
+
+// 로그인 성공 시 호출 - 마지막 로그인 정보 저장
+function saveLastLoginInfo(user) {
+  if (!user) return;
+  try {
+    const meta = user.user_metadata || {};
+    const provider = user.app_metadata?.provider || 'email';
+    if (provider !== 'kakao' && provider !== 'google') return; // OAuth만 저장
+    
+    const displayName = meta.full_name || meta.name || meta.nickname ||
+                        meta.user_name || user.email?.split('@')[0] || '사장';
+    const avatar = meta.avatar_url || meta.picture || meta.profile_image || '';
+    
+    localStorage.setItem(ONETAP_KEY, JSON.stringify({
+      provider,
+      name: displayName,
+      email: user.email || '',
+      avatar,
+      savedAt: Date.now()
+    }));
+    
+    // 다시 로그인했으니 dismissed 플래그 리셋
+    sessionStorage.removeItem(ONETAP_DISMISS_KEY);
+  } catch (e) {
+    console.warn('마지막 로그인 정보 저장 실패:', e);
+  }
+}
+
+// 페이지 로드 시 호출 - 자동 로그인 모달 표시 여부 결정
+function maybeShowOnetapModal() {
+  // 이미 로그인되어 있으면 표시 안 함
+  if (currentUser) return;
+  
+  // 이번 세션에서 사용자가 닫았으면 다시 표시 안 함
+  if (sessionStorage.getItem(ONETAP_DISMISS_KEY)) return;
+  
+  // 저장된 정보 없으면 표시 안 함
+  const raw = localStorage.getItem(ONETAP_KEY);
+  if (!raw) return;
+  
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { return; }
+  
+  if (!data || !data.provider) return;
+  
+  // 30일 이상 지난 정보는 만료 처리
+  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+  if (data.savedAt && Date.now() - data.savedAt > THIRTY_DAYS) {
+    localStorage.removeItem(ONETAP_KEY);
+    return;
+  }
+  
+  showOnetapModal(data);
+}
+
+// 모달 내용 채우고 표시
+function showOnetapModal(data) {
+  const modal = document.getElementById('peachOnetap');
+  if (!modal) return;
+  
+  const providerIcon = document.getElementById('onetapProviderIcon');
+  const providerName = document.getElementById('onetapProviderName');
+  const avatar = document.getElementById('onetapAvatar');
+  const nameEl = document.getElementById('onetapName');
+  const emailEl = document.getElementById('onetapEmail');
+  const ctaText = document.getElementById('onetapCtaText');
+  
+  // provider 아이콘 + 이름
+  if (data.provider === 'kakao') {
+    providerIcon.className = 'peach-onetap-provider-icon kakao';
+    providerIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.61 5.08 4.04 6.54-.16.56-.99 3.44-1.03 3.67 0 0-.02.17.09.23.11.06.24.01.24.01.31-.04 3.62-2.38 4.19-2.77.47.06.95.09 1.47.09 5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>';
+    if (providerName) providerName.textContent = '카카오';
+  } else if (data.provider === 'google') {
+    providerIcon.className = 'peach-onetap-provider-icon google';
+    providerIcon.innerHTML = '<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+    if (providerName) providerName.textContent = '구글';
+  }
+  
+  // 사용자 정보
+  if (nameEl) nameEl.textContent = data.name || '사장님';
+  if (emailEl) emailEl.textContent = data.email || '';
+  
+  // 아바타 (이미지 또는 첫 글자)
+  if (avatar) {
+    if (data.avatar) {
+      avatar.innerHTML = `<img src="${data.avatar}" alt="" onerror="this.parentElement.textContent='${(data.name || '사').charAt(0)}'">`;
+    } else {
+      avatar.textContent = (data.name || '사').charAt(0);
+    }
+  }
+  
+  // CTA 텍스트
+  if (ctaText) ctaText.textContent = `${data.name || '사장님'} 계정으로 계속`;
+  
+  // 약간 지연 후 슬라이드 인 (튕기는 효과)
+  setTimeout(() => modal.classList.add('show'), 100);
+}
+
+// 모달 숨기기 (애니메이션)
+function hideOnetapModal() {
+  const modal = document.getElementById('peachOnetap');
+  if (modal) modal.classList.remove('show');
+}
+
+// X 버튼 - 이번 세션에서는 다시 표시 안 함
+window.dismissOnetap = function() {
+  hideOnetapModal();
+  sessionStorage.setItem(ONETAP_DISMISS_KEY, '1');
+};
+
+// "[이름] 계정으로 계속" - 저장된 provider로 OAuth 시작
+window.continueWithOnetap = function() {
+  const raw = localStorage.getItem(ONETAP_KEY);
+  if (!raw) return;
+  let data;
+  try { data = JSON.parse(raw); } catch { return; }
+  
+  hideOnetapModal();
+  if (data.provider === 'kakao') signInKakao();
+  else if (data.provider === 'google') signInGoogle();
+};
+
+// "다른 계정으로 로그인" - 일반 로그인 모달 열기
+window.otherAccountOnetap = function() {
+  hideOnetapModal();
+  if (typeof openAuthModal === 'function') openAuthModal();
+};
+
+// 페이지 로드 후 1.2초 뒤에 자동 모달 체크
+window.addEventListener('load', () => {
+  setTimeout(maybeShowOnetapModal, 1200);
+});
 
 function openAuthModal() { document.getElementById('authModalOverlay').classList.add('open'); }
 function closeAuthModal() { document.getElementById('authModalOverlay').classList.remove('open'); }
@@ -6101,19 +6588,57 @@ function loadMypageSubscription() {
   const planCard = document.getElementById('mypagePlanCard');
   const planName = document.getElementById('mypagePlanName');
   const planDesc = document.getElementById('mypagePlanDesc');
-  const planCta = document.getElementById('mypagePlanCta');
-  if (!planCard || !planName || !planDesc || !planCta) return;
+  const freeCard = document.getElementById('mypageCompareFree');
+  const proCard = document.getElementById('mypageComparePro');
+  const freeBtn = document.getElementById('mypageCompareFreeBtn');
+  const proBtn = document.getElementById('mypageCompareProBtn');
+  if (!planCard || !planName || !planDesc) return;
   
-  if (typeof isPro !== 'undefined' && isPro) {
+  const userIsPro = (typeof isPro !== 'undefined' && isPro);
+  
+  if (userIsPro) {
+    // PRO 사용중
     planCard.classList.add('pro');
     planName.textContent = '✦ PRO 플랜';
     planDesc.textContent = '모든 기능을 자유롭게 이용하실 수 있습니다.';
-    planCta.style.display = 'none';
+    
+    // 비교 카드: PRO를 '이용중'으로, 무료는 일반 상태로
+    if (freeCard) freeCard.classList.remove('current');
+    if (proCard) proCard.classList.add('current');
+    if (freeBtn) {
+      freeBtn.textContent = '다운그레이드';
+      freeBtn.disabled = true;
+      freeBtn.classList.add('current');
+      freeBtn.classList.remove('pro');
+    }
+    if (proBtn) {
+      proBtn.textContent = '이용중';
+      proBtn.disabled = true;
+      proBtn.classList.remove('pro');
+      proBtn.classList.add('current');
+      proBtn.onclick = null;
+    }
   } else {
+    // 무료 사용중
     planCard.classList.remove('pro');
     planName.textContent = '무료 플랜';
     planDesc.textContent = '현재 무료 요금제를 이용중입니다.';
-    planCta.style.display = '';
+    
+    // 비교 카드: 무료를 '이용중'으로, PRO는 업그레이드 버튼
+    if (freeCard) freeCard.classList.add('current');
+    if (proCard) proCard.classList.remove('current');
+    if (freeBtn) {
+      freeBtn.textContent = '이용중';
+      freeBtn.disabled = true;
+      freeBtn.classList.add('current');
+    }
+    if (proBtn) {
+      proBtn.textContent = 'PRO 시작하기 →';
+      proBtn.disabled = false;
+      proBtn.classList.add('pro');
+      proBtn.classList.remove('current');
+      proBtn.onclick = openProFromMypage;
+    }
   }
 }
 
@@ -7192,15 +7717,52 @@ window.addEventListener('resize', () => {
     
     <!-- ━━ 탭 3: 구독 정보 ━━ -->
     <div class="mypage-tab-content" data-tab-content="subscription">
+      <!-- 1. 사용중인 요금제 (현재 플랜 강조) -->
       <div class="mypage-section-header">
         <div class="mypage-section-title">사용중인 요금제</div>
       </div>
       <div class="mypage-plan-card" id="mypagePlanCard">
+        <div class="mypage-plan-status-badge">현재 이용중</div>
         <div class="mypage-plan-info">
           <div class="mypage-plan-name" id="mypagePlanName">무료 플랜</div>
           <div class="mypage-plan-desc" id="mypagePlanDesc">현재 무료 요금제를 이용중입니다.</div>
         </div>
-        <button class="mypage-plan-cta" id="mypagePlanCta" onclick="openProFromMypage()">PRO 업그레이드 →</button>
+      </div>
+      
+      <!-- 2. 플랜 비교 -->
+      <div class="mypage-section-header" style="margin-top: 32px;">
+        <div class="mypage-section-title">플랜 비교</div>
+      </div>
+      <div class="mypage-plans-grid">
+        <!-- 무료 플랜 카드 -->
+        <div class="mypage-plan-compare-card" id="mypageCompareFree" data-plan="free">
+          <div class="mypage-plan-compare-name">무료</div>
+          <div class="mypage-plan-compare-price">₩0<span>/ 월</span></div>
+          <ul class="mypage-plan-compare-features">
+            <li>비포&애프터 사진 편집</li>
+            <li>인스타 사이즈 3종 (4:5, 1:1, 16:9)</li>
+            <li>31종 폰트 무료 이용</li>
+            <li>워터마크 포함</li>
+            <li>하루 3장 저장</li>
+          </ul>
+          <button class="mypage-plan-compare-btn current" id="mypageCompareFreeBtn" disabled>이용중</button>
+        </div>
+        
+        <!-- PRO 플랜 카드 -->
+        <div class="mypage-plan-compare-card pro" id="mypageComparePro" data-plan="pro">
+          <div class="mypage-plan-compare-badge">HOT 🔥</div>
+          <div class="mypage-plan-compare-name">PRO ✦</div>
+          <div class="mypage-plan-compare-price">₩8,900<span>/ 월</span></div>
+          <div class="mypage-plan-compare-tip">☕ 하루 297원으로 인스타 무제한!</div>
+          <ul class="mypage-plan-compare-features">
+            <li>워터마크 완전 제거</li>
+            <li>1080×1350 px 최고화질 저장</li>
+            <li>무제한 이미지 생성</li>
+            <li>모든 옵션 제한 없이 사용</li>
+            <li>모든 무료 기능 포함</li>
+          </ul>
+          <button class="mypage-plan-compare-btn pro" id="mypageCompareProBtn" onclick="openProFromMypage()">PRO 시작하기 →</button>
+        </div>
       </div>
     </div>
     
