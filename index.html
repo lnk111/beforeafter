@@ -2733,19 +2733,47 @@
     try { history.pushState({view:'landing'}, '', window.location.pathname); } catch(e){}
   };
   
+  // 🔑 OAuth 콜백 처리 (구글/카카오 로그인 후 돌아왔을 때)
+  window.addEventListener('DOMContentLoaded', async () => {
+    // URL에 access_token이 있는지 확인 (OAuth 콜백)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token=')) {
+      console.log('🔑 OAuth 콜백 감지');
+      
+      // hash에서 access_token 부분만 추출 (#app#access_token=... → #access_token=...)
+      const tokenIndex = hash.indexOf('access_token=');
+      const cleanHash = '#' + hash.substring(tokenIndex);
+      
+      // 새 URL로 hash 정리 (Supabase가 파싱할 수 있게)
+      const newUrl = window.location.pathname + window.location.search + cleanHash;
+      window.history.replaceState({}, '', newUrl);
+      
+      console.log('✅ Hash 정리됨, Supabase가 자동으로 세션 처리합니다');
+      
+      // 잠시 후 세션 확인 후 편집 화면으로
+      setTimeout(async () => {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+          console.log('✅ 세션 생성 성공:', session.user.email);
+          // URL 정리 (?error=... 제거)
+          window.history.replaceState({}, '', window.location.pathname);
+          // 편집 화면으로 이동
+          if (typeof window.startApp === 'function') {
+            window.startApp();
+          }
+        }
+      }, 500);
+    } else if (window.location.hash === '#app') {
+      document.body.classList.add('app-mode');
+    }
+  });
+  
   // 브라우저 뒤로가기
   window.addEventListener('popstate', () => {
     if (window.location.hash === '#app') {
       document.body.classList.add('app-mode');
-    } else {
+    } else if (!window.location.hash.includes('access_token')) {
       document.body.classList.remove('app-mode');
-    }
-  });
-  
-  // 새로고침 시 해시 감지
-  window.addEventListener('DOMContentLoaded', () => {
-    if (window.location.hash === '#app') {
-      document.body.classList.add('app-mode');
     }
   });
   
