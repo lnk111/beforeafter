@@ -172,6 +172,75 @@
     font-weight: 600;
   }
   
+  /* 🆕 로그인 상태 - 사용자 버튼 */
+  .nav-user-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: white;
+    border: 1.5px solid #ffd9c0;
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-user-btn:hover {
+    background: #fff8f3;
+    border-color: var(--coral);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 90, 0.15);
+  }
+  .nav-user-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffb89e 0%, #ff6b5a 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+  }
+  .nav-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .nav-user-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .nav-user-arrow {
+    font-size: 0.7rem;
+    color: var(--coral);
+    margin-left: 2px;
+  }
+  
+  /* 모바일에서는 텍스트 줄이기 */
+  @media (max-width: 768px) {
+    .nav-user-btn {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+    .nav-user-name {
+      max-width: 80px;
+      font-size: 0.78rem;
+    }
+    .nav-user-avatar {
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
+    }
+  }
+  
   /* ═══════════════════════════════════════
      HOOK (Hero) — Minimal Centered Style
      ═══════════════════════════════════════ */
@@ -2003,8 +2072,15 @@
       <button class="nav-link" onclick="scrollToSection('features')">기능</button>
       <button class="nav-link" onclick="scrollToSection('industries')">사용 업종</button>
       <button class="nav-link" onclick="scrollToSection('counter')">성과</button>
-      <button class="nav-link nav-link-help" onclick="loginApp()">로그인</button>
-      <button class="nav-cta" onclick="signupApp()">회원가입</button>
+      <!-- 비로그인 상태 -->
+      <button class="nav-link nav-link-help" id="navLoginBtn" onclick="loginApp()">로그인</button>
+      <button class="nav-cta" id="navSignupBtn" onclick="signupApp()">회원가입</button>
+      <!-- 로그인 상태 -->
+      <button class="nav-user-btn" id="navUserBtn" onclick="openMypage()" style="display:none;">
+        <span class="nav-user-avatar" id="navUserAvatar">👤</span>
+        <span class="nav-user-name" id="navUserName">사장님</span>
+        <span class="nav-user-arrow">▾</span>
+      </button>
     </div>
   </div>
 </nav>
@@ -5025,9 +5101,18 @@ function updateAuthUI(loggedIn) {
   const userGreeting = document.getElementById('userGreeting');
   const userName = document.getElementById('userName');
   const mypageBtn = document.getElementById('mypageBtn');
+  
+  // 🆕 랜딩 페이지 nav 버튼들
+  const navLoginBtn = document.getElementById('navLoginBtn');
+  const navSignupBtn = document.getElementById('navSignupBtn');
+  const navUserBtn = document.getElementById('navUserBtn');
+  const navUserName = document.getElementById('navUserName');
+  const navUserAvatar = document.getElementById('navUserAvatar');
+  
   if (!loginBtn) return;
   
   if (loggedIn && currentUser) {
+    // 편집 화면 헤더
     loginBtn.style.display = 'none';
     logoutBtn.style.display = 'inline-flex';
     
@@ -5042,14 +5127,36 @@ function updateAuthUI(loggedIn) {
     
     if (userEmail) {
       userEmail.textContent = currentUser.email || '';
-      userEmail.style.display = 'none'; // 이메일 대신 이름 사용
+      userEmail.style.display = 'none';
+    }
+    
+    // 🆕 랜딩 페이지 nav 업데이트
+    if (navLoginBtn) navLoginBtn.style.display = 'none';
+    if (navSignupBtn) navSignupBtn.style.display = 'none';
+    if (navUserBtn) navUserBtn.style.display = 'inline-flex';
+    if (navUserName) navUserName.textContent = displayName + '님';
+    
+    // 프로필 사진 (아바타) 표시
+    if (navUserAvatar) {
+      const profilePic = meta.avatar_url || meta.picture || meta.profile_image;
+      if (profilePic) {
+        navUserAvatar.innerHTML = `<img src="${profilePic}" alt="${displayName}" onerror="this.parentElement.innerHTML='${displayName.charAt(0)}'">`;
+      } else {
+        navUserAvatar.textContent = displayName.charAt(0);
+      }
     }
   } else {
+    // 비로그인 상태
     loginBtn.style.display = 'inline-flex';
     logoutBtn.style.display = 'none';
     if (userEmail) userEmail.style.display = 'none';
     if (userGreeting) userGreeting.style.display = 'none';
     if (mypageBtn) mypageBtn.style.display = 'none';
+    
+    // 🆕 랜딩 페이지 nav 원래대로
+    if (navLoginBtn) navLoginBtn.style.display = 'inline-flex';
+    if (navSignupBtn) navSignupBtn.style.display = 'inline-flex';
+    if (navUserBtn) navUserBtn.style.display = 'none';
   }
 }
 
