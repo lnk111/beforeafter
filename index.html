@@ -3622,9 +3622,172 @@
 .mypage-content {
   flex: 1;
   padding: 32px;
-  max-width: 1280px;
-  margin: 0 auto;
+  min-width: 0;
+}
+
+/* ─── 좌우 분할 컨테이너 ─────────────────── */
+.mypage-body {
+  display: flex;
+  flex: 1;
   width: 100%;
+  align-items: stretch;
+  min-height: 0;
+}
+
+/* ─── 좌측 사이드바 ─────────────────────── */
+.mypage-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 24px 14px;
+  width: 220px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid var(--ea-border);
+  align-self: stretch;
+  position: sticky;
+  top: 73px; /* mypage-header 높이만큼 offset */
+  height: fit-content;
+  max-height: calc(100vh - 73px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.mypage-tab {
+  padding: 11px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: var(--ea-muted);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  text-align: left;
+  width: 100%;
+}
+.mypage-tab:hover {
+  color: var(--ea-ink);
+  background: var(--ea-bg);
+}
+.mypage-tab.active {
+  color: var(--ea-accent);
+  background: #fdf0eb;
+}
+.mypage-tab-icon { font-size: 1.05rem; flex-shrink: 0; }
+.mypage-tab-content { display: none; }
+.mypage-tab-content.active {
+  display: block;
+  animation: mypageFadeIn 0.2s ease;
+}
+@keyframes mypageFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── 계정 정보 ─────────────────────────── */
+.mypage-account-card {
+  background: white;
+  border: 1px solid var(--ea-border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.mypage-account-row {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--ea-border);
+}
+.mypage-account-row:last-child { border-bottom: none; }
+.mypage-account-label {
+  flex: 0 0 140px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ea-muted);
+}
+.mypage-account-value {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--ea-ink);
+  font-weight: 500;
+  word-break: break-all;
+}
+.mypage-account-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.mypage-action-btn {
+  padding: 12px 20px;
+  background: white;
+  color: var(--ea-ink);
+  border: 1px solid var(--ea-border);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mypage-action-btn:hover { background: #f5f5f5; }
+.mypage-action-btn.danger {
+  color: #d63031;
+  border-color: #ffd6d6;
+}
+.mypage-action-btn.danger:hover {
+  background: #fff5f5;
+  border-color: #d63031;
+}
+
+/* ─── 구독 정보 ─────────────────────────── */
+.mypage-plan-card {
+  background: white;
+  border: 1px solid var(--ea-border);
+  border-radius: 16px;
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.mypage-plan-card.pro {
+  background: linear-gradient(135deg, #fff8f0, #ffefe0);
+  border-color: var(--ea-accent);
+}
+.mypage-plan-info { flex: 1; min-width: 0; }
+.mypage-plan-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ea-ink);
+  margin-bottom: 6px;
+}
+.mypage-plan-card.pro .mypage-plan-name { color: var(--ea-accent); }
+.mypage-plan-desc {
+  font-size: 0.9rem;
+  color: var(--ea-muted);
+  line-height: 1.5;
+}
+.mypage-plan-cta {
+  flex-shrink: 0;
+  padding: 14px 24px;
+  background: var(--ea-accent);
+  color: white;
+  border: none;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mypage-plan-cta:hover {
+  background: #a04d2c;
+  transform: translateY(-1px);
 }
 
 .mypage-section-header {
@@ -3743,6 +3906,63 @@
   .mypage-header { padding: 12px 16px; }
   .mypage-title { font-size: 1rem; }
   .mypage-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  
+  /* 모바일: 사이드바 → 가로 탭바로 전환 */
+  .mypage-body { flex-direction: column; }
+  .mypage-tabs {
+    flex-direction: row;
+    width: 100%;
+    padding: 0 12px;
+    gap: 4px;
+    border-right: none;
+    border-bottom: 1px solid var(--ea-border);
+    position: sticky;
+    top: 0;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+    z-index: 9;
+  }
+  .mypage-tab {
+    flex-shrink: 0;
+    width: auto;
+    padding: 12px 12px;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-size: 0.82rem;
+    background: transparent;
+  }
+  .mypage-tab:hover {
+    background: transparent;
+    color: var(--ea-ink);
+  }
+  .mypage-tab.active {
+    background: transparent;
+    color: var(--ea-accent);
+    border-bottom-color: var(--ea-accent);
+  }
+  
+  /* 계정정보 - 모바일 (라벨/값 세로 배치) */
+  .mypage-account-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 18px;
+  }
+  .mypage-account-label { flex: none; font-size: 0.78rem; }
+  .mypage-account-value { font-size: 0.9rem; }
+  .mypage-action-btn { flex: 1; min-width: 130px; padding: 12px 14px; }
+  
+  /* 구독정보 - 모바일 (세로 배치) */
+  .mypage-plan-card {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+    padding: 20px;
+    gap: 16px;
+  }
+  .mypage-plan-cta { width: 100%; }
 }
 
 /* ════════════════════════════════════════
@@ -5812,13 +6032,110 @@ window.openMypage = async function() {
                       meta.user_name || currentUser.email?.split('@')[0] || '사장';
   if (userInfo) userInfo.textContent = `${displayName}님 안녕하세요 👋`;
   
-  // 작업물 불러오기
-  await loadMypageGallery();
+  // 첫 탭(내 프로젝트)으로 초기화 (열 때마다 항상 첫 화면부터)
+  switchMypageTab('projects');
 };
 
 window.closeMypage = function() {
   const overlay = document.getElementById('mypageOverlay');
   if (overlay) overlay.classList.remove('open');
+};
+
+/* ─── 탭 전환 ─────────────────────────────────── */
+window.switchMypageTab = function(tabName) {
+  // 탭 버튼 활성화 토글
+  document.querySelectorAll('.mypage-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabName);
+  });
+  // 탭 컨텐츠 활성화 토글
+  document.querySelectorAll('.mypage-tab-content').forEach(content => {
+    content.classList.toggle('active', content.dataset.tabContent === tabName);
+  });
+  
+  // 탭별 데이터 로드 (lazy loading)
+  switch (tabName) {
+    case 'projects': loadMypageGallery(); break;
+    case 'account': loadMypageAccount(); break;
+    case 'subscription': loadMypageSubscription(); break;
+    case 'billing': loadMypageBilling(); break;
+  }
+};
+
+/* ─── 계정 정보 로드 ──────────────────────────── */
+function loadMypageAccount() {
+  if (!currentUser) return;
+  const meta = currentUser.user_metadata || {};
+  
+  // 이름: 메타데이터 → 이메일 앞부분 → 기본값
+  const name = meta.full_name || meta.name || meta.nickname ||
+               meta.user_name || currentUser.email?.split('@')[0] || '-';
+  
+  // 이메일
+  const email = currentUser.email || '-';
+  
+  // 로그인 방식 (한글 라벨)
+  const provider = currentUser.app_metadata?.provider || '';
+  const providerMap = { kakao: '🟡 카카오', google: '🟢 구글', email: '✉️ 이메일' };
+  const providerLabel = providerMap[provider] || provider || '-';
+  
+  // 가입일 (날짜만, 시간 X)
+  let joined = '-';
+  if (currentUser.created_at) {
+    const d = new Date(currentUser.created_at);
+    joined = `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+  }
+  
+  // DOM 업데이트
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+  set('mypageAccountName', name);
+  set('mypageAccountEmail', email);
+  set('mypageAccountProvider', providerLabel);
+  set('mypageAccountJoined', joined);
+}
+
+/* ─── 구독 정보 로드 ──────────────────────────── */
+function loadMypageSubscription() {
+  const planCard = document.getElementById('mypagePlanCard');
+  const planName = document.getElementById('mypagePlanName');
+  const planDesc = document.getElementById('mypagePlanDesc');
+  const planCta = document.getElementById('mypagePlanCta');
+  if (!planCard || !planName || !planDesc || !planCta) return;
+  
+  if (typeof isPro !== 'undefined' && isPro) {
+    planCard.classList.add('pro');
+    planName.textContent = '✦ PRO 플랜';
+    planDesc.textContent = '모든 기능을 자유롭게 이용하실 수 있습니다.';
+    planCta.style.display = 'none';
+  } else {
+    planCard.classList.remove('pro');
+    planName.textContent = '무료 플랜';
+    planDesc.textContent = '현재 무료 요금제를 이용중입니다.';
+    planCta.style.display = '';
+  }
+}
+
+/* ─── 결제 내역 로드 (TODO: 토스페이먼츠 연동 후 구현) ── */
+function loadMypageBilling() {
+  // 결제 시스템 연동 전까지는 빈 상태 placeholder 유지
+  // 추후: sb.from('payments').select(...).eq('user_id', currentUser.id) 로 결제 기록 가져오기
+}
+
+/* ─── 마이페이지에서 PRO 모달 열기 ────────────── */
+window.openProFromMypage = function() {
+  if (typeof openModal === 'function') {
+    openModal();
+  }
+};
+
+/* ─── 계정 삭제 확인 (2단계) ──────────────────── */
+window.confirmDeleteAccount = function() {
+  if (!confirm('정말 계정을 삭제하시겠어요?\n저장하신 모든 작업물이 영구 삭제되며 복구할 수 없어요.')) return;
+  if (!confirm('마지막 확인입니다.\n정말 계정을 삭제하시겠어요?')) return;
+  // TODO: 실제 계정 삭제 API 호출 (Supabase admin API 또는 Edge Function 필요)
+  alert('계정 삭제는 준비 중입니다.\nsupport@designfor.kr 로 문의주시면 빠르게 처리해드릴게요.');
 };
 
 async function loadMypageGallery() {
@@ -6804,24 +7121,105 @@ window.addEventListener('resize', () => {
     <div class="mypage-header-title">
       <button class="mypage-back-btn" onclick="closeMypage()">← 뒤로</button>
       <div>
-        <h1 class="mypage-title">📁 내 작업공간</h1>
+        <h1 class="mypage-title">📁 내 페이지</h1>
         <div class="mypage-subtitle" id="mypageUserInfo">사장님 안녕하세요</div>
       </div>
     </div>
     <button class="mypage-new-btn" onclick="closeMypage()">+ 새로 만들기</button>
   </div>
   
-  <div class="mypage-content">
-    <!-- 작업물 갤러리 -->
-    <div class="mypage-section-header">
-      <div class="mypage-section-title">최근 작업물</div>
+  <!-- ━━ 좌측 사이드바 + 우측 컨텐츠 ━━ -->
+  <div class="mypage-body">
+    <!-- 탭 네비게이션 (좌측 사이드바) -->
+    <div class="mypage-tabs" role="tablist">
+      <button class="mypage-tab active" data-tab="projects" onclick="switchMypageTab('projects')">
+        <span class="mypage-tab-icon">📁</span>
+        <span class="mypage-tab-label">내 프로젝트</span>
+      </button>
+      <button class="mypage-tab" data-tab="account" onclick="switchMypageTab('account')">
+        <span class="mypage-tab-icon">👤</span>
+        <span class="mypage-tab-label">계정 정보</span>
+      </button>
+      <button class="mypage-tab" data-tab="subscription" onclick="switchMypageTab('subscription')">
+        <span class="mypage-tab-icon">✦</span>
+        <span class="mypage-tab-label">구독 정보</span>
+      </button>
+      <button class="mypage-tab" data-tab="billing" onclick="switchMypageTab('billing')">
+        <span class="mypage-tab-icon">📋</span>
+        <span class="mypage-tab-label">결제 내역</span>
+      </button>
     </div>
     
-    <div id="mypageGalleryContainer">
-      <div class="mypage-loading">불러오는 중...</div>
+    <div class="mypage-content">
+    <!-- ━━ 탭 1: 내 프로젝트 ━━ -->
+    <div class="mypage-tab-content active" data-tab-content="projects">
+      <div class="mypage-section-header">
+        <div class="mypage-section-title">최근 작업물</div>
+      </div>
+      <div id="mypageGalleryContainer">
+        <div class="mypage-loading">불러오는 중...</div>
+      </div>
     </div>
-  </div>
-</div>
+    
+    <!-- ━━ 탭 2: 계정 정보 ━━ -->
+    <div class="mypage-tab-content" data-tab-content="account">
+      <div class="mypage-section-header">
+        <div class="mypage-section-title">내 계정</div>
+      </div>
+      <div class="mypage-account-card">
+        <div class="mypage-account-row">
+          <div class="mypage-account-label">이름</div>
+          <div class="mypage-account-value" id="mypageAccountName">-</div>
+        </div>
+        <div class="mypage-account-row">
+          <div class="mypage-account-label">이메일</div>
+          <div class="mypage-account-value" id="mypageAccountEmail">-</div>
+        </div>
+        <div class="mypage-account-row">
+          <div class="mypage-account-label">로그인 방식</div>
+          <div class="mypage-account-value" id="mypageAccountProvider">-</div>
+        </div>
+        <div class="mypage-account-row">
+          <div class="mypage-account-label">가입일</div>
+          <div class="mypage-account-value" id="mypageAccountJoined">-</div>
+        </div>
+      </div>
+      <div class="mypage-account-actions">
+        <button class="mypage-action-btn" onclick="logout()">로그아웃</button>
+        <button class="mypage-action-btn danger" onclick="confirmDeleteAccount()">계정 삭제</button>
+      </div>
+    </div>
+    
+    <!-- ━━ 탭 3: 구독 정보 ━━ -->
+    <div class="mypage-tab-content" data-tab-content="subscription">
+      <div class="mypage-section-header">
+        <div class="mypage-section-title">사용중인 요금제</div>
+      </div>
+      <div class="mypage-plan-card" id="mypagePlanCard">
+        <div class="mypage-plan-info">
+          <div class="mypage-plan-name" id="mypagePlanName">무료 플랜</div>
+          <div class="mypage-plan-desc" id="mypagePlanDesc">현재 무료 요금제를 이용중입니다.</div>
+        </div>
+        <button class="mypage-plan-cta" id="mypagePlanCta" onclick="openProFromMypage()">PRO 업그레이드 →</button>
+      </div>
+    </div>
+    
+    <!-- ━━ 탭 4: 결제 내역 ━━ -->
+    <div class="mypage-tab-content" data-tab-content="billing">
+      <div class="mypage-section-header">
+        <div class="mypage-section-title">결제 내역</div>
+      </div>
+      <div id="mypageBillingContainer">
+        <div class="mypage-empty">
+          <div class="mypage-empty-icon">📋</div>
+          <div class="mypage-empty-title">결제 내역이 없어요</div>
+          <div class="mypage-empty-desc">유료 플랜을 이용하시면 결제 내역이 여기에 표시됩니다</div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /mypage-content -->
+  </div><!-- /mypage-body -->
+</div><!-- /mypageOverlay -->
 
 <!-- ══════════════════════════════════════════════════════════
      [SEARCH: ONBOARDING] 온보딩 - 첫 방문자 4단계 가이드
