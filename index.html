@@ -4975,7 +4975,7 @@ async function signInKakao() {
     provider: 'kakao',
     options: { 
       redirectTo: window.location.href,
-      scopes: 'profile_nickname profile_image account_email'
+      scopes: 'profile_nickname profile_image'
     }
   });
   if (error && msg) msg.textContent = '오류: ' + error.message;
