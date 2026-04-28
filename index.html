@@ -4747,7 +4747,10 @@ async function signInGoogle() {
   if (msg) msg.textContent = '구글 로그인 중...';
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href, scopes: 'profile_nickname profile_image' }
+    options: { 
+      redirectTo: window.location.href,
+      scopes: 'email profile'
+    }
   });
   if (error && msg) msg.textContent = '오류: ' + error.message;
 }
@@ -4757,7 +4760,10 @@ async function signInKakao() {
   if (msg) msg.textContent = '카카오 로그인 중...';
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'kakao',
-    options: { redirectTo: window.location.href, scopes: 'profile_nickname profile_image' }
+    options: { 
+      redirectTo: window.location.href,
+      scopes: 'profile_nickname profile_image account_email'
+    }
   });
   if (error && msg) msg.textContent = '오류: ' + error.message;
 }
