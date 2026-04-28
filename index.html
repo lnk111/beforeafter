@@ -3627,30 +3627,6 @@
   width: 100%;
 }
 
-.mypage-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
-}
-.mypage-stat-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid var(--ea-border);
-}
-.mypage-stat-label {
-  font-size: 0.75rem;
-  color: var(--ea-muted);
-  margin-bottom: 6px;
-}
-.mypage-stat-value {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--ea-ink);
-}
-.mypage-stat-value.peach { color: var(--ea-accent); }
-
 .mypage-section-header {
   display: flex;
   align-items: center;
@@ -3713,10 +3689,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.mypage-card-date {
-  font-size: 0.7rem;
-  color: var(--ea-muted);
-}
 .mypage-card-delete {
   position: absolute;
   top: 8px;
@@ -3770,10 +3742,6 @@
   .mypage-content { padding: 16px; }
   .mypage-header { padding: 12px 16px; }
   .mypage-title { font-size: 1rem; }
-  .mypage-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .mypage-stat-card { padding: 12px; }
-  .mypage-stat-value { font-size: 1.1rem; }
-  .mypage-stat-label { font-size: 0.65rem; }
   .mypage-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 }
 
@@ -4263,7 +4231,7 @@
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
-    <span id="userGreeting" style="display:none;font-size:.78rem;color:var(--ea-ink);font-weight:500;">👋 <span id="userName"></span>님</span>
+    <span id="userGreeting" style="display:none;font-size:.97rem;color:var(--ea-ink);font-weight:600;">👋 <span id="userName"></span>님</span>
     <button id="mypageBtn" onclick="openMypage()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:#fff;color:var(--ea-ink);border:1.5px solid var(--ea-border);border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:500;cursor:pointer;">📁 마이페이지</button>
     <span id="userEmail" style="display:none;font-size:.75rem;color:var(--ea-muted);"></span>
     <button id="loginBtn" onclick="openAuthModal()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ea-ink);color:#fff;border:none;border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;">🔑 로그인</button>
@@ -5844,13 +5812,6 @@ window.openMypage = async function() {
                       meta.user_name || currentUser.email?.split('@')[0] || '사장';
   if (userInfo) userInfo.textContent = `${displayName}님 안녕하세요 👋`;
   
-  // 플랜 표시
-  const planEl = document.getElementById('mypageStatPlan');
-  if (planEl) {
-    planEl.textContent = isPro ? 'PRO ✦' : '무료';
-    planEl.style.color = isPro ? '#b85c38' : '';
-  }
-  
   // 작업물 불러오기
   await loadMypageGallery();
 };
@@ -5873,9 +5834,6 @@ async function loadMypageGallery() {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    
-    // 통계 업데이트
-    updateMypageStats(data || []);
     
     if (!data || data.length === 0) {
       container.innerHTML = `
@@ -5906,16 +5864,6 @@ async function loadMypageGallery() {
 }
 
 function renderWorkCard(work) {
-  const date = new Date(work.created_at);
-  const now = new Date();
-  const diff = now - date;
-  let dateText = '';
-  if (diff < 60000) dateText = '방금 전';
-  else if (diff < 3600000) dateText = Math.floor(diff/60000) + '분 전';
-  else if (diff < 86400000) dateText = Math.floor(diff/3600000) + '시간 전';
-  else if (diff < 604800000) dateText = Math.floor(diff/86400000) + '일 전';
-  else dateText = `${date.getMonth()+1}/${date.getDate()}`;
-  
   const typeLabel = work.work_type === 'resize' ? '✨ 리사이즈' : '🔀 비포&애프터';
   const imgSrc = work.thumbnail_url || work.image_url || '';
   
@@ -5925,24 +5873,15 @@ function renderWorkCard(work) {
       ${imgSrc ? `<img class="mypage-card-img" src="${imgSrc}" alt="${work.title}" onclick="downloadWork('${work.image_url || ''}', '${work.title}')">` : '<div class="mypage-card-img"></div>'}
       <div class="mypage-card-info">
         <div class="mypage-card-title">${work.title || typeLabel}</div>
-        <div class="mypage-card-date">${dateText}</div>
       </div>
     </div>
   `;
 }
 
 function updateMypageStats(works) {
-  const total = works.length;
-  const now = new Date();
-  const thisMonth = works.filter(w => {
-    const d = new Date(w.created_at);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).length;
-  
-  const totalEl = document.getElementById('mypageStatTotal');
-  const monthEl = document.getElementById('mypageStatMonth');
-  if (totalEl) totalEl.textContent = total;
-  if (monthEl) monthEl.textContent = thisMonth;
+  // 수치화 노출 방지를 위해 의도적으로 비워둠.
+  // 마이페이지에는 정량적 수치(총 작업 수, 이번 달 작업 수, 플랜 등)를 표시하지 않음.
+  // 플랜 정보는 [설정 > 결제 정보 설정] 탭에서만 확인 가능.
 }
 
 window.downloadWork = function(url, title) {
@@ -6873,22 +6812,6 @@ window.addEventListener('resize', () => {
   </div>
   
   <div class="mypage-content">
-    <!-- 통계 -->
-    <div class="mypage-stats">
-      <div class="mypage-stat-card">
-        <div class="mypage-stat-label">📸 총 작업물</div>
-        <div class="mypage-stat-value peach" id="mypageStatTotal">0</div>
-      </div>
-      <div class="mypage-stat-card">
-        <div class="mypage-stat-label">📅 이번 달</div>
-        <div class="mypage-stat-value" id="mypageStatMonth">0</div>
-      </div>
-      <div class="mypage-stat-card">
-        <div class="mypage-stat-label">💎 플랜</div>
-        <div class="mypage-stat-value" id="mypageStatPlan">무료</div>
-      </div>
-    </div>
-    
     <!-- 작업물 갤러리 -->
     <div class="mypage-section-header">
       <div class="mypage-section-title">최근 작업물</div>
