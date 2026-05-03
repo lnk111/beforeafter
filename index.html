@@ -5080,6 +5080,54 @@
             <label>오른쪽/아래 글자</label>
             <input class="lbl-input" type="text" id="labelAfter" value="AFTER" maxlength="20" oninput="refreshSim()">
           </div>
+          <div class="opt-group" style="grid-column: 1 / -1;">
+            <label>글씨체 (BEFORE / AFTER 공통)</label>
+            <select class="font-sel" id="labelFont" onchange="updateLabelFontPreview();refreshSim()" style="width:100%;">
+              <optgroup label="━ 한글 기본 ━">
+                <option value='"Noto Sans KR",sans-serif' selected>기본 (Noto Sans KR)</option>
+                <option value='"Pretendard",sans-serif'>프리텐다드 ⭐</option>
+                <option value='"Nanum Gothic",sans-serif'>나눔고딕</option>
+                <option value='"Nanum Myeongjo",serif'>나눔명조</option>
+                <option value='"Sunflower",sans-serif'>선플라워</option>
+              </optgroup>
+              <optgroup label="━ 한글 굵은 헤드라인 ━">
+                <option value='"Black Han Sans",sans-serif'>검은고딕 ⭐</option>
+                <option value='"Do Hyeon",sans-serif'>도현체</option>
+                <option value='"Jua",sans-serif'>주아체 (귀여움)</option>
+                <option value='"Stylish",sans-serif'>스타일리쉬</option>
+              </optgroup>
+              <optgroup label="━ 한글 손글씨 ━">
+                <option value='"Nanum Pen Script",cursive'>나눔손글씨 펜</option>
+                <option value='"Gaegu",cursive'>가에구</option>
+                <option value='"Single Day",cursive'>싱글데이 ⭐</option>
+                <option value='"Hi Melody",cursive'>하이멜로디</option>
+                <option value='"East Sea Dokdo",cursive'>동해독도체</option>
+                <option value='"Cute Font",cursive'>귀여운 폰트</option>
+              </optgroup>
+              <optgroup label="━ 영문 모던 ━">
+                <option value='"Inter",sans-serif'>Inter ⭐</option>
+                <option value='"Roboto",sans-serif'>Roboto</option>
+                <option value='"Poppins",sans-serif'>Poppins ⭐</option>
+                <option value='"DM Sans",sans-serif'>DM Sans ⭐</option>
+                <option value='"Manrope",sans-serif'>Manrope</option>
+                <option value='"Lato",sans-serif'>Lato</option>
+                <option value='"Open Sans",sans-serif'>Open Sans</option>
+                <option value='"Montserrat",sans-serif'>Montserrat</option>
+              </optgroup>
+              <optgroup label="━ 영문 헤드라인 ━">
+                <option value='"Bebas Neue",sans-serif'>Bebas Neue ⭐</option>
+                <option value='"Oswald",sans-serif'>Oswald</option>
+                <option value='"Playfair Display",serif'>Playfair (세리프)</option>
+              </optgroup>
+              <optgroup label="━ 영문 손글씨 ━">
+                <option value='"Pacifico",cursive'>Pacifico ⭐</option>
+                <option value='"Lobster",cursive'>Lobster</option>
+                <option value='"Dancing Script",cursive'>Dancing Script</option>
+                <option value='"Caveat",cursive'>Caveat (메모)</option>
+                <option value='"Quicksand",sans-serif'>Quicksand (둥글)</option>
+              </optgroup>
+            </select>
+          </div>
           <div class="opt-group">
             <label>글자 색</label>
             <div class="color-row">
@@ -5304,8 +5352,6 @@
       </div>
       <button class="gen-btn" id="genBtn" onclick="generate()">💾 저장하기</button>
       <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
-      <button class="dl-btn" id="dlBtn" onclick="download()">⬇ JPG 다운로드</button>
-      <button class="insta-open-btn" id="instaBtn1" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
   </div>
 </div>
@@ -5571,7 +5617,6 @@
       </div>
       <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">💾 전체 저장</button>
       <div class="wm-notice" id="rWmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
-      <button class="insta-open-btn" id="instaBtn2" onclick="openInstagram()">📸 인스타그램에 올리기</button>
     </div>
   </div>
 </div>
@@ -6033,6 +6078,7 @@ function collectCurrentSettings() {
     ba_font_size: opts.fontSize || 30,
     ba_label_before: document.getElementById('labelBefore')?.value || 'BEFORE',
     ba_label_after: document.getElementById('labelAfter')?.value || 'AFTER',
+    ba_label_font: document.getElementById('labelFont')?.value || '"Noto Sans KR",sans-serif',
     ba_divider_size: parseInt(document.getElementById('dividerSize')?.value || 6),
     ba_split_ratio: parseInt(document.getElementById('splitRatio')?.value || 50),
     ba_label_shadow: parseInt(document.getElementById('labelShadow')?.value || 0),
@@ -6116,6 +6162,13 @@ function applyUserPreferences(s) {
   const setVal = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
   setVal('labelBefore', s.ba_label_before);
   setVal('labelAfter', s.ba_label_after);
+  // 🆕 BEFORE/AFTER 폰트
+  if (s.ba_label_font) {
+    setVal('labelFont', s.ba_label_font);
+    if (typeof window.updateLabelFontPreview === 'function') {
+      window.updateLabelFontPreview();
+    }
+  }
   setVal('dividerSize', s.ba_divider_size);
   setVal('splitRatio', s.ba_split_ratio);
   // 🆕 그림자 슬라이더
@@ -6443,6 +6496,10 @@ window.otherAccountOnetap = function() {
 // 페이지 로드 후 1.2초 뒤에 자동 모달 체크
 window.addEventListener('load', () => {
   setTimeout(maybeShowOnetapModal, 1200);
+  // BEFORE/AFTER 폰트 미리보기 초기 적용 (선택된 폰트로 입력 박스 미리 보이게)
+  if (typeof window.updateLabelFontPreview === 'function') {
+    window.updateLabelFontPreview();
+  }
 });
 
 function openAuthModal() { document.getElementById('authModalOverlay').classList.add('open'); }
@@ -6807,7 +6864,9 @@ function coverFit(ctx, img, dx, dy, dw, dh, transform) {
 function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
   const fs=fontSize(cw);
   ctx.save();
-  ctx.font=`600 ${fs}px "Noto Sans KR",sans-serif`;
+  // 🆕 사용자가 선택한 폰트 사용 (BEFORE/AFTER 글씨체)
+  const labelFont = document.getElementById('labelFont')?.value || '"Noto Sans KR",sans-serif';
+  ctx.font=`600 ${fs}px ${labelFont}`;
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
   
   // 🆕 슬라이더 값으로 그림자 강도 조정 (0~100, 기본 0 = 그림자 없음)
@@ -6837,6 +6896,19 @@ window.updateLabelShadowDisplay = function(value) {
   else if (v < 30) el.textContent = '연하게';
   else if (v < 70) el.textContent = '보통';
   else el.textContent = '진하게';
+};
+
+// 🆕 BEFORE/AFTER 입력 박스에 선택한 폰트 미리보기 적용
+window.updateLabelFontPreview = function() {
+  const sel = document.getElementById('labelFont');
+  if (!sel) return;
+  const font = sel.value;
+  const inputBefore = document.getElementById('labelBefore');
+  const inputAfter = document.getElementById('labelAfter');
+  if (inputBefore) inputBefore.style.fontFamily = font;
+  if (inputAfter) inputAfter.style.fontFamily = font;
+  // 셀렉터 자체도 선택한 폰트로 표시 (사용자가 어떤 폰트인지 직관적으로 알 수 있게)
+  sel.style.fontFamily = font;
 };
 
 function getTextEffects(prefix) {
@@ -7298,10 +7370,16 @@ window.resetRImagePosition = function() {
 function generate() {
   if(!imgs.before||!imgs.after) return;
   if (!canSave()) { openModal(); return; }
+  
+  // 캔버스에 그림 (현재 미리보기 상태로 새로 그림)
   drawAll(document.getElementById('resultCanvas'), 1.0);
-  document.getElementById('dlBtn').classList.add('show');
+  
   if (!isPro) { incrementSaveCount(); updateCountBar(); }
   refreshSim();
+  
+  // 🆕 저장하기 → 즉시 다운로드 모달 + 마이페이지 저장 흐름으로 진입
+  // (사용자가 별도로 "JPG 다운로드" 버튼을 누를 필요 없음)
+  download();
 }
 function download() {
   // 1. 로딩 모달 표시
@@ -7314,6 +7392,19 @@ function download() {
   // 2. 약간의 지연 후 실제 다운로드 (애니메이션 보여주려고)
   setTimeout(() => {
     try {
+      const canvas = document.getElementById('resultCanvas');
+      if (!canvas) {
+        throw new Error('resultCanvas not found');
+      }
+      
+      // 🔧 [버그 수정] 다운로드 직전에 캔버스를 항상 새로 그림
+      // 이전에는 generate() 시점의 캔버스가 그대로 남아있어서,
+      // 사용자가 사진을 바꾼 후 다시 generate()를 누르지 않고 download()만 누르면
+      // 이전 사진이 저장되는 버그가 있었음.
+      if (typeof drawAll === 'function' && imgs && imgs.before && imgs.after) {
+        drawAll(canvas, 1.0);
+      }
+      
       const a = document.createElement('a');
       // 파일명: peachpost-YYYYMMDD-HHmmss.jpg (브랜드 노출 + 중복 방지)
       const now = new Date();
@@ -7325,12 +7416,10 @@ function download() {
         + String(now.getMinutes()).padStart(2, '0')
         + String(now.getSeconds()).padStart(2, '0');
       a.download = `peachpost-${ts}.jpg`;
-      a.href = document.getElementById('resultCanvas').toDataURL('image/jpeg', 1.0);
+      a.href = canvas.toDataURL('image/jpeg', 1.0);
       a.click();
       
-      // 인스타 버튼 표시 (기존 동작 유지 - 편집 화면 하단)
-      const instaBtn = document.getElementById('instaBtn1');
-      if (instaBtn) instaBtn.classList.add('show');
+      // (편집 화면 하단 인스타 버튼은 제거됨 - 다운로드 모달의 액션 버튼으로 통합)
     } catch (e) {
       console.error('다운로드 실패:', e);
       closeDlModal();
@@ -8722,8 +8811,7 @@ async function rGenerate() {
   rSelIdx=origIdx;
   if (!isPro) { rUpdateCountBar(); updateCountBar(); }
   btn.textContent='✦ 전체 저장'; btn.style.opacity='';
-  showToast('🎉 ' + total + '장 저장 완료! 아래 버튼으로 인스타에 올려보세요!');
-  document.getElementById('instaBtn2').classList.add('show');
+  showToast('🎉 ' + total + '장 저장 완료!');
   rRefreshSim();
 }
 
