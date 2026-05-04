@@ -2902,7 +2902,7 @@
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
           console.log('✅ 세션 생성 성공:', session.user.email);
-          // URL 정리 (?error=... 제거)
+          // 🔧 hash까지 완전히 제거 (새로고침 시 OAuth 재처리 방지)
           window.history.replaceState({}, '', window.location.pathname);
           // 편집 화면으로 이동
           if (typeof window.startApp === 'function') {
@@ -2912,6 +2912,16 @@
       }, 500);
     } else if (window.location.hash === '#app') {
       document.body.classList.add('app-mode');
+      // 🆕 #app 상태에서 새로고침된 경우, 세션이 살아있으면 자동으로 편집 화면 유지
+      setTimeout(async () => {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+          console.log('✅ 새로고침 후 세션 복원됨:', session.user.email);
+          if (typeof window.startApp === 'function') {
+            window.startApp();
+          }
+        }
+      }, 100);
     }
   });
   
@@ -5995,7 +6005,15 @@
 
 const EA_SUPABASE_URL = 'https://garzmqgpyghbiorehlta.supabase.co';
 const EA_SUPABASE_KEY = 'sb_publishable_13OUnm9P_LQ42g1bn9NxnA_6yxsw1OL';
-const sb = supabase.createClient(EA_SUPABASE_URL, EA_SUPABASE_KEY);
+// 🔑 로그인 유지: persistSession + autoRefreshToken으로 새로고침해도 세션 살아있음
+const sb = supabase.createClient(EA_SUPABASE_URL, EA_SUPABASE_KEY, {
+  auth: {
+    persistSession: true,        // localStorage에 세션 저장 (새로고침 후에도 유지)
+    autoRefreshToken: true,      // 토큰 만료 임박 시 자동 갱신
+    detectSessionInUrl: true,    // OAuth 콜백 URL의 토큰 자동 감지
+    storage: window.localStorage // 명시적으로 localStorage 사용
+  }
+});
 
 let currentUser = null;
 
@@ -6038,9 +6056,16 @@ sb.auth.onAuthStateChange(async (event, session) => {
 });
 
 (async () => {
+  // 🔑 페이지 로드 시 저장된 세션 복원 시도
   const { data: { session } } = await sb.auth.getSession();
-  currentUser = session?.user ?? null;
-  if (currentUser) { await loadProStatus(); updateAuthUI(true); }
+  if (session?.user) {
+    console.log('✅ 저장된 세션 복원:', session.user.email);
+    currentUser = session.user;
+    await loadProStatus();
+    updateAuthUI(true);
+  } else {
+    console.log('ℹ️ 저장된 세션 없음 - 비로그인 상태로 시작');
+  }
 })();
 
 async function loadProStatus() {
