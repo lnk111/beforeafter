@@ -6240,8 +6240,8 @@ function collectCurrentSettings() {
     ba_show_label: opts.showLabel !== false,
     ba_label_color: opts.labelColor || '#ffffff',
     ba_font_size: opts.fontSize || 30,
-    ba_label_before: document.getElementById('labelBefore')?.value || 'BEFORE',
-    ba_label_after: document.getElementById('labelAfter')?.value || 'AFTER',
+    ba_label_before: (document.getElementById('labelBefore')?.value ?? 'BEFORE'),
+    ba_label_after: (document.getElementById('labelAfter')?.value ?? 'AFTER'),
     ba_label_font: document.getElementById('labelFont')?.value || '"Noto Sans KR",sans-serif',
     ba_divider_size: parseInt(document.getElementById('dividerSize')?.value || 6),
     ba_split_ratio: parseInt(document.getElementById('splitRatio')?.value || 50),
@@ -7115,6 +7115,9 @@ function coverFit(ctx, img, dx, dy, dw, dh, transform) {
   ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
 }
 function drawLabel(ctx, text, sx, sy, sw, sh, cw) {
+  // 🆕 빈 텍스트면 그리지 않음 (사용자가 입력 다 지웠을 때 미리보기에서도 사라짐)
+  if (!text || !text.trim()) return;
+  
   const fs=fontSize(cw);
   ctx.save();
   // 🆕 사용자가 선택한 폰트 사용 (BEFORE/AFTER 글씨체)
@@ -7242,8 +7245,9 @@ function drawAll(canvas, scale) {
   ctx.imageSmoothingQuality = 'high';
   
   const dp=Math.round(+document.getElementById('dividerSize').value * scale);
-  const lblB=document.getElementById('labelBefore').value||'BEFORE';
-  const lblA=document.getElementById('labelAfter').value||'AFTER';
+  // 🆕 빈 입력은 빈 문자열로 그대로 사용 (사용자가 지우면 미리보기에서도 즉시 사라짐)
+  const lblB = (document.getElementById('labelBefore').value || '').trim();
+  const lblA = (document.getElementById('labelAfter').value || '').trim();
   const CW=Math.round(IW*scale), CH=Math.round(IH*scale);
   const ratio=getSplit();
   canvas.width=CW; canvas.height=CH;
@@ -7253,13 +7257,19 @@ function drawAll(canvas, scale) {
     coverFit(ctx,imgs.before,0,0,CW,h1,imgTransforms.before);
     if(dp>0){ctx.fillStyle='#fff';ctx.fillRect(0,h1,CW,dp);}
     coverFit(ctx,imgs.after,0,h1+dp,CW,h2,imgTransforms.after);
-    if(opts.showLabel){ drawLabel(ctx,lblB,0,0,CW,h1,CW); drawLabel(ctx,lblA,0,h1+dp,CW,h2,CW); }
+    if(opts.showLabel){
+      if(lblB) drawLabel(ctx,lblB,0,0,CW,h1,CW);
+      if(lblA) drawLabel(ctx,lblA,0,h1+dp,CW,h2,CW);
+    }
   } else {
     const w1=Math.round((CW-dp)*ratio), w2=CW-dp-w1;
     coverFit(ctx,imgs.before,0,0,w1,CH,imgTransforms.before);
     if(dp>0){ctx.fillStyle='#fff';ctx.fillRect(w1,0,dp,CH);}
     coverFit(ctx,imgs.after,w1+dp,0,w2,CH,imgTransforms.after);
-    if(opts.showLabel){ drawLabel(ctx,lblB,0,0,w1,CH,CW); drawLabel(ctx,lblA,w1+dp,0,w2,CH,CW); }
+    if(opts.showLabel){
+      if(lblB) drawLabel(ctx,lblB,0,0,w1,CH,CW);
+      if(lblA) drawLabel(ctx,lblA,w1+dp,0,w2,CH,CW);
+    }
   }
 
   const baTxt = (document.getElementById('baOverlayText')?.value || '').trim();
