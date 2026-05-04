@@ -5036,13 +5036,13 @@
   <div class="ctrl-panel">
     <div class="upload-grid">
       <div class="upload-zone" id="zone-before" ondragover="onDrag(event,'before')" ondragleave="offDrag('before')" ondrop="onDrop(event,'before')">
-        <input type="file" accept="image/*" onchange="loadFile(event,'before')">
+        <input type="file" accept="image/*,.heic,.heif" onchange="loadFile(event,'before')">
         <div class="up-icon">📷</div>
         <span class="up-label before">BEFORE</span>
         <span class="up-hint">클릭 또는 드래그</span>
       </div>
       <div class="upload-zone" id="zone-after" ondragover="onDrag(event,'after')" ondragleave="offDrag('after')" ondrop="onDrop(event,'after')">
-        <input type="file" accept="image/*" onchange="loadFile(event,'after')">
+        <input type="file" accept="image/*,.heic,.heif" onchange="loadFile(event,'after')">
         <div class="up-icon">✨</div>
         <span class="up-label after">AFTER</span>
         <span class="up-hint">클릭 또는 드래그</span>
@@ -5295,7 +5295,7 @@
             <div class="logo-upload-icon">📷</div>
             <div class="logo-upload-text">로고 이미지를 <strong>클릭</strong>하여 업로드<br><span style="font-size:0.7rem;color:#b0a99e;">PNG (투명 배경 권장) · JPG · 최대 5MB</span></div>
           </div>
-          <input type="file" id="baLogoFile" accept="image/png,image/jpeg,image/jpg,image/webp" style="display:none;" onchange="handleLogoUpload('ba', this)">
+          <input type="file" id="baLogoFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/heif,.heic,.heif" style="display:none;" onchange="handleLogoUpload('ba', this)">
           
           <!-- 업로드 후 상태 -->
           <div class="logo-upload-zone has-logo" id="baLogoZoneFilled" style="display:none;">
@@ -5407,7 +5407,7 @@
     <div class="r-upload-section">
       <div class="r-upload-header"><h2 style="font-size:.85rem;font-weight:700;margin:0;">📁 업로드된 사진</h2><span class="r-upload-count" id="rUploadCount">0 / 10장</span></div>
       <div class="r-dropzone" id="rZone">
-        <input type="file" accept="image/*" multiple onchange="rLoadFiles(event)">
+        <input type="file" accept="image/*,.heic,.heif" multiple onchange="rLoadFiles(event)">
         <div class="up-icon">🖼️</div>
         <span class="up-label" style="color:var(--ea-ink);font-size:1rem;font-weight:600;">사진 업로드 (최대 10장)</span>
         <span class="up-hint">여러 장 한꺼번에 선택 · 드래그 앤 드롭 OK</span>
@@ -5563,7 +5563,7 @@
             <div class="logo-upload-icon">📷</div>
             <div class="logo-upload-text">로고 이미지를 <strong>클릭</strong>하여 업로드<br><span style="font-size:0.7rem;color:#b0a99e;">PNG (투명 배경 권장) · JPG · 최대 5MB</span></div>
           </div>
-          <input type="file" id="rLogoFile" accept="image/png,image/jpeg,image/jpg,image/webp" style="display:none;" onchange="handleLogoUpload('r', this)">
+          <input type="file" id="rLogoFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/heic,image/heif,.heic,.heif" style="display:none;" onchange="handleLogoUpload('r', this)">
           
           <div class="logo-upload-zone has-logo" id="rLogoZoneFilled" style="display:none;">
             <div class="logo-preview"><img id="rLogoPreviewImg" alt="로고"></div>
@@ -5997,6 +5997,11 @@
 
 <!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- 🆕 HEIC 변환 라이브러리 (iPhone 사진 지원) - 최신 안정 버전 -->
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js" 
+        onload="console.log('✅ heic2any 라이브러리 로드 완료')" 
+        onerror="console.error('❌ heic2any CDN 로드 실패. iPhone 사진(HEIC) 변환이 작동하지 않을 수 있습니다.')"></script>
 
 <script>
 /* ══════════════════════════════════════════
@@ -6778,20 +6783,108 @@ function resetSplit() {
 function getSplit() { return +document.getElementById('splitRatio').value / 100; }
 
 function loadFile(e, side) { const f = e.target.files[0]; if (f) readImg(f, side); }
+
+/* ══════════════════════════════════════════════════════════
+   🆕 HEIC → JPEG 자동 변환 헬퍼
+   iPhone 사진(.heic)도 사용 가능하게 함
+══════════════════════════════════════════════════════════════ */
+
+/**
+ * 파일이 HEIC/HEIF 형식인지 검사
+ */
+function isHeicFile(file) {
+  if (!file) return false;
+  const name = (file.name || '').toLowerCase();
+  const type = (file.type || '').toLowerCase();
+  return name.endsWith('.heic') || name.endsWith('.heif') 
+      || type === 'image/heic' || type === 'image/heif';
+}
+
+/**
+ * HEIC 파일을 JPEG로 변환. HEIC가 아니면 원본 그대로 반환.
+ * @returns {Promise<File>} 변환된 File 객체
+ */
+async function convertHeicIfNeeded(file) {
+  if (!isHeicFile(file)) return file;
+  
+  console.log('🔄 [HEIC 변환] 시작:', file.name, file.size, 'bytes');
+  
+  // heic2any 라이브러리 로드 대기 (최대 3초)
+  let waitedMs = 0;
+  while (typeof heic2any === 'undefined' && waitedMs < 3000) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    waitedMs += 200;
+  }
+  
+  if (typeof heic2any === 'undefined') {
+    console.error('❌ heic2any 라이브러리 미로드 (3초 대기 후에도 없음)');
+    if (typeof showToast === 'function') {
+      showToast('⚠️ HEIC 변환 도구 로드 실패. 새로고침 후 시도해주세요.');
+    }
+    throw new Error('heic2any not loaded');
+  }
+  
+  // 사용자에게 변환 중임을 알림 (시간 좀 걸림)
+  if (typeof showToast === 'function') {
+    showToast('🔄 iPhone 사진 변환 중... 5초 정도 기다려주세요');
+  }
+  
+  try {
+    const blob = await heic2any({
+      blob: file,
+      toType: 'image/jpeg',
+      quality: 0.92  // 화질 92% (충분히 고화질)
+    });
+    
+    // 변환된 Blob을 File 객체로 래핑 (이름은 .jpg로 변경)
+    const newName = file.name.replace(/\.(heic|heif)$/i, '.jpg');
+    const convertedFile = new File([blob], newName, { type: 'image/jpeg' });
+    
+    console.log('✅ [HEIC 변환] 완료:', newName, convertedFile.size, 'bytes');
+    if (typeof showToast === 'function') {
+      showToast('✅ iPhone 사진 변환 완료!');
+    }
+    return convertedFile;
+  } catch (e) {
+    console.error('❌ [HEIC 변환] 실패:', e);
+    if (typeof showToast === 'function') {
+      showToast('⚠️ HEIC 변환 실패. 사진을 카카오톡 \"나에게 보내기\"로 보낸 후 저장하면 JPG로 변환됩니다.');
+    }
+    throw e;
+  }
+}
+
 function readImg(file, side) {
-  const r = new FileReader();
-  r.onload = ev => {
-    const i = new Image();
-    i.onload = () => {
-      imgs[side] = i;
-      imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 }; // 🔄 새 이미지 = transform 리셋
-      showPreview(side, ev.target.result);
-      checkReady();
-      refreshSim();
+  console.log('📷 [사진 업로드]', side, '시작:', file.name, file.size, 'bytes', 'type:', file.type);
+  
+  // 🆕 HEIC 자동 변환
+  convertHeicIfNeeded(file).then(processedFile => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const i = new Image();
+      i.onload = () => {
+        imgs[side] = i;
+        imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 };
+        showPreview(side, ev.target.result);
+        checkReady();
+        refreshSim();
+        console.log('✅ [사진 업로드]', side, '완료');
+      };
+      i.onerror = () => {
+        console.error('❌ [사진 업로드] 이미지 로드 실패:', side);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ 이미지를 읽을 수 없어요. 다른 사진을 시도해주세요.');
+        }
+      };
+      i.src = ev.target.result;
     };
-    i.src = ev.target.result;
-  };
-  r.readAsDataURL(file);
+    r.onerror = () => {
+      console.error('❌ [사진 업로드] 파일 읽기 실패:', side);
+    };
+    r.readAsDataURL(processedFile);
+  }).catch(err => {
+    console.error('❌ [사진 업로드] 처리 실패:', err);
+  });
 }
 function showPreview(side, src) {
   const z = document.getElementById('zone-' + side);
@@ -6810,7 +6903,7 @@ function removeImg(side) {
   imgTransforms[side] = { offsetX: 0, offsetY: 0, zoom: 1 }; // 🔄 transform 리셋
   const z = document.getElementById('zone-' + side);
   z.classList.remove('has-image'); z.innerHTML = '';
-  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*,.heic,.heif';
   inp.onchange = e => loadFile(e, side); z.appendChild(inp);
   const ic = document.createElement('div'); ic.className='up-icon'; ic.textContent=side==='before'?'📷':'✨'; z.appendChild(ic);
   const lb = document.createElement('span'); lb.className='up-label '+side; lb.textContent=side==='before'?'Before':'After'; z.appendChild(lb);
@@ -6826,7 +6919,8 @@ function onDrag(e,s){ e.preventDefault(); document.getElementById('zone-'+s).cla
 function offDrag(s){ document.getElementById('zone-'+s).classList.remove('drag-over'); }
 function onDrop(e,s){
   e.preventDefault(); offDrag(s);
-  const f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) readImg(f,s);
+  const f=e.dataTransfer.files[0]; 
+  if(f && (f.type.startsWith('image/') || isHeicFile(f))) readImg(f,s);
 }
 function checkReady(){
   document.getElementById('genBtn').classList.toggle('ready', !!(imgs.before&&imgs.after));
@@ -8361,8 +8455,9 @@ window.handleLogoUpload = function(prefix, input) {
     return;
   }
   
-  // 이미지 형식 검증
-  if (!file.type.startsWith('image/')) {
+  // 이미지 형식 검증 (HEIC도 통과하도록)
+  const isHeic = isHeicFile(file);
+  if (!file.type.startsWith('image/') && !isHeic) {
     if (typeof showToast === 'function') showToast('⚠️ 이미지 파일만 업로드 가능해요');
     input.value = '';
     return;
@@ -8376,6 +8471,17 @@ window.handleLogoUpload = function(prefix, input) {
     return;
   }
   
+  // 🆕 HEIC 자동 변환 (필요한 경우만)
+  convertHeicIfNeeded(file).then(processedFile => {
+    handleLogoFileRead(processedFile, prefix, input);
+  }).catch(err => {
+    console.error('로고 파일 처리 실패:', err);
+    input.value = '';
+  });
+};
+
+// HEIC 변환 후 실제 처리 함수 (분리)
+function handleLogoFileRead(file, prefix, input) {
   const reader = new FileReader();
   reader.onload = (e) => {
     const img = new Image();
@@ -8875,25 +8981,33 @@ function rPickColor(e) {
 }
 
 function rLoadFiles(e) {
-  const files = Array.from(e.target.files).filter(f=>f.type.startsWith('image/')).slice(0, R_MAX - rImgs.length);
+  // HEIC도 통과하도록 필터 변경
+  const files = Array.from(e.target.files)
+    .filter(f => f.type.startsWith('image/') || isHeicFile(f))
+    .slice(0, R_MAX - rImgs.length);
   files.forEach(rReadImgFile);
 }
 function rReadImgFile(file) {
-  const r = new FileReader();
-  r.onload = ev => {
-    const i = new Image();
-    i.onload = () => {
-      rImgs.push({ 
-        img: i, 
-        src: ev.target.result,
-        transform: { offsetX: 0, offsetY: 0, zoom: 1 }
-      });
-      if (rImgs.length === 1) rSelIdx = 0;
-      rRenderAll();
+  // 🆕 HEIC 자동 변환
+  convertHeicIfNeeded(file).then(processedFile => {
+    const r = new FileReader();
+    r.onload = ev => {
+      const i = new Image();
+      i.onload = () => {
+        rImgs.push({ 
+          img: i, 
+          src: ev.target.result,
+          transform: { offsetX: 0, offsetY: 0, zoom: 1 }
+        });
+        if (rImgs.length === 1) rSelIdx = 0;
+        rRenderAll();
+      };
+      i.src = ev.target.result;
     };
-    i.src = ev.target.result;
-  };
-  r.readAsDataURL(file);
+    r.readAsDataURL(processedFile);
+  }).catch(err => {
+    console.error('리사이즈 이미지 처리 실패:', err);
+  });
 }
 
 function rDeleteImg(idx) {
@@ -8934,7 +9048,7 @@ function rRenderRightThumbs() {
   });
   if (rImgs.length < R_MAX) {
     const add = document.createElement('div'); add.className='r-thumb-add';
-    const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.multiple=true;
+    const inp = document.createElement('input'); inp.type='file'; inp.accept='image/*,.heic,.heif'; inp.multiple=true;
     inp.onchange = rLoadFiles;
     const ic = document.createElement('span'); ic.className='r-thumb-add-icon'; ic.textContent='＋';
     const tx = document.createElement('span'); tx.textContent='추가'; tx.style.fontSize='.6rem';
