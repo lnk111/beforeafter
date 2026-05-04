@@ -8409,8 +8409,18 @@ window.handleLogoUpload = function(prefix, input) {
  * 사용자별 1개의 로고만 보관 (덮어쓰기 방식)
  */
 async function uploadLogoToCloud(file) {
-  if (typeof currentUser === 'undefined' || !currentUser) return null;
-  if (typeof sb === 'undefined') return null;
+  console.log('🔍 [로고 업로드] 시작 - 파일:', file.name, file.size, 'bytes');
+  
+  if (typeof currentUser === 'undefined' || !currentUser) {
+    console.log('🔍 [로고 업로드] 중단: 비로그인 상태 (로컬에만 보관)');
+    return null;
+  }
+  if (typeof sb === 'undefined') {
+    console.log('🔍 [로고 업로드] 중단: Supabase 클라이언트 없음');
+    return null;
+  }
+  
+  console.log('🔍 [로고 업로드] currentUser.id:', currentUser.id);
   
   try {
     // 1. 기존 로고가 있으면 먼저 삭제 (Storage 용량 절약)
@@ -8422,6 +8432,8 @@ async function uploadLogoToCloud(file) {
     const timestamp = Date.now();
     const fileName = `logos/${currentUser.id}/${timestamp}.${safeExt}`;
     
+    console.log('🔍 [로고 업로드] Storage 경로:', fileName);
+    
     const { error: uploadError } = await sb.storage
       .from('user-works')
       .upload(fileName, file, { 
@@ -8430,11 +8442,16 @@ async function uploadLogoToCloud(file) {
         contentType: file.type
       });
     
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      console.error('❌ [로고 업로드] Storage 업로드 실패:', uploadError);
+      console.error('   가능한 원인: Storage RLS 정책, 버킷 권한, 파일 형식');
+      throw uploadError;
+    }
     
     // 3. 공개 URL 가져오기
     const { data: urlData } = sb.storage.from('user-works').getPublicUrl(fileName);
     const logoUrl = urlData.publicUrl;
+    console.log('🔍 [로고 업로드] Storage 업로드 완료, URL:', logoUrl);
     
     // 4. user_preferences에 메타데이터 upsert
     const { error: dbError } = await sb.from('user_preferences').upsert({
@@ -8443,19 +8460,27 @@ async function uploadLogoToCloud(file) {
       logo_name: file.name,
       logo_width: window.sharedLogo?.width || null,
       logo_height: window.sharedLogo?.height || null,
-      logo_path: fileName,  // 추후 삭제 시 사용
+      logo_path: fileName,
       updated_at: new Date().toISOString()
     });
     
     if (dbError) {
-      // DB 에러나도 Storage는 성공했으니 일단 URL은 보관
-      console.warn('DB 메타데이터 저장 실패:', dbError);
+      console.error('❌ [로고 업로드] DB 저장 실패:', dbError.code, dbError.message);
+      if (dbError.code === '42703') {
+        console.error('   👉 Supabase SQL Editor에서 아래 쿼리 실행 필요:');
+        console.error('   ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS logo_url TEXT,');
+        console.error('   ADD COLUMN IF NOT EXISTS logo_name TEXT,');
+        console.error('   ADD COLUMN IF NOT EXISTS logo_width INTEGER,');
+        console.error('   ADD COLUMN IF NOT EXISTS logo_height INTEGER,');
+        console.error('   ADD COLUMN IF NOT EXISTS logo_path TEXT;');
+      }
+    } else {
+      console.log('☁️ [로고 업로드] DB 저장 완료');
     }
     
-    console.log('☁️ 로고 클라우드 저장 완료:', logoUrl);
     return logoUrl;
   } catch (e) {
-    console.error('로고 클라우드 업로드 오류:', e);
+    console.error('❌ [로고 업로드] 예외 발생:', e);
     return null;
   }
 }
@@ -8492,8 +8517,18 @@ async function deleteOldLogoFiles() {
  * loadUserPreferences 끝에서 호출됨
  */
 async function restoreLogoFromCloud() {
-  if (typeof currentUser === 'undefined' || !currentUser) return;
-  if (typeof sb === 'undefined') return;
+  console.log('🔍 [로고 복원] 시작');
+  
+  if (typeof currentUser === 'undefined' || !currentUser) {
+    console.log('🔍 [로고 복원] 중단: currentUser 없음');
+    return;
+  }
+  if (typeof sb === 'undefined') {
+    console.log('🔍 [로고 복원] 중단: Supabase(sb) 클라이언트 없음');
+    return;
+  }
+  
+  console.log('🔍 [로고 복원] currentUser.id:', currentUser.id);
   
   try {
     const { data, error } = await sb.from('user_preferences')
@@ -8501,10 +8536,32 @@ async function restoreLogoFromCloud() {
       .eq('user_id', currentUser.id)
       .single();
     
-    if (error || !data || !data.logo_url) {
-      console.log('ℹ️ 저장된 로고 없음');
+    if (error) {
+      // PGRST116 = "no rows found" (정상 - 첫 사용자)
+      if (error.code === 'PGRST116') {
+        console.log('ℹ️ [로고 복원] user_preferences 행 자체가 없음 (첫 사용자)');
+      } else if (error.code === '42703') {
+        console.error('❌ [로고 복원] DB 컬럼이 없음! Supabase에서 ALTER TABLE 쿼리 실행 필요:');
+        console.error('   ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS logo_url TEXT, ...');
+      } else {
+        console.error('❌ [로고 복원] DB 오류:', error.code, error.message, error);
+      }
       return;
     }
+    
+    if (!data) {
+      console.log('ℹ️ [로고 복원] data 없음');
+      return;
+    }
+    
+    console.log('🔍 [로고 복원] 조회된 data:', data);
+    
+    if (!data.logo_url) {
+      console.log('ℹ️ [로고 복원] logo_url 컬럼 비어있음 - 저장된 로고 없음');
+      return;
+    }
+    
+    console.log('🔍 [로고 복원] logo_url 발견:', data.logo_url);
     
     // Image 객체로 로드
     const img = new Image();
@@ -8515,7 +8572,7 @@ async function restoreLogoFromCloud() {
         name: data.logo_name || 'logo',
         width: data.logo_width || img.naturalWidth,
         height: data.logo_height || img.naturalHeight,
-        dataUrl: data.logo_url  // 원격 URL을 dataUrl처럼 취급
+        dataUrl: data.logo_url
       };
       
       // 양쪽 탭 UI 동기화 (열려있다면)
@@ -8528,16 +8585,15 @@ async function restoreLogoFromCloud() {
       if (typeof refreshSim === 'function') refreshSim();
       if (typeof rRefreshSim === 'function') rRefreshSim();
       
-      console.log('☁️ 저장된 로고 복원 완료:', data.logo_name);
+      console.log('☁️ [로고 복원] 완료!', data.logo_name);
     };
-    img.onerror = () => {
-      console.warn('저장된 로고 로드 실패 (URL 만료 또는 삭제됨)');
+    img.onerror = (err) => {
+      console.error('❌ [로고 복원] 이미지 로드 실패:', data.logo_url);
+      console.error('   가능한 원인: URL 만료, Storage 권한, CORS, 파일 삭제됨');
     };
     img.src = data.logo_url;
   } catch (e) {
-    if (e.code !== 'PGRST116') {
-      console.warn('로고 복원 오류:', e);
-    }
+    console.error('❌ [로고 복원] 예외 발생:', e);
   }
 }
 
