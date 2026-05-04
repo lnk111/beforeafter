@@ -7309,12 +7309,32 @@ function drawAll(canvas, scale) {
 }
 
 function refreshSim() {
-  if(!imgs.before||!imgs.after) return;
-  document.getElementById('simPh').style.display='none';
-  const c=document.getElementById('simCanvas'); c.style.display='block';
-  const fw=document.getElementById('simFrame').clientWidth||320;
+  const c = document.getElementById('simCanvas');
+  const ph = document.getElementById('simPh');
+  if (!c) return;
+  
+  // 🆕 두 장 다 있어야 미리보기 가능. 한 장만 있거나 없으면 캔버스 비우고 placeholder 표시
+  if (!imgs.before || !imgs.after) {
+    // 캔버스 클리어 (이전에 그렸던 잔상 제거)
+    const ctx = c.getContext('2d');
+    if (c.width > 0 && c.height > 0) {
+      ctx.clearRect(0, 0, c.width, c.height);
+    }
+    c.style.display = 'none';
+    if (ph) ph.style.display = 'flex';
+    
+    // 인터랙션 바 숨김
+    const bar = document.getElementById('simInteractionBar');
+    if (bar) bar.style.display = 'none';
+    return;
+  }
+  
+  // 두 장 모두 있을 때만 정상 렌더링
+  if (ph) ph.style.display = 'none';
+  c.style.display = 'block';
+  const fw = document.getElementById('simFrame').clientWidth || 320;
   // 🎨 미리보기 화질 1.5배 (더 또렷하게)
-  drawAll(c, (fw/IW) * 1.5);
+  drawAll(c, (fw / IW) * 1.5);
   
   // 인터랙션 바 표시
   const bar = document.getElementById('simInteractionBar');
@@ -9406,6 +9426,11 @@ function rRefreshSim() {
   const bar = document.getElementById('rInteractionBar');
   if (!canvas) return;
   if (!rImgs[rSelIdx]) {
+    // 🆕 캔버스 클리어 (이전에 그렸던 잔상 제거)
+    const ctx = canvas.getContext('2d');
+    if (canvas.width > 0 && canvas.height > 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
     canvas.style.display='none';
     if (ph) ph.style.display='flex';
     if (bar) bar.style.display='none';
