@@ -8346,6 +8346,9 @@ window.rLogoPos = 8;
  * @param {string} prefix - 'ba' 또는 'r'
  * @param {HTMLInputElement} input
  */
+// 🔒 로고 업로드 진행 중 플래그 (동시 업로드 충돌 방지)
+window._logoUploadInProgress = false;
+
 window.handleLogoUpload = function(prefix, input) {
   const file = input.files && input.files[0];
   if (!file) return;
@@ -8361,6 +8364,14 @@ window.handleLogoUpload = function(prefix, input) {
   // 이미지 형식 검증
   if (!file.type.startsWith('image/')) {
     if (typeof showToast === 'function') showToast('⚠️ 이미지 파일만 업로드 가능해요');
+    input.value = '';
+    return;
+  }
+  
+  // 🔒 이전 업로드가 진행 중이면 잠시 대기하라고 안내
+  if (window._logoUploadInProgress) {
+    console.warn('⚠️ [로고 업로드] 이전 업로드가 아직 진행 중. 잠시 후 다시 시도해주세요.');
+    if (typeof showToast === 'function') showToast('⏳ 잠시만요, 이전 로고 업로드 처리 중이에요...');
     input.value = '';
     return;
   }
@@ -8406,9 +8417,16 @@ window.handleLogoUpload = function(prefix, input) {
       
       // 🆕 로그인 상태면 클라우드에 자동 저장 (다음 방문 시 복원용)
       if (typeof currentUser !== 'undefined' && currentUser) {
-        uploadLogoToCloud(file).catch(err => {
-          console.warn('로고 클라우드 저장 실패 (로컬은 정상 작동):', err);
-        });
+        // 🔒 락 설정 → 업로드 → 항상 락 해제
+        window._logoUploadInProgress = true;
+        uploadLogoToCloud(file)
+          .catch(err => {
+            console.warn('로고 클라우드 저장 실패 (로컬은 정상 작동):', err);
+          })
+          .finally(() => {
+            window._logoUploadInProgress = false;
+            console.log('🔓 [로고 업로드] 락 해제 - 다음 업로드 가능');
+          });
       }
     };
     img.onerror = () => {
@@ -8463,7 +8481,7 @@ async function uploadLogoToCloud(file) {
       .from('user-works')
       .upload(fileName, file, { 
         cacheControl: '3600',
-        upsert: false,
+        upsert: true,  // 같은 경로 충돌 시 덮어쓰기 (안전)
         contentType: file.type
       });
     
