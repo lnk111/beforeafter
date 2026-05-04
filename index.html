@@ -6056,6 +6056,11 @@ async function loadProStatus() {
   // 🆕 로그인 시 자동으로 최근 설정 불러오기
   await loadUserPreferences();
   
+  // 🆕 로그인 시 저장된 로고 자동 복원
+  if (typeof restoreLogoFromCloud === 'function') {
+    restoreLogoFromCloud();
+  }
+  
   if (imgs?.before && imgs?.after) refreshSim();
 }
 
@@ -8373,6 +8378,13 @@ window.handleLogoUpload = function(prefix, input) {
       if (typeof rRefreshSim === 'function') rRefreshSim();
       
       if (typeof showToast === 'function') showToast('✅ 로고가 적용됐어요. 두 탭에서 모두 사용 가능해요!');
+      
+      // 🆕 로그인 상태면 클라우드에 자동 저장 (다음 방문 시 복원용)
+      if (typeof currentUser !== 'undefined' && currentUser) {
+        uploadLogoToCloud(file).catch(err => {
+          console.warn('로고 클라우드 저장 실패 (로컬은 정상 작동):', err);
+        });
+      }
     };
     img.onerror = () => {
       if (typeof showToast === 'function') showToast('⚠️ 이미지 로드 실패. 다른 파일을 시도해주세요');
@@ -8387,6 +8399,147 @@ window.handleLogoUpload = function(prefix, input) {
   // input value 초기화 (같은 파일 다시 선택 가능하게)
   input.value = '';
 };
+
+/* ══════════════════════════════════════════════════════════
+   🆕 로고 클라우드 저장/복원 (Supabase Storage + user_preferences)
+══════════════════════════════════════════════════════════════ */
+
+/**
+ * 로고를 Supabase Storage에 업로드하고 DB에 메타데이터 저장
+ * 사용자별 1개의 로고만 보관 (덮어쓰기 방식)
+ */
+async function uploadLogoToCloud(file) {
+  if (typeof currentUser === 'undefined' || !currentUser) return null;
+  if (typeof sb === 'undefined') return null;
+  
+  try {
+    // 1. 기존 로고가 있으면 먼저 삭제 (Storage 용량 절약)
+    await deleteOldLogoFiles();
+    
+    // 2. 새 로고 업로드 (사용자별 폴더 + 타임스탬프)
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+    const safeExt = ['png','jpg','jpeg','webp'].includes(ext) ? ext : 'png';
+    const timestamp = Date.now();
+    const fileName = `logos/${currentUser.id}/${timestamp}.${safeExt}`;
+    
+    const { error: uploadError } = await sb.storage
+      .from('user-works')
+      .upload(fileName, file, { 
+        cacheControl: '3600',
+        upsert: false,
+        contentType: file.type
+      });
+    
+    if (uploadError) throw uploadError;
+    
+    // 3. 공개 URL 가져오기
+    const { data: urlData } = sb.storage.from('user-works').getPublicUrl(fileName);
+    const logoUrl = urlData.publicUrl;
+    
+    // 4. user_preferences에 메타데이터 upsert
+    const { error: dbError } = await sb.from('user_preferences').upsert({
+      user_id: currentUser.id,
+      logo_url: logoUrl,
+      logo_name: file.name,
+      logo_width: window.sharedLogo?.width || null,
+      logo_height: window.sharedLogo?.height || null,
+      logo_path: fileName,  // 추후 삭제 시 사용
+      updated_at: new Date().toISOString()
+    });
+    
+    if (dbError) {
+      // DB 에러나도 Storage는 성공했으니 일단 URL은 보관
+      console.warn('DB 메타데이터 저장 실패:', dbError);
+    }
+    
+    console.log('☁️ 로고 클라우드 저장 완료:', logoUrl);
+    return logoUrl;
+  } catch (e) {
+    console.error('로고 클라우드 업로드 오류:', e);
+    return null;
+  }
+}
+
+/**
+ * 기존 로고 파일들 삭제 (Storage 정리용)
+ * 사용자가 로고를 교체하거나 삭제할 때 호출
+ */
+async function deleteOldLogoFiles() {
+  if (typeof currentUser === 'undefined' || !currentUser) return;
+  
+  try {
+    // 현재 저장된 logo_path 가져오기
+    const { data } = await sb.from('user_preferences')
+      .select('logo_path')
+      .eq('user_id', currentUser.id)
+      .single();
+    
+    if (data && data.logo_path) {
+      // Storage에서 기존 파일 제거
+      await sb.storage.from('user-works').remove([data.logo_path]);
+      console.log('🗑️ 기존 로고 파일 삭제됨:', data.logo_path);
+    }
+  } catch (e) {
+    // single()이 데이터 없을 때도 에러 던지므로 무시
+    if (e.code !== 'PGRST116') {
+      console.warn('기존 로고 정리 실패 (무시 가능):', e);
+    }
+  }
+}
+
+/**
+ * 로그인 시 저장된 로고 자동 복원
+ * loadUserPreferences 끝에서 호출됨
+ */
+async function restoreLogoFromCloud() {
+  if (typeof currentUser === 'undefined' || !currentUser) return;
+  if (typeof sb === 'undefined') return;
+  
+  try {
+    const { data, error } = await sb.from('user_preferences')
+      .select('logo_url, logo_name, logo_width, logo_height')
+      .eq('user_id', currentUser.id)
+      .single();
+    
+    if (error || !data || !data.logo_url) {
+      console.log('ℹ️ 저장된 로고 없음');
+      return;
+    }
+    
+    // Image 객체로 로드
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      window.sharedLogo = {
+        img: img,
+        name: data.logo_name || 'logo',
+        width: data.logo_width || img.naturalWidth,
+        height: data.logo_height || img.naturalHeight,
+        dataUrl: data.logo_url  // 원격 URL을 dataUrl처럼 취급
+      };
+      
+      // 양쪽 탭 UI 동기화 (열려있다면)
+      if (typeof syncLogoUI === 'function') {
+        syncLogoUI('ba');
+        syncLogoUI('r');
+      }
+      
+      // 미리보기 갱신
+      if (typeof refreshSim === 'function') refreshSim();
+      if (typeof rRefreshSim === 'function') rRefreshSim();
+      
+      console.log('☁️ 저장된 로고 복원 완료:', data.logo_name);
+    };
+    img.onerror = () => {
+      console.warn('저장된 로고 로드 실패 (URL 만료 또는 삭제됨)');
+    };
+    img.src = data.logo_url;
+  } catch (e) {
+    if (e.code !== 'PGRST116') {
+      console.warn('로고 복원 오류:', e);
+    }
+  }
+}
 
 /**
  * 로고 삭제
@@ -8427,7 +8580,47 @@ window.removeLogo = function(prefix) {
   // 양쪽 미리보기 갱신
   if (typeof refreshSim === 'function') refreshSim();
   if (typeof rRefreshSim === 'function') rRefreshSim();
+  
+  // 🆕 로그인 상태면 클라우드에서도 삭제
+  if (typeof currentUser !== 'undefined' && currentUser) {
+    deleteLogoFromCloud().catch(err => {
+      console.warn('클라우드 로고 삭제 실패:', err);
+    });
+  }
 };
+
+/**
+ * 클라우드에서 로고 완전 삭제 (Storage 파일 + DB 메타데이터)
+ */
+async function deleteLogoFromCloud() {
+  if (typeof currentUser === 'undefined' || !currentUser) return;
+  if (typeof sb === 'undefined') return;
+  
+  try {
+    // Storage 파일 삭제
+    await deleteOldLogoFiles();
+    
+    // DB 메타데이터 NULL로 업데이트 (행을 지우진 않음 - 다른 설정 보존)
+    const { error } = await sb.from('user_preferences')
+      .update({
+        logo_url: null,
+        logo_name: null,
+        logo_width: null,
+        logo_height: null,
+        logo_path: null,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', currentUser.id);
+    
+    if (error) {
+      console.warn('DB 로고 메타데이터 삭제 실패:', error);
+    } else {
+      console.log('☁️ 로고 클라우드 삭제 완료');
+    }
+  } catch (e) {
+    console.error('클라우드 로고 삭제 오류:', e);
+  }
+}
 
 /**
  * 위치 그리드 빌드 (3x3 9방향)
