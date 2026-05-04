@@ -4808,6 +4808,111 @@
 }
 .logo-section-title .ls-emoji { font-size: 1rem; }
 
+/* ━━━ iOS 스타일 토글 (로고 사용 ON/OFF) ━━━ */
+.logo-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #faf8f5;
+  border: 1px solid #e0dbd4;
+  border-radius: 12px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  transition: opacity 0.2s ease;
+}
+.logo-toggle-row.disabled {
+  opacity: 0.55;
+}
+.logo-toggle-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-toggle-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.logo-toggle-text {
+  flex: 1;
+  min-width: 0;
+}
+.logo-toggle-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1c1a17;
+}
+.logo-toggle-desc {
+  font-size: 11px;
+  color: #928c84;
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+/* iOS 토글 본체 (68 × 40, 손잡이 32px - 균형감 있는 비율) */
+.ios-toggle {
+  position: relative;
+  width: 68px;
+  height: 40px;
+  background: #E9E9EA;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background 0.25s ease;
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: inherit;
+}
+.ios-toggle:hover:not(:disabled) {
+  background: #D9D9DC;
+}
+.ios-toggle.on {
+  background: #34C759;
+}
+.ios-toggle.on:hover:not(:disabled) {
+  background: #2EB14F;
+}
+.ios-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.ios-toggle::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.06);
+  transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+.ios-toggle.on::before {
+  transform: translateX(28px);
+}
+.ios-toggle:active:not(:disabled)::before {
+  /* 클릭 시 살짝 늘어나는 효과 */
+  width: 36px;
+}
+
+/* 토글 OFF 시 컨트롤(위치/크기) 비활성화 */
+.logo-controls.toggle-off {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+  pointer-events: none;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* 토글 OFF 시 미리보기도 흐릿하게 */
+.logo-upload-zone.has-logo.toggle-off {
+  opacity: 0.55;
+}
+
 .logo-upload-zone {
   border: 2px dashed #d4cabe;
   border-radius: 12px;
@@ -5310,6 +5415,18 @@
             </div>
           </div>
           
+          <!-- 🆕 로고 사용 ON/OFF 토글 (iOS 스타일) -->
+          <div class="logo-toggle-row" id="baLogoToggleRow" style="display:none;">
+            <div class="logo-toggle-info">
+              <span class="logo-toggle-icon">✨</span>
+              <div class="logo-toggle-text">
+                <div class="logo-toggle-label">로고 사용</div>
+                <div class="logo-toggle-desc">이번 작업물에 로고를 표시할지 선택합니다</div>
+              </div>
+            </div>
+            <button class="ios-toggle on" id="baLogoToggle" role="switch" aria-checked="true" aria-label="비포애프터 로고 사용 토글" onclick="toggleLogoUse('ba')"></button>
+          </div>
+          
           <!-- 위치/크기 컨트롤 -->
           <div class="logo-controls" id="baLogoControls">
             <div class="logo-controls-row">
@@ -5575,6 +5692,18 @@
               <button class="logo-action-btn" onclick="document.getElementById('rLogoFile').click()">교체</button>
               <button class="logo-action-btn danger" onclick="removeLogo('r')">삭제</button>
             </div>
+          </div>
+          
+          <!-- 🆕 로고 사용 ON/OFF 토글 (iOS 스타일) -->
+          <div class="logo-toggle-row" id="rLogoToggleRow" style="display:none;">
+            <div class="logo-toggle-info">
+              <span class="logo-toggle-icon">✨</span>
+              <div class="logo-toggle-text">
+                <div class="logo-toggle-label">로고 사용</div>
+                <div class="logo-toggle-desc">이번 작업물에 로고를 표시할지 선택합니다</div>
+              </div>
+            </div>
+            <button class="ios-toggle on" id="rLogoToggle" role="switch" aria-checked="true" aria-label="리사이즈 로고 사용 토글" onclick="toggleLogoUse('r')"></button>
           </div>
           
           <div class="logo-controls" id="rLogoControls">
@@ -8434,6 +8563,44 @@ window.sharedLogo = null;
 // 위치는 탭별로 독립 (탭마다 캔버스 비율이 달라서 위치를 따로 잡고 싶을 수 있음)
 window.baLogoPos = 8;
 window.rLogoPos = 8;
+// 🆕 로고 사용 여부 (탭별 독립 — 한쪽 켜고 한쪽 끌 수 있음)
+window.logoEnabled = { ba: true, r: true };
+
+/**
+ * 로고 사용 ON/OFF 토글 (iOS 스타일 토글 버튼 클릭 시 호출)
+ * @param {string} prefix - 'ba' 또는 'r'
+ */
+window.toggleLogoUse = function(prefix) {
+  if (!window.sharedLogo || !window.sharedLogo.img) return; // 로고 없으면 무시
+  
+  // 상태 토글
+  window.logoEnabled[prefix] = !window.logoEnabled[prefix];
+  const isOn = window.logoEnabled[prefix];
+  
+  // 버튼 시각 상태 업데이트
+  const btn = document.getElementById(`${prefix}LogoToggle`);
+  if (btn) {
+    btn.classList.toggle('on', isOn);
+    btn.setAttribute('aria-checked', String(isOn));
+  }
+  
+  // 컨트롤 비활성화 (위치/크기 슬라이더)
+  const controls = document.getElementById(`${prefix}LogoControls`);
+  if (controls) controls.classList.toggle('toggle-off', !isOn);
+  
+  // 미리보기 박스도 흐릿하게
+  const filled = document.getElementById(`${prefix}LogoZoneFilled`);
+  if (filled) filled.classList.toggle('toggle-off', !isOn);
+  
+  // 미리보기 캔버스 갱신
+  if (prefix === 'ba' && typeof refreshSim === 'function') refreshSim();
+  else if (prefix === 'r' && typeof rRefreshSim === 'function') rRefreshSim();
+  
+  // 토스트 안내
+  if (typeof showToast === 'function') {
+    showToast(isOn ? '✅ 로고가 적용됐어요' : '⏸️ 로고가 잠시 숨겨졌어요. 토글로 다시 켤 수 있어요');
+  }
+};
 
 /**
  * 파일 업로드 처리
@@ -8503,13 +8670,29 @@ function handleLogoFileRead(file, prefix, input) {
         const previewName = document.getElementById(`${p}LogoPreviewName`);
         const previewMeta = document.getElementById(`${p}LogoPreviewMeta`);
         const controls = document.getElementById(`${p}LogoControls`);
+        const toggleRow = document.getElementById(`${p}LogoToggleRow`);
+        const toggleBtn = document.getElementById(`${p}LogoToggle`);
         
         if (zoneEmpty) zoneEmpty.style.display = 'none';
-        if (zoneFilled) zoneFilled.style.display = 'flex';
+        if (zoneFilled) {
+          zoneFilled.style.display = 'flex';
+          zoneFilled.classList.remove('toggle-off');  // OFF 흐림 효과 제거
+        }
         if (previewImg) previewImg.src = e.target.result;
         if (previewName) previewName.textContent = file.name;
         if (previewMeta) previewMeta.textContent = `${img.naturalWidth} × ${img.naturalHeight}`;
-        if (controls) controls.classList.add('show');
+        if (controls) {
+          controls.classList.add('show');
+          controls.classList.remove('toggle-off');  // OFF 흐림 효과 제거
+        }
+        
+        // 🆕 토글 row 표시 + 자동 ON
+        if (toggleRow) toggleRow.style.display = 'flex';
+        window.logoEnabled[p] = true;
+        if (toggleBtn) {
+          toggleBtn.classList.add('on');
+          toggleBtn.setAttribute('aria-checked', 'true');
+        }
         
         // 위치 그리드 빌드 (현재 보이는 탭만 빌드되며, 다른 탭은 패널 열릴 때 빌드됨)
         buildLogoPosGrid(p);
@@ -8759,10 +8942,26 @@ window.removeLogo = function(prefix) {
     const zoneEmpty = document.getElementById(`${p}LogoZoneEmpty`);
     const zoneFilled = document.getElementById(`${p}LogoZoneFilled`);
     const controls = document.getElementById(`${p}LogoControls`);
+    const toggleRow = document.getElementById(`${p}LogoToggleRow`);
+    const toggleBtn = document.getElementById(`${p}LogoToggle`);
     
     if (zoneEmpty) zoneEmpty.style.display = 'block';
-    if (zoneFilled) zoneFilled.style.display = 'none';
-    if (controls) controls.classList.remove('show');
+    if (zoneFilled) {
+      zoneFilled.style.display = 'none';
+      zoneFilled.classList.remove('toggle-off');
+    }
+    if (controls) {
+      controls.classList.remove('show');
+      controls.classList.remove('toggle-off');
+    }
+    
+    // 🆕 토글 row 숨김 + 상태 리셋 (다음에 새 로고 올리면 다시 ON으로)
+    if (toggleRow) toggleRow.style.display = 'none';
+    window.logoEnabled[p] = true;
+    if (toggleBtn) {
+      toggleBtn.classList.add('on');
+      toggleBtn.setAttribute('aria-checked', 'true');
+    }
     
     // 슬라이더 초기화 (탭별로 독립적인 컨트롤이라 각각 리셋)
     ['OffsetX', 'OffsetY'].forEach(suffix => {
@@ -8888,6 +9087,8 @@ function syncLogoUI(prefix) {
   const zoneEmpty = document.getElementById(`${prefix}LogoZoneEmpty`);
   const zoneFilled = document.getElementById(`${prefix}LogoZoneFilled`);
   const controls = document.getElementById(`${prefix}LogoControls`);
+  const toggleRow = document.getElementById(`${prefix}LogoToggleRow`);
+  const toggleBtn = document.getElementById(`${prefix}LogoToggle`);
   
   if (window.sharedLogo && window.sharedLogo.img) {
     // 로고가 있으면 미리보기 상태로
@@ -8901,15 +9102,30 @@ function syncLogoUI(prefix) {
     if (previewName) previewName.textContent = window.sharedLogo.name;
     if (previewMeta) previewMeta.textContent = `${window.sharedLogo.width} × ${window.sharedLogo.height}`;
     if (controls) controls.classList.add('show');
+    
+    // 🆕 토글 row 표시 + 현재 상태 동기화
+    if (toggleRow) toggleRow.style.display = 'flex';
+    const isOn = (window.logoEnabled && window.logoEnabled[prefix] !== false);
+    if (toggleBtn) {
+      toggleBtn.classList.toggle('on', isOn);
+      toggleBtn.setAttribute('aria-checked', String(isOn));
+    }
+    // OFF 상태면 컨트롤/미리보기 흐림 효과 적용
+    if (controls) controls.classList.toggle('toggle-off', !isOn);
+    if (zoneFilled) zoneFilled.classList.toggle('toggle-off', !isOn);
   } else {
     // 로고 없으면 업로드 안내 상태로
     if (zoneEmpty) zoneEmpty.style.display = 'block';
     if (zoneFilled) zoneFilled.style.display = 'none';
     if (controls) controls.classList.remove('show');
+    if (toggleRow) toggleRow.style.display = 'none';
   }
 }
 
 function drawLogoOverlay(ctx, prefix, CW, CH, scale) {
+  // 🆕 로고 사용 OFF 상태면 그리지 않음 (데이터는 유지하되 렌더링만 스킵)
+  if (window.logoEnabled && window.logoEnabled[prefix] === false) return;
+  
   // 공유 로고 사용 (양쪽 탭이 같은 이미지를 보여줌)
   const data = window.sharedLogo;
   if (!data || !data.img) return;
