@@ -6044,7 +6044,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
 })();
 
 async function loadProStatus() {
-  const { data } = await sb.from('users').select('is_pro').eq('id', currentUser.id).single();
+  const { data } = await sb.from('users').select('is_pro').eq('id', currentUser.id).maybeSingle();
   if (data) { isPro = data.is_pro; }
   else {
     await sb.from('users').upsert({ id: currentUser.id, email: currentUser.email, is_pro: false });
@@ -6133,7 +6133,7 @@ async function loadUserPreferences() {
     const { data, error } = await sb.from('user_preferences')
       .select('*')
       .eq('user_id', currentUser.id)
-      .single();
+      .maybeSingle();
     
     if (error || !data) {
       console.log('ℹ️ 저장된 설정 없음 (첫 사용자)');
@@ -8493,22 +8493,26 @@ async function deleteOldLogoFiles() {
   if (typeof currentUser === 'undefined' || !currentUser) return;
   
   try {
-    // 현재 저장된 logo_path 가져오기
-    const { data } = await sb.from('user_preferences')
+    // 현재 저장된 logo_path 가져오기 (행 없을 수 있으므로 maybeSingle 사용)
+    const { data, error } = await sb.from('user_preferences')
       .select('logo_path')
       .eq('user_id', currentUser.id)
-      .single();
+      .maybeSingle();
+    
+    if (error) {
+      console.warn('🔍 [기존 로고 조회] 에러 (무시 가능):', error.code, error.message);
+      return;
+    }
     
     if (data && data.logo_path) {
       // Storage에서 기존 파일 제거
       await sb.storage.from('user-works').remove([data.logo_path]);
       console.log('🗑️ 기존 로고 파일 삭제됨:', data.logo_path);
+    } else {
+      console.log('🔍 [기존 로고] 없음 (첫 업로드)');
     }
   } catch (e) {
-    // single()이 데이터 없을 때도 에러 던지므로 무시
-    if (e.code !== 'PGRST116') {
-      console.warn('기존 로고 정리 실패 (무시 가능):', e);
-    }
+    console.warn('기존 로고 정리 실패 (무시 가능):', e);
   }
 }
 
@@ -8534,13 +8538,10 @@ async function restoreLogoFromCloud() {
     const { data, error } = await sb.from('user_preferences')
       .select('logo_url, logo_name, logo_width, logo_height')
       .eq('user_id', currentUser.id)
-      .single();
+      .maybeSingle();
     
     if (error) {
-      // PGRST116 = "no rows found" (정상 - 첫 사용자)
-      if (error.code === 'PGRST116') {
-        console.log('ℹ️ [로고 복원] user_preferences 행 자체가 없음 (첫 사용자)');
-      } else if (error.code === '42703') {
+      if (error.code === '42703') {
         console.error('❌ [로고 복원] DB 컬럼이 없음! Supabase에서 ALTER TABLE 쿼리 실행 필요:');
         console.error('   ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS logo_url TEXT, ...');
       } else {
@@ -8550,7 +8551,7 @@ async function restoreLogoFromCloud() {
     }
     
     if (!data) {
-      console.log('ℹ️ [로고 복원] data 없음');
+      console.log('ℹ️ [로고 복원] user_preferences 행 없음 (첫 사용자)');
       return;
     }
     
@@ -8575,13 +8576,11 @@ async function restoreLogoFromCloud() {
         dataUrl: data.logo_url
       };
       
-      // 양쪽 탭 UI 동기화 (열려있다면)
       if (typeof syncLogoUI === 'function') {
         syncLogoUI('ba');
         syncLogoUI('r');
       }
       
-      // 미리보기 갱신
       if (typeof refreshSim === 'function') refreshSim();
       if (typeof rRefreshSim === 'function') rRefreshSim();
       
