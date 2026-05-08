@@ -5474,11 +5474,11 @@
 
     <div class="action-area">
       <div class="plan-banner" id="planBanner">
-        <div class="plan-info"><span class="plan-badge free" id="planBadge">무료 플랜</span><span class="plan-desc" id="planDesc">저장 시 워터마크가 삽입됩니다</span></div>
+        <div class="plan-info"><span class="plan-badge free" id="planBadge">무료 플랜</span><span class="plan-desc" id="planDesc">손님이 더 신뢰하는 게시물 만들기 →</span></div>
         <button class="plan-btn upgrade" id="planBtn" onclick="openModal()">✦ PRO <span class="free-trial-badge">14일 무료</span></button>
       </div>
       <button class="gen-btn" id="genBtn" onclick="generate()">💾 저장하기</button>
-      <div class="wm-notice" id="wmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
+      <div class="wm-notice" id="wmNotice">📸 PRO는 워터마크 없이 — 손님이 진짜라고 믿게 만들어요</div>
     </div>
   </div>
 </div>
@@ -5751,11 +5751,11 @@
         <span class="count-warn" id="rCountWarn"></span>
       </div>
       <div class="plan-banner" id="rPlanBanner">
-        <div class="plan-info"><span class="plan-badge free" id="rPlanBadge">무료 플랜</span><span class="plan-desc" id="rPlanDesc">저장 시 워터마크가 삽입됩니다</span></div>
+        <div class="plan-info"><span class="plan-badge free" id="rPlanBadge">무료 플랜</span><span class="plan-desc" id="rPlanDesc">손님이 더 신뢰하는 게시물 만들기 →</span></div>
         <button class="plan-btn upgrade" id="rPlanBtn" onclick="openModal()">✦ PRO <span class="free-trial-badge">14일 무료</span></button>
       </div>
       <button class="gen-btn" id="rGenBtn" onclick="rGenerate()">💾 전체 저장</button>
-      <div class="wm-notice" id="rWmNotice">🔒 워터마크 포함 · PRO 업그레이드 시 제거</div>
+      <div class="wm-notice" id="rWmNotice">📸 PRO는 워터마크 없이 — 손님이 진짜라고 믿게 만들어요</div>
     </div>
   </div>
 </div>
@@ -5771,18 +5771,18 @@
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-icon">✦</div>
-    <h2>PRO 플랜으로 업그레이드</h2>
-    <p style="font-size:.85rem;color:var(--ea-muted);">워터마크 없이 깔끔하게, 고화질로</p>
-    <p style="font-size:.8rem;color:var(--ea-accent);font-weight:600;margin-top:-4px;">☕ 하루 297원으로 인스타 콘텐츠 무제한!</p>
-    <div class="modal-price">₩8,900 <span>/ 월</span></div>
+    <h2>지금 인스타그램, 손님 한 명이라도 더 부르나요?</h2>
+    <p style="font-size:.85rem;color:var(--ea-muted);line-height:1.5;">PRO로 업그레이드하면, <strong style="color:var(--ea-accent);">단 5초 만에</strong> "전문가가 만든 것 같은" 게시물이 완성됩니다.</p>
+    <p style="font-size:.8rem;color:var(--ea-accent);font-weight:600;margin-top:6px;">☕ 아메리카노 한 잔 값으로 한 달 인스타 운영 끝</p>
+    <div class="modal-price">₩8,900 <span>/ 월 (하루 297원)</span></div>
     <ul class="modal-features">
-      <li>워터마크 완전 제거</li>
-      <li>1080 × 1350 px 최고화질 저장</li>
-      <li>무제한 이미지 생성</li>
-      <li>모든 옵션 제한 없이 사용</li>
+      <li>✦ <strong>내 가게 로고만</strong> 깔끔하게 — 손님이 진짜라고 믿어요</li>
+      <li>📸 <strong>성수기에도 끊김 없이</strong> 매일 5장 이상 자유롭게</li>
+      <li>🎯 <strong>인스타 사이즈 자동 맞춤</strong> — 1080×1350 최고화질</li>
+      <li>🚀 <strong>새 기능 먼저 체험</strong> — 업종별 템플릿, 자동 캡션 추천 등</li>
     </ul>
-    <button class="modal-cta" onclick="activatePro()">월 8,900원으로 시작하기</button>
-    <button class="modal-close" onclick="closeModal()">나중에 할게요</button>
+    <button class="modal-cta" onclick="activatePro()">월 8,900원으로 시작하기 →</button>
+    <button class="modal-close" onclick="closeModal()">나중에 결정할게요</button>
     <button class="modal-demo" onclick="activateProDemo()">🔓 데모: PRO 무료 체험 (테스트용)</button>
   </div>
 </div>
@@ -6770,7 +6770,7 @@ function updateCountBar() {
     dots.appendChild(d);
   }
   text.textContent = `오늘 저장 ${used}/${FREE_LIMIT}회`;
-  warn.textContent = left === 0 ? '오늘 횟수 초과 · PRO 업그레이드' : left === 1 ? '오늘 1회 남음' : '';
+  warn.textContent = left === 0 ? '오늘 한도 끝 · PRO로 무제한 ✦' : left === 1 ? '⚠️ 오늘 1장 남음' : '';
 }
 
 function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
@@ -6793,7 +6793,7 @@ function updatePlanUI() {
   if (isPro) {
     badge.textContent = '✦ PRO 플랜';
     badge.className = 'plan-badge pro';
-    desc.textContent = '워터마크 없음 · 최고화질 저장';
+    desc.textContent = '✓ 손님이 진짜라고 믿는 콘텐츠';
     btn.innerHTML = '✓ PRO 이용중';
     btn.className = 'plan-btn active-pro';
     btn.onclick = null;
@@ -6809,7 +6809,7 @@ function updatePlanUI() {
     if (isPro) {
       rBadge.textContent = '✦ PRO 플랜';
       rBadge.className = 'plan-badge pro';
-      rDesc.textContent = '워터마크 없음 · 최고화질 저장';
+      rDesc.textContent = '✓ 손님이 진짜라고 믿는 콘텐츠';
       rBtn.innerHTML = '✓ PRO 이용중';
       rBtn.className = 'plan-btn active-pro';
       rBtn.onclick = null;
@@ -7069,7 +7069,71 @@ function fontSize(cw) {
   const px = Number(opts.fontSize) || 30;
   return Math.max(8, px * cw / REF_WIDTH);
 }
+/**
+ * 🆕 빈 영역에 placeholder 그리기 (한쪽 사진만 업로드됐을 때)
+ * 회색 그라데이션 배경 + 카메라 아이콘 + "사진을 올려주세요" 텍스트
+ */
+function drawPlaceholder(ctx, dx, dy, dw, dh) {
+  ctx.save();
+  
+  // 1. 부드러운 그라데이션 배경
+  const grad = ctx.createLinearGradient(dx, dy, dx, dy + dh);
+  grad.addColorStop(0, '#f0eee9');
+  grad.addColorStop(1, '#e8e4dc');
+  ctx.fillStyle = grad;
+  ctx.fillRect(dx, dy, dw, dh);
+  
+  // 2. 점선 테두리 (안쪽 여백)
+  const pad = Math.min(dw, dh) * 0.05;
+  ctx.strokeStyle = '#c8bfb0';
+  ctx.lineWidth = Math.max(2, Math.min(dw, dh) * 0.005);
+  ctx.setLineDash([Math.min(dw, dh) * 0.02, Math.min(dw, dh) * 0.015]);
+  ctx.strokeRect(dx + pad, dy + pad, dw - pad * 2, dh - pad * 2);
+  ctx.setLineDash([]);
+  
+  // 3. 카메라 아이콘 (간단한 SVG 모양)
+  const cx = dx + dw / 2;
+  const cy = dy + dh / 2 - dh * 0.06;
+  const iconSize = Math.min(dw, dh) * 0.18;
+  
+  ctx.fillStyle = '#a89e8e';
+  // 카메라 본체 (roundRect 호환성 체크)
+  ctx.beginPath();
+  if (typeof ctx.roundRect === 'function') {
+    ctx.roundRect(cx - iconSize / 2, cy - iconSize * 0.35, iconSize, iconSize * 0.7, iconSize * 0.08);
+  } else {
+    ctx.rect(cx - iconSize / 2, cy - iconSize * 0.35, iconSize, iconSize * 0.7);
+  }
+  ctx.fill();
+  // 렌즈
+  ctx.fillStyle = '#f0eee9';
+  ctx.beginPath();
+  ctx.arc(cx, cy - iconSize * 0.02, iconSize * 0.22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#a89e8e';
+  ctx.lineWidth = Math.max(2, iconSize * 0.04);
+  ctx.beginPath();
+  ctx.arc(cx, cy - iconSize * 0.02, iconSize * 0.22, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // 4. 안내 텍스트
+  ctx.fillStyle = '#928c84';
+  const fontSize = Math.max(14, Math.min(dw, dh) * 0.05);
+  ctx.font = `600 ${fontSize}px "Noto Sans KR", sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('사진을 올려주세요', cx, cy + iconSize * 0.7);
+  
+  ctx.restore();
+}
+
 function coverFit(ctx, img, dx, dy, dw, dh, transform) {
+  // 🆕 이미지가 없으면 placeholder 그리기 (한쪽만 업로드됐을 때 빈 영역 표시)
+  if (!img) {
+    drawPlaceholder(ctx, dx, dy, dw, dh);
+    return;
+  }
+  
   const ia = img.naturalWidth/img.naturalHeight, da = dw/dh;
   let sx, sy, sw, sh;
   
@@ -7313,8 +7377,8 @@ function refreshSim() {
   const ph = document.getElementById('simPh');
   if (!c) return;
   
-  // 🆕 두 장 다 있어야 미리보기 가능. 한 장만 있거나 없으면 캔버스 비우고 placeholder 표시
-  if (!imgs.before || !imgs.after) {
+  // 🆕 둘 다 없을 때만 placeholder 안내 (한 장이라도 있으면 미리보기 그림)
+  if (!imgs.before && !imgs.after) {
     // 캔버스 클리어 (이전에 그렸던 잔상 제거)
     const ctx = c.getContext('2d');
     if (c.width > 0 && c.height > 0) {
@@ -7329,16 +7393,16 @@ function refreshSim() {
     return;
   }
   
-  // 두 장 모두 있을 때만 정상 렌더링
+  // 🆕 한 장이라도 있으면 미리보기 그림 (빈 쪽은 자동으로 placeholder 표시됨)
   if (ph) ph.style.display = 'none';
   c.style.display = 'block';
   const fw = document.getElementById('simFrame').clientWidth || 320;
   // 🎨 미리보기 화질 1.5배 (더 또렷하게)
   drawAll(c, (fw / IW) * 1.5);
   
-  // 인터랙션 바 표시
+  // 인터랙션 바는 두 장 모두 있을 때만 표시 (드래그/줌은 합성 완성 후에만 의미있음)
   const bar = document.getElementById('simInteractionBar');
-  if (bar) bar.style.display = 'flex';
+  if (bar) bar.style.display = (imgs.before && imgs.after) ? 'flex' : 'none';
 }
 
 // ════════════════════════════════════════════
@@ -7885,7 +7949,7 @@ function loadMypageSubscription() {
       freeBtn.classList.add('current');
     }
     if (proBtn) {
-      proBtn.textContent = 'PRO 시작하기 →';
+      proBtn.textContent = '✦ 14일 무료로 시작하기';
       proBtn.disabled = false;
       proBtn.classList.add('pro');
       proBtn.classList.remove('current');
@@ -9450,7 +9514,7 @@ async function rGenerate() {
   if (!canSave()) { openModal(); return; }
   const total = isPro ? rImgs.length : Math.min(rImgs.length, FREE_LIMIT-getSaveCount());
   if (!isPro && rImgs.length > total) {
-    alert(`오늘 ${total}장만 더 저장 가능해요.\nPRO 업그레이드 시 무제한!`);
+    alert(`오늘은 ${total}장만 더 저장할 수 있어요.\n\nPRO로 업그레이드하면 매일 무제한 — 성수기에도 끊김 없어요 ✦`);
   }
   const btn = document.getElementById('rGenBtn');
   btn.textContent='저장 중...'; btn.style.opacity='.6';
@@ -9488,7 +9552,7 @@ function rUpdateCountBar() {
     dots.appendChild(d);
   }
   text.textContent=`오늘 저장 ${used}/${FREE_LIMIT}회`;
-  warn.textContent=left===0?'오늘 횟수 초과 · PRO 업그레이드':left===1?'오늘 1회 남음':'';
+  warn.textContent=left===0?'오늘 한도 끝 · PRO로 무제한 ✦':left===1?'⚠️ 오늘 1장 남음':'';
 }
 
 window.baTextPos = 8;
@@ -9674,29 +9738,28 @@ window.addEventListener('resize', () => {
           <div class="mypage-plan-compare-name">무료</div>
           <div class="mypage-plan-compare-price">₩0<span>/ 월</span></div>
           <ul class="mypage-plan-compare-features">
-            <li>비포&애프터 사진 편집</li>
-            <li>인스타 사이즈 3종 (4:5, 1:1, 16:9)</li>
-            <li>31종 폰트 무료 이용</li>
-            <li>워터마크 포함</li>
-            <li>하루 3장 저장</li>
+            <li>✓ 비포&애프터 / 사이즈 변환 기본 기능</li>
+            <li>✓ 31종 무료 폰트 + 가게 로고 추가</li>
+            <li>📷 워터마크 포함 — 사장님이 직접 만든 거 티 나요</li>
+            <li>📅 하루 3장까지만 저장 — 성수기엔 부족할 수 있어요</li>
           </ul>
           <button class="mypage-plan-compare-btn current" id="mypageCompareFreeBtn" disabled>이용중</button>
         </div>
         
         <!-- PRO 플랜 카드 -->
         <div class="mypage-plan-compare-card pro" id="mypageComparePro" data-plan="pro">
-          <div class="mypage-plan-compare-badge">HOT 🔥</div>
+          <div class="mypage-plan-compare-badge">손님이 늘어요 🔥</div>
           <div class="mypage-plan-compare-name">PRO ✦</div>
           <div class="mypage-plan-compare-price">₩8,900<span>/ 월</span></div>
-          <div class="mypage-plan-compare-tip">☕ 하루 297원으로 인스타 무제한!</div>
+          <div class="mypage-plan-compare-tip">☕ 하루 297원 — 손님 한 명만 더 와도 본전</div>
           <ul class="mypage-plan-compare-features">
-            <li>워터마크 완전 제거</li>
-            <li>1080×1350 px 최고화질 저장</li>
-            <li>무제한 이미지 생성</li>
-            <li>모든 옵션 제한 없이 사용</li>
-            <li>모든 무료 기능 포함</li>
+            <li>✦ <strong>내 가게 로고만</strong> — 진짜 가게처럼 보여요</li>
+            <li>📸 <strong>매일 무제한 저장</strong> — 성수기에도 끊김 없어요</li>
+            <li>🎯 <strong>1080×1350 최고화질</strong> — 인스타에서 흐릿함 X</li>
+            <li>🚀 <strong>새 기능 먼저</strong> — 업종별 템플릿, 자동 캡션 등</li>
+            <li>💝 <strong>14일 무료 체험</strong> — 마음에 안 들면 언제든 해지</li>
           </ul>
-          <button class="mypage-plan-compare-btn pro" id="mypageCompareProBtn" onclick="openProFromMypage()">PRO 시작하기 →</button>
+          <button class="mypage-plan-compare-btn pro" id="mypageCompareProBtn" onclick="openProFromMypage()">✦ 14일 무료로 시작하기</button>
         </div>
       </div>
     </div>
