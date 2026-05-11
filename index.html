@@ -5137,18 +5137,21 @@
         <span id="currentSizeLabel">📐 출력: 1080 × 1350 px · JPEG 최고화질</span>
         <span style="font-size:.65rem;opacity:.6;">▼</span>
       </button>
-      <div class="size-menu" id="sizeMenu" style="display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#fff;border:1.5px solid #ffd9c0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:1000;min-width:260px;">
-        <button class="size-option" onclick="setCanvasSize(1080,1350,'4:5')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
-          <span><strong>인스타 게시물</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">4:5</span></span>
-          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 1350</span>
+      <div class="size-menu" id="sizeMenu" style="display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#fff;border:1.5px solid #ffd9c0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:1000;min-width:300px;">
+        <button class="size-option" onclick="setCanvasSize(1080,1350,'4:5')" style="width:100%;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
+          <strong style="text-align:left;">인스타 게시물</strong>
+          <span style="color:#928c84;font-size:.7rem;">4:5</span>
+          <span style="color:#b85c38;font-weight:600;font-size:.7rem;min-width:80px;text-align:right;">1080 × 1350</span>
         </button>
-        <button class="size-option" onclick="setCanvasSize(1080,1080,'1:1')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
-          <span><strong>정사각형</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">1:1</span></span>
-          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 1080</span>
+        <button class="size-option" onclick="setCanvasSize(1080,1080,'1:1')" style="width:100%;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
+          <strong style="text-align:left;">정사각형</strong>
+          <span style="color:#928c84;font-size:.7rem;">1:1</span>
+          <span style="color:#b85c38;font-weight:600;font-size:.7rem;min-width:80px;text-align:right;">1080 × 1080</span>
         </button>
-        <button class="size-option" onclick="setCanvasSize(1080,566,'16:9')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
-          <span><strong>가로형</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">16:9</span></span>
-          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 566</span>
+        <button class="size-option" onclick="setCanvasSize(1080,566,'16:9')" style="width:100%;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
+          <strong style="text-align:left;">가로형</strong>
+          <span style="color:#928c84;font-size:.7rem;">16:9</span>
+          <span style="color:#b85c38;font-weight:600;font-size:.7rem;min-width:80px;text-align:right;">1080 × 566</span>
         </button>
       </div>
     </div>
