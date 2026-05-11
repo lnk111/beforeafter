@@ -5089,26 +5089,6 @@
     <span id="userEmail" style="display:none;font-size:.75rem;color:var(--ea-muted);"></span>
     <button id="loginBtn" onclick="openAuthModal()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--ea-ink);color:#fff;border:none;border-radius:100px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;">🔑 로그인</button>
     <button id="logoutBtn" onclick="logout()" style="display:none;align-items:center;gap:6px;padding:7px 14px;background:transparent;color:var(--ea-muted);border:1.5px solid var(--ea-border);border-radius:100px;font-family:inherit;font-size:.78rem;cursor:pointer;">로그아웃</button>
-    <div class="size-selector-wrap" style="position:relative;">
-      <button class="insta-badge size-selector-btn" id="sizeSelectorBtn" onclick="toggleSizeMenu(event)" style="cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;">
-        <span id="currentSizeLabel">📐 1080 × 1350 px</span>
-        <span style="font-size:.65rem;opacity:.6;">▼</span>
-      </button>
-      <div class="size-menu" id="sizeMenu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1.5px solid #ffd9c0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:1000;min-width:240px;">
-        <button class="size-option" onclick="setCanvasSize(1080,1350,'4:5')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
-          <span><strong>인스타 게시물</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">4:5</span></span>
-          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 1350</span>
-        </button>
-        <button class="size-option" onclick="setCanvasSize(1080,1080,'1:1')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
-          <span><strong>정사각형</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">1:1</span></span>
-          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 1080</span>
-        </button>
-        <button class="size-option" onclick="setCanvasSize(1080,566,'16:9')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
-          <span><strong>가로형</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">16:9</span></span>
-          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 566</span>
-        </button>
-      </div>
-    </div>
   </div>
 </header>
 
@@ -5151,7 +5131,27 @@
       <span>🔄 <strong>휠로 확대</strong></span>
       <button onclick="resetImagePosition()" style="background:#fff;border:1px solid #ffd9c0;border-radius:100px;padding:2px 10px;font-size:.7rem;color:#b85c38;cursor:pointer;font-weight:600;font-family:inherit;">↺ 원래대로</button>
     </div>
-    <span class="sim-label">출력: 1080 × 1350 px · JPEG 최고화질</span>
+    <!-- 🆕 사이즈 셀렉터 (헤더에서 이동) - 미리보기 결과 영역과 직접 연결 -->
+    <div class="size-selector-wrap" style="position:relative;display:inline-flex;align-self:center;margin-top:8px;">
+      <button class="insta-badge size-selector-btn" id="sizeSelectorBtn" onclick="toggleSizeMenu(event)" style="cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;">
+        <span id="currentSizeLabel">📐 출력: 1080 × 1350 px · JPEG 최고화질</span>
+        <span style="font-size:.65rem;opacity:.6;">▼</span>
+      </button>
+      <div class="size-menu" id="sizeMenu" style="display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#fff;border:1.5px solid #ffd9c0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;z-index:1000;min-width:260px;">
+        <button class="size-option" onclick="setCanvasSize(1080,1350,'4:5')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
+          <span><strong>인스타 게시물</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">4:5</span></span>
+          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 1350</span>
+        </button>
+        <button class="size-option" onclick="setCanvasSize(1080,1080,'1:1')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
+          <span><strong>정사각형</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">1:1</span></span>
+          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 1080</span>
+        </button>
+        <button class="size-option" onclick="setCanvasSize(1080,566,'16:9')" style="width:100%;text-align:left;padding:10px 14px;background:transparent;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78rem;display:flex;justify-content:space-between;align-items:center;color:#1c1a17;transition:background 0.15s;" onmouseover="this.style.background='#fff8f3'" onmouseout="this.style.background='transparent'">
+          <span><strong>가로형</strong> <span style="color:#928c84;font-size:.7rem;margin-left:4px;">16:9</span></span>
+          <span style="color:#b85c38;font-weight:600;font-size:.7rem;">1080 × 566</span>
+        </button>
+      </div>
+    </div>
   </div>
   <div class="resizer" id="resizer"></div>
   <div class="ctrl-panel">
@@ -8267,11 +8267,11 @@ window.setCanvasSize = function(width, height, ratio) {
     console.log('📐 사이즈 변경:', width, 'x', height, '비율:', simpleRatio);
   }
   
-  // 라벨 업데이트
+  // 라벨 업데이트 (미리보기 영역 내 사이즈 셀렉터)
   const label = document.getElementById('currentSizeLabel');
-  if (label) label.textContent = `📐 ${width} × ${height} px`;
+  if (label) label.textContent = `📐 출력: ${width} × ${height} px · JPEG 최고화질`;
   
-  // 모든 출력 사이즈 표시 업데이트
+  // 다른 곳에 잔존하는 sim-label도 동일하게 업데이트 (안전장치)
   document.querySelectorAll('.sim-label').forEach(el => {
     el.textContent = `출력: ${width} × ${height} px · JPEG 최고화질`;
   });
